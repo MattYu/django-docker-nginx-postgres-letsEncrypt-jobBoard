@@ -1,0 +1,451 @@
+<!doctype html>
+{% load static %}
+{% load joblist_tag %}
+<html lang="en">
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Concordia ACE</title>
+ 
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href={% static "assets/css/bootstrap.min.css" %}>
+
+    <!-- External Css -->
+    <link rel="stylesheet" href={% static "assets/css/fontawesome-all.min.css" %}>
+    <link rel="stylesheet" href={% static "assets/css/themify-icons.css" %} />
+    <link rel="stylesheet" href={% static "assets/css/et-line.css" %} />
+    <link rel="stylesheet" href={% static "assets/css/bootstrap-select.min.css" %} />
+    <link rel="stylesheet" href={% static "assets/css/plyr.css" %} />
+    <link rel="stylesheet" href={% static "assets/css/flag.css" %} />
+    <link rel="stylesheet" href={% static "assets/css/slick.css" %} /> 
+    <link rel="stylesheet" href={% static "assets/css/owl.carousel.min.css" %} />
+    <link rel="stylesheet" href={% static "assets/css/jquery.nstSlider.min.css" %} />
+
+    <!-- Custom Css -->
+    <link rel="stylesheet" type="text/css" href={% static "css/main.css" %}>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,600%7CRoboto:300i,400,500" rel="stylesheet">
+
+    <!-- Favicon -->
+    <link rel="icon" href={% static "images/favicon.png" %}>
+    <link rel="apple-touch-icon" href={% static "images/apple-touch-icon.png" %}>
+    <link rel="apple-touch-icon" sizes="72x72" href={% static "images/icon-72x72.png" %}>
+    <link rel="apple-touch-icon" sizes="114x114" href={% static "images/icon-114x114.png" %}>
+
+
+    <!--[if lt IE 9]>
+    <script src="assets/js/html5shiv.min.js"></script>
+    <script src="assets/js/respond.min.js"></script>
+    <![endif]-->
+
+  </head>
+  <body>
+
+    <header class="header-2 access-page-nav">
+      <div class="container">
+        <div class="row">
+          <div class="col">
+            <div class="header-top">
+              <div class="logo-area">
+                <a href="/"><img src={% static "images/concordia-logo.png" %} alt=""></a>
+              </div>
+              <div class="top-nav">
+                <a href="login.html" class="account-page-link">Login</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <div class="padding-top-90 padding-bottom-90 access-page-bg" >
+      <div class="container">
+        <div class="row">
+          <div class="col-xl-4 col-md-6">
+            <div class="access-form">
+              <div class="form-header">
+                <h5><i data-feather="edit"></i>Register Account</h5>
+              </div>
+              {% if form.non_field_errors %}
+                <div class="non-field-errors">
+                  {% for err in form.non_field_errors %}
+                    <p class="text-danger">{{ err }}</p>
+                  {% endfor %}
+                </div>
+              {% endif %}
+              <form method="POST" enctype="multipart/form-data">
+              {% csrf_token %}       
+                {{form.registrationType}}
+                {{form.employerCompany}}
+                {{form.extra_language_count}}
+                {% if not form.is_type_selected %}
+                <div class="row"> 
+                  <div class="col-md-6">
+                    <input type="submit" class="button primary-bg btn-block" formnovalidate value="Candidate" name="selectCandidate" id="selectCandidate">
+                  </div>
+                  <div class="col-md-6">
+                    <input type="submit" class="button primary-bg btn-block" formnovalidate value="Employer" name="selectEmployer" id="selectEmployer">
+                  </div>
+                </div>
+                {% elif form.is_candidate_selected %}
+                <div class="row"> 
+                  <div class="col-md-6">
+                    <input type="submit" class="button primary-bg btn-block" formnovalidate value="Candidate" name="selectCandidate" id="selectCandidate">
+                  </div>
+                  <div class="col-md-6">
+                    <input type="submit" class="button secondary-bg btn-block" formnovalidate value="Employer" name="selectEmployer" id="selectEmployer">
+                  </div>
+                </div>
+                
+                {% else  %}
+                <div class="row"> 
+                  <div class="col-md-6">
+                    <input type="submit" class="button secondary-bg btn-block" formnovalidate value="Candidate" name="selectCandidate" id="selectCandidate">
+                  </div>
+                  <div class="col-md-6">
+                    <input type="submit" class="button primary-bg btn-block" formnovalidate value="Employer" name="selectEmployer" id="selectEmployer">
+                  </div>
+                </div>
+                {% endif %}
+
+                {% if form.is_type_selected %}
+                <br>
+                <br>
+                  {% if form.is_employer_selected %}
+                    <div class="basic-info-input">
+                      <h4><i data-feather="plus-circle"></i>About your company</h4>
+                    </div>
+                    {% if not form.isAllFieldSelected %}
+                      <div class="row"> 
+                        <div class="col-md-6">
+                          <input type="submit" class="button secondary-bg btn-block" formnovalidate value="Existing ACE Partner" name="existingpartner" id="existingpartner">
+                        </div>
+                        <div class="col-md-6">
+                          <input type="submit" class="button secondary-bg btn-block" formnovalidate value="New to ACE" name="newpartner" id="newpartner">
+                        </div>
+                      </div>
+                    {% elif form.is_createCompany_selected %}
+                      <div class="row"> 
+                        <div class="col-md-6">
+                          <input type="submit" class="button secondary-bg btn-block" formnovalidate value="Existing ACE Partner" name="existingpartner" id="existingpartner">
+                        </div>
+                        <div class="col-md-6">
+                          <input type="submit" class="button primary-bg btn-block" formnovalidate value="New to ACE" name="newpartner" id="newpartner">
+                        </div>
+                      </div>
+                      <br>
+                      <div class="form-header">
+                        <h5><i data-feather="edit"></i>Please tell us more about your company</h5>
+                      </div>
+                      <div class="form-group">
+                        {{form.companyName}}
+                      </div>
+                      <div class="form-group">
+                        {{form.address}}
+                      </div>
+                      <div class="form-group">
+                        {{form.website}}
+                      </div>
+                      <div class="form-group">
+                        {{form.profile}}
+                      </div>
+                      <div class="form-group">
+                        <br>
+                        <label>Please upload your company logo</label>
+                        {{form.image}}
+                      </div>
+                    {% else %}
+                      <div class="row"> 
+                        <div class="col-md-6">
+                          <input type="submit" class="button primary-bg btn-block" formnovalidate value="Existing ACE Partner" name="existingpartner" id="existingpartner">
+                        </div>
+                        <div class="col-md-6">
+                          <input type="submit" class="button secondary-bg btn-block" formnovalidate value="New to ACE" name="newpartner" id="newpartner">
+                        </div>
+                      </div>
+                      <br>
+                      <div class="form-header">
+                        <h5><i data-feather="edit"></i>Select your company from the list</h5>
+                      </div>
+                      <div class="form-group">
+                        {{form.company}}
+                      </div>                           
+                    {% endif %}
+                  <br>
+                  <br>
+                  {% endif %}      
+
+                <br>
+                <div class="basic-info-input">
+                  <h4><i data-feather="plus-circle"></i>About you</h4>
+                </div>
+                <div class="form-group" id="test">
+                  {{form.email}}
+                </div>
+                <div class="form-group">
+                  {{form.firstName}}
+                </div>
+                <div class="form-group">
+                  {{form.lastName}}
+                </div>
+                <div class="form-group">
+                  {{form.preferredName}}
+                </div>
+                <div class="form-group">
+                  {{form.phoneNumber}}
+                </div>
+                  {% if form.is_candidate_selected %}
+                    <div class="form-group">
+                      {{form.studentID}}
+                    </div>
+                    <div class="form-group">
+                      {{form.gpa}}
+                    </div>
+                    <div class="form-group">
+                      {{form.creditCompleted}}
+                    </div>
+                    <div class="form-group">
+                      {{form.creditLeft}}
+                    </div>
+                    <div class="row" id = "LanguageFields">
+                    {% for language in form.get_language_fields %}
+                      <label class="col-md-3 col-form-label" name="edu_{{ forloop.counter }}">Language {{ forloop.counter }}</label>
+                      <div class="col-md-9" id>
+                        <div class="form-group">
+                          {{language.language}}
+                        </div>
+                        <div class="form-group">
+                          {{language.proficiency}}
+                        </div>
+                        <div class="form-group">
+                          {{language.details}}
+                        </div>
+                        {% if forloop.last %}
+                        <div class="row">
+                          {% if forloop.first %} 
+                          <div class="col-md-3">
+                            <input type="submit" class="add-new-field" formnovalidate value="+ Add Language" name="addLanguage" id="addLanguage">
+                          </div>
+                          {% endif %}
+                          {% if not forloop.first %}
+                          {% if not form.check_max_language_count%} 
+                          <div class="col-md-3">
+                            <input type="submit" class="add-new-field" formnovalidate value="+ Add" name="addLanguage" id="addLanguage">
+                          </div>
+                          {% endif %}
+                          <div class="col-md-9">
+                            <input type="submit" class="add-new-field" formnovalidate value="- Remove language" name="removeLanguage" id="removeLanguage">
+                          </div>
+                          {% endif %}
+                        </div>
+                        {% endif %}         
+                      </div>
+                    {% endfor %}
+                    </div>
+                    <div class="row" id = "LanguageFields">
+                      <br>
+                      <label>Are you an international student? (if so, you will be required to have a working VISA before the start of the internship, and for the total length of the internship)
+</label>
+                      {{form.internationalStudent}}
+                      <br>
+                      <br>
+                      <label>Are you willing to do an internship outside of the greater Montreal area (ex.  Mirabel, Quebec city, Ottawa or out of province)?</label>
+                      {{form.travel}}
+                      <br> 
+                      <br>
+                      <label>Are you willing to commit to a 12 or 16 month internship that will extend your graduation date by up to 1 year?</label>
+                      {{form.timeCommitment}}
+                      <br> 
+                      <br>
+                      <label>What is your program of study?</label>
+                      {{form.program}}
+                      <br>
+                      <br>
+                      <label>Please upload PDF of your unofficial transcript</label>
+                      {{form.transcript}}
+                      <br>
+                      <br>
+                      <br>                        
+                    </div>
+
+                  {% endif %}
+
+
+                <div class="form-group">
+                  {{form.password}}
+                </div>
+                <div class="form-group">
+                  {{form.passwordConfirm}}
+                </div>
+                {% endif %}
+                {% if form.non_field_errors %}
+                  <div class="non-field-errors">
+                    {% for err in form.non_field_errors %}
+                      <p class="text-danger">{{ err }}</p>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+                {% if form.isAllFieldSelected %}
+                <div class="more-option terms">
+                  <div class="mt-0 terms">
+                    <input class="custom-radio" type="checkbox" id="radio-4" name="termsandcondition" checked>
+                    <label for="radio-4">
+                      <span class="dot"></span> I accept the <a href="#">terms & conditions</a>
+                    </label>
+                  </div>
+                </div>
+                {% block content %}
+                  {% csrf_token %}
+                  <script src='https://www.google.com/recaptcha/api.js'></script>
+                  <div class="g-recaptcha" data-sitekey="6LcU4dQUAAAAALjqzMSN-ee3Wna5gzXMgbYXcHxT"></div>
+                  <br>
+                {% endblock %}
+                <button class="button primary-bg btn-block">Register</button>
+                {% else %}
+                <div class="more-option terms">
+                  <div class="mt-0 terms">
+                  </div>
+                </div>
+                <button class="button secondary-bg btn-block">Register</button>
+                {% endif %}
+              </form>
+              <div class="shortcut-login">
+                <span>Or connect with</span>
+                <div class="buttons">
+                  <a href="#" class="facebook"><i class="fab fa-facebook-f"></i>Facebook</a>
+                  <a href="#" class="google"><i class="fab fa-google"></i>Google</a>
+                </div>
+                <p>Already have an account? <a href="login.html">Login</a></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script>
+
+    var notLocked = true;
+    $.fn.animateHighlight = function(highlightColor, duration) {
+        var highlightBg = highlightColor || "#6495ED";
+        var animateMs = duration || 1500;
+        var originalBg = this.css("backgroundColor");
+        if (notLocked) {
+            notLocked = false;
+            this.stop().css("background-color", highlightBg)
+                .animate({backgroundColor: originalBg}, animateMs);
+            setTimeout( function() { notLocked = true; }, animateMs);
+        }
+    };
+
+    </script>
+
+    <script src={% static "assets/js/jquery.min.js" %}></script>
+    <script src={% static "assets/js/popper.min.js" %}></script>
+    <script src={% static "assets/js/bootstrap.min.js" %}></script>
+    <script src={% static "assets/js/feather.min.js" %}></script>
+    <script src={% static "assets/js/bootstrap-select.min.js" %}></script>
+    <script src={% static "assets/js/jquery.nstSlider.min.js" %}></script>
+    <script src={% static "assets/js/owl.carousel.min.js" %}></script>
+    <script src={% static "assets/js/visible.js" %}></script>
+    <script src={% static "assets/js/jquery.countTo.js" %}></script>
+    <script src={% static "assets/js/chart.js" %}></script>
+    <script src={% static "assets/js/plyr.js" %}></script>
+    <script src={% static "assets/js/tinymce.min.js" %}></script>
+    <script src={% static "assets/js/slick.min.js" %}></script>
+    <script src={% static "assets/js/jquery.ajaxchimp.min.js" %}></script>
+
+    <script src={% static "js/custom.js" %}></script>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC87gjXWLqrHuLKR0CTV5jNLdP4pEHMhmg"></script>
+    <script src={% static "js/map.js" %}></script>
+    <script>
+
+      let form_language_count = Number($("[name=extra_language_count]").val());
+
+      $(function() {
+          var pos = localStorage.getItem('my-scroll-pos', 0);
+          if (pos)
+              $(window).scrollTop(pos)
+      });
+
+    </script>
+    <!-- On click button color change animation function -->
+    <script>
+
+    var notLocked = true;
+    $.fn.animateHighlight = function(highlightColor, duration) {
+        var highlightBg = highlightColor || "#6495ED";
+        var animateMs = duration || 1500;
+        var originalBg = this.css("backgroundColor");
+        if (notLocked) {
+            notLocked = false;
+            this.stop().css("background-color", highlightBg)
+                .animate({backgroundColor: originalBg}, animateMs);
+            setTimeout( function() { notLocked = true; }, animateMs);
+        }
+    };
+
+    </script>
+
+    <script>
+  
+      $("#addLanguage").click(function() {
+          form_language_count ++;
+          localStorage.setItem('my-scroll-pos', $(window).scrollTop());
+
+          $("[name=extra_language_count]").val(form_language_count);
+
+          $("#addLanguage").animateHighlight("##6495ED", 1000)
+      })
+
+      $("#removeLanguage").click(function() {
+          form_language_count --;
+          localStorage.setItem('my-scroll-pos', $(window).scrollTop());
+
+          $("[name=extra_language_count]").val(form_language_count);
+          $("#removeLanguage").animateHighlight("##6495ED", 1000)
+      })
+    </script>
+    <!-- Select between candidate or employer button control-->
+    <script>
+  
+      $("#selectCandidate").click(function() {
+          localStorage.setItem('my-scroll-pos', $(window).scrollTop());
+
+          $("[name=registrationType]").val("candidate");
+          $("#selectCandidate").animateHighlight("##6495ED", 1000)
+      })
+
+      $("#selectEmployer").click(function() {
+          localStorage.setItem('my-scroll-pos', $(window).scrollTop());
+
+          $("[name=registrationType]").val("employer");
+          $("#selectCandidate").animateHighlight("##6495ED", 1000)
+      })
+    </script>
+
+    <!-- Select between new company or existing company button control-->
+    <script>
+
+      $("#existingpartner").click(function() {
+          localStorage.setItem('my-scroll-pos', $(window).scrollTop());
+
+          $("[name=employerCompany]").val("selectFromExisting");
+          $("#existingpartner").animateHighlight("##6495ED", 1000)
+      })
+
+      $("#newpartner").click(function() {
+          localStorage.setItem('my-scroll-pos', $(window).scrollTop());
+
+          $("[name=employerCompany]").val("createNew");
+          $("#newpartner").animateHighlight("##6495ED", 1000)
+      })
+    </script>
+  </body>
+</html>

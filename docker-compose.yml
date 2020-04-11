@@ -1,4 +1,4 @@
-version: '3'
+version: '3.3'
 
 services:
   web:
@@ -6,16 +6,13 @@ services:
     build: ./web
     expose:
       - "8000"
-    links:
-      - postgres:postgres
-      - redis:redis
     volumes:
-      - web-django:/usr/src/app
-      - web-static:/usr/src/app/static
+      - ./web:/web
+      - static_files:/static_files
     env_file: .env
     environment:
       DEBUG: 'true'
-    command: /usr/local/bin/gunicorn docker_django.wsgi:application -w 2 -b :8000
+    command: bash -c "python manage.py makemigrations && python manage.py migrate --run-syncdb && /usr/local/bin/gunicorn ace.wsgi:application -w 2 -b :8000 &&  python manage.py collectstatic --noinput --clear"
 
   nginx:
     restart: always
@@ -23,28 +20,9 @@ services:
     ports:
       - "80:80"
     volumes:
-      - web-static:/www/static
+      - static_files:/static_files
     links:
       - web:web
 
-  postgres:
-    restart: always
-    image: postgres:latest
-    ports:
-      - "5432:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data/
-
-  redis:
-    restart: always
-    image: redis:latest
-    ports:
-      - "6379:6379"
-    volumes:
-      - redisdata:/data
-
 volumes:
-  web-django:
-  web-static:
-  pgdata:
-  redisdata:
+  static_files:

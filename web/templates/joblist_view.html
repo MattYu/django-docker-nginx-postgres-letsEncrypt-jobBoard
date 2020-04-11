@@ -1,0 +1,27 @@
+{% load static %}
+            {% for job in joblist %}
+            <div class="job-list">
+              <div class="thumb">
+                <a href="#">
+                  <img src= {{job.company.image.url}} class="img-fluid" alt="">
+                </a>
+              </div>
+              <div class="body">
+                <div class="content">
+                  <h4><a href="job-details/{{job.pk}}/">{{job.title}}</a></h4>
+                  <div class="info">
+                    <span class="company"><a href="#"><i data-feather="briefcase"></i>{{job.company.name}}</a></span>
+                    <span class="office-location"><a href="#"><i data-feather="map-pin"></i>{{job.location}}</a></span>
+                    <span class="job-type full-time"><a href="#"><i data-feather="clock"></i>{{job.jobtype}}</a></span>
+                  </div>
+                </div>
+                <div class="more">
+                  <div class="buttons">
+                    <a href="add-resume/{{job.pk}}/"" class="button">Apply Now</a>
+                    <a href="#" class="favourite"><i data-feather="heart"></i></a>
+                  </div>
+                  <p class="deadline">Deadline: {{job.expirationDate}}</p>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
