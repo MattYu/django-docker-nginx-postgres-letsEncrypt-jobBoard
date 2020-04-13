@@ -295,6 +295,16 @@
         </form>
       {% endif %}
 
+      {% if user.user_type == 4 and showInterview %}
+        <form method="POST" class="candidate-details">
+        {% csrf_token %}
+        <row>
+        <input type="submit" class="add-new-field" formnovalidate value="Interview" name="Interview" id="Interview">
+        <input type="submit" class="add-new-field" formnovalidate value="Reject" name="Reject" id="Reject">
+        </row>
+        </form>
+      {% endif %}
+      
       {% if user.user_type == 2 and showButton %}
         <form method="POST" class="candidate-details">
         {% csrf_token %}

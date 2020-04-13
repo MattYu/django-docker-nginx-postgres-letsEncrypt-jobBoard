@@ -177,15 +177,17 @@ def admin_matchmaking(request):
                 matchingHistory.save()
 
                 for rank in Ranking.objects.filter(is_closed=False):
-                    if rank.candidateRank == 1000 or rank.candidateRank == 999 or rank.employerRank == 1000 or rank.employerRank == 9:
+                    if rank.candidateRank == 1000 or rank.candidateRank == 999 or rank.employerRank == 1000 or rank.employerRank == 999:
                         rank.status = "Not Matched"
                         rank.jobApplication.status = "Not Matched"
                         rank.is_closed = True
+                        rank.jobApplication.save()
                         rank.save()
 
                     if rank.candidateRank == 1 and rank.employerRank == 1 and rank.jobApplication.job.vacancy !=0:
                         rank.jobApplication.job.vacancy -= 1
                         rank.jobApplication.job.filled += 1
+                        rank.jobApplication.job.save()
 
                         # Before creating a match, perform a safety check to see if candidate already have been matched by the same employer for the same job before
                         if Match.objects.filter(candidate=rank.candidate, job=rank.jobApplication.job).count() == 0:
@@ -193,7 +195,7 @@ def admin_matchmaking(request):
                             match.candidate = rank.candidate
                             match.job = rank.jobApplication.job
                             match.jobApplication = rank.jobApplication
-
+                            match.jobApplication.save()
                             match.save()
 
                             matchingHistory.matches.add(match)
@@ -201,33 +203,42 @@ def admin_matchmaking(request):
 
                         rank.status = "Matched"
                         rank.jobApplication.status = "Matched"
-                        rank.is_closed = True
                         rank.save()
 
 
                 employer_prefs = {}
                 capacities = {}
 
-                for rank in Ranking.objects.filter(is_closed=False).order_by('employerRank'):
-                    jobApplication = rank.jobApplication.id
+                for rank in Ranking.objects.filter(~Q(status="Matched") | ~Q(status="Not Matched")).order_by('employerRank'):
+                    jobId = rank.jobApplication.job.id
+                    job = rank.jobApplication.job
 
-                    if jobApplication not in employer_prefs:
-                        employer_prefs[jobApplication] = [rank.candidate.id]
-                        capacities[jobApplication] = JobApplication.objects.get(id=jobApplication).job.vacancy
+                    if jobId not in employer_prefs:
+                        employer_prefs[jobId] = [rank.candidate.id]
+                        capacities[jobId] = job.vacancy
+                        print("Capacity**************************************")
+                        print(capacities[jobId])
                     else:
-                        employer_prefs[jobApplication].append(rank.candidate.id)
+                        employer_prefs[jobId].append(rank.candidate.id)
                 
                 candidate_prefs = {}
-                for rank in Ranking.objects.filter(is_closed=False).order_by('candidateRank'):
+                for rank in Ranking.objects.filter(~Q(status="Matched") | ~Q(status="Not Matched")).order_by('candidateRank'):
                     candidate = rank.candidate.id
 
                     if candidate not in candidate_prefs:
-                        candidate_prefs[candidate] = [rank.jobApplication.id]
+                        candidate_prefs[candidate] = [rank.jobApplication.job.id]
                     else:
-                        candidate_prefs[candidate].append(rank.jobApplication.id)
-
+                        candidate_prefs[candidate].append(rank.jobApplication.job.id)
+                print("Candidate Pref*****************")
+                print(candidate_prefs)
+                print("employer_prefs*****************")
+                print(employer_prefs)
+                print("CAPACITY")
+                print(capacities)
 
                 match = ranking.HospitalResident.create_from_dictionaries( candidate_prefs, employer_prefs, capacities)
+                print("MATCH*****************")
+                print(match)
 
                 matchResult = match.solve(optimal="hospital")
 
@@ -248,6 +259,7 @@ def admin_matchmaking(request):
 
                             jobApp.job.vacancy -= 1
                             jobApp.job.filled += 1
+                            jobApp.job.save()
                             jobApp.save()
                             jobSet.add(match.job)
 

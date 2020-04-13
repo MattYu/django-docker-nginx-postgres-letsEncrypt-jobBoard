@@ -293,8 +293,21 @@ def view_application_details(request, pk):
                 jobApplication.status= "Not Selected"
                 jobApplication.save()
 
-        if jobApplication.status == "Submitted" or jobApplication.status== "Not Selected":
+            if request.POST.get('Interview'):
+                ranking = Ranking()
+                ranking.jobApplication = jobApplication
+                ranking.job = jobApplication.job
+                ranking.candidate = jobApplication.candidate
+                ranking.save()
+                jobApplication.status= "Interviewing"
+                jobApplication.job.status= "Interviewing"
+                jobApplication.save()
+
+        if jobApplication.status == "Pending Review" or jobApplication.status== "Not Approved":
             context['showButton'] = True
+        
+        if jobApplication.status == "Submitted":
+            context['showInterview'] = True
 
 
     if request.user.user_type == USER_TYPE_CANDIDATE:
