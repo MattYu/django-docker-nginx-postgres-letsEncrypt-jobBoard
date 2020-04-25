@@ -19,7 +19,7 @@ account_activation_token = TokenGenerator()
 class ApplicationsTokenGenerator(PasswordResetTokenGenerator):
     def _make_hash_value(self, user, timestamp):
         return (
-            six.text_type(user.pk) + six.text_type(timestamp) + six.text_type(user.protect_file_temp_download_key)
+            six.text_type(user.pk) + six.text_type(timestamp) + six.text_type(user.username)
         )
 downloadProtectedFile_token = ApplicationsTokenGenerator()
 

@@ -184,27 +184,6 @@ def admin_matchmaking(request):
                         rank.jobApplication.save()
                         rank.save()
 
-                    if rank.candidateRank == 1 and rank.employerRank == 1 and rank.jobApplication.job.vacancy !=0:
-                        rank.jobApplication.job.vacancy -= 1
-                        rank.jobApplication.job.filled += 1
-                        rank.jobApplication.job.save()
-
-                        # Before creating a match, perform a safety check to see if candidate already have been matched by the same employer for the same job before
-                        if Match.objects.filter(candidate=rank.candidate, job=rank.jobApplication.job).count() == 0:
-                            match = Match()
-                            match.candidate = rank.candidate
-                            match.job = rank.jobApplication.job
-                            match.jobApplication = rank.jobApplication
-                            match.jobApplication.save()
-                            match.save()
-
-                            matchingHistory.matches.add(match)
-                            matchingHistory.save()
-
-                        rank.status = "Matched"
-                        rank.jobApplication.status = "Matched"
-                        rank.save()
-
 
                 employer_prefs = {}
                 capacities = {}
@@ -242,45 +221,48 @@ def admin_matchmaking(request):
 
                 matchResult = match.solve(optimal="hospital")
 
-                for jobApplication in matchResult:
-                    jobSet = set()
-                    for candidate in matchResult[jobApplication]:
+                for j in matchResult:
+                    print(j)
+
+                for jobObj in matchResult:
+                    print("test job")
+                    print(jobObj)
+                    for candidate in matchResult[jobObj]:
+                        print("test candidate")
+                        print(candidate)
                         match = Match()
                         # Before creating a match, perform a safety check to see if candidate already have been matched by the same employer for the same job before
-                        if Match.objects.filter(candidate=Candidate.objects.get(id=int(candidate.name)), job= JobApplication.objects.get(id=int(jobApplication.name)).job).count() == 0:
+                        if Match.objects.filter(candidate=Candidate.objects.get(id=int(candidate.name)), job= Job.objects.get(id=int(jobObj.name))).count() == 0:
                             match.candidate = Candidate.objects.get(id=int(candidate.name))
-                            jobApp = JobApplication.objects.get(id=int(jobApplication.name))
-                            match.job = jobApp.job
-                            match.jobApplication = jobApp
+                            job = Job.objects.get(id=int(jobObj.name))
+                            match.job = job
+                            match.jobApplication = JobApplication.objects.filter(candidate=Candidate.objects.get(id=int(candidate.name)), job= job).first()
                             match.save()
+                            #match.jobApplication.status = "Matched"
+                            match.jobApplication.save()
 
                             matchingHistory.matches.add(match)
                             matchingHistory.save()
 
-                            jobApp.job.vacancy -= 1
-                            jobApp.job.filled += 1
-                            jobApp.job.save()
-                            jobApp.save()
-                            jobSet.add(match.job)
-
-                        jobApp = JobApplication.objects.get(id=int(jobApplication.name))
-                        #jobApp.status = "Matched"
-                        jobApp.save()
-
-                    for job in jobSet:
-                        if job.vacancy == 0:
-                            job.status = "Filled"
+                            job.vacancy -= 1
+                            job.filled += 1
                             job.save()
-                        if job.vacancy !=0 and job.filled != 0:
-                            job.status = "Partially Filled"
-                            job.save()                           
+
+                            if job.vacancy == 0:
+                                job.status = "Filled"
+                                job.save()
+                            if job.vacancy !=0 and job.filled != 0:
+                                job.status = "Partially Filled"
+                                job.save()                           
 
                 for rank in Ranking.objects.filter(is_closed=False):
                     if Match.objects.filter(jobApplication=rank.jobApplication).count() == 0:
                         rank.status = "Not Matched"
+                        rank.is_closed = True
                         rank.save()
                     else:
                         rank.status = "Matched"
+                        rank.is_closed = True
                         rank.save()
 
             if request.POST.get("open"):
@@ -318,6 +300,7 @@ def admin_matchmaking(request):
                     rank.jobApplication.job.vacancy += matchCount
                     rank.jobApplication.job.filled -= matchCount
                     rank.jobApplication.status = "Interviewing"
+                    rank.status = "Interviewing"
                     rank.jobApplication.save()
                     rank.jobApplication.job.save()
                     print("test")
