@@ -19,7 +19,6 @@ from django.db.models import Q
 def job_search(request, *args, **kwargs):
     if request.method == 'POST':
         keywords = request.POST['keyword']
-        location = request.POST['search-location']
 
         args = []
         queries = keywords.split(" ")
@@ -36,8 +35,7 @@ def job_search(request, *args, **kwargs):
 
         queryset = []
         for q in qs:
-            if q.location.lower() == location or q.country.lower() == location:
-                queryset.append(q)
+            queryset.append(q)
  
         context = {
             'joblist': queryset,

@@ -4,9 +4,8 @@ server {
     server_name localhost;
     charset utf-8;
 
-    location /static {
-        autoindex on;
-        alias static_files/;
+    location /static/ {
+        alias /static_files/;
     }
 
     location /media {
