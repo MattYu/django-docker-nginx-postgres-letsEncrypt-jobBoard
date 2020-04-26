@@ -170,8 +170,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 SENDFILE_BACKEND = 'sendfile.backends.nginx'
 #SENDFILE_ROOT = os.path.join(BASE_DIR, 'protected')
 
-SENDFILE_ROOT = '/protected_files/'
-SENDFILE_URL = '/protected'
+SENDFILE_ROOT = '/media/'
+SENDFILE_URL = '/media'
 
 # Email notification settings
 # SECURITY WARNING: Not prod ready. Do not used in prod
