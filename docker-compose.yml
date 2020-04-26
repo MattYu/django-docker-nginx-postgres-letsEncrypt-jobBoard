@@ -9,6 +9,7 @@ services:
     volumes:
       - ./web:/web
       - static_files:/static_files
+      - media:/media
     env_file: .env
     environment:
       DEBUG: 'true'
@@ -21,8 +22,10 @@ services:
       - "80:80"
     volumes:
       - static_files:/static_files
+      - media:/media
     links:
       - web:web
 
 volumes:
   static_files:
+  media:
