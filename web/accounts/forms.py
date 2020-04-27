@@ -189,6 +189,8 @@ class RegistrationForm(forms.Form):
         if self.is_createCompany_selected() and self.is_createCompany_selected() and self.is_valid():
             if not cleaned_data.get('image'):
                 raise forms.ValidationError('You have to upload a logo for your company')
+            if not cleaned_data.get('profile'):
+                raise forms.ValidationError('Please enter a short company profile description (This can be changed later)')
 
         if self.is_candidate_selected() and self.is_valid():
             if not cleaned_data.get('transcript'):

@@ -4,11 +4,24 @@ server {
     server_name localhost;
     charset utf-8;
 
-    location /static/ {
-        alias /static_files/;
+    location /static {
+        sendfile  on;
+        sendfile_max_chunk 10m;
+        alias /static;
     }
 
-    location /protected/ {
+    location /media {
+        sendfile  on;
+        sendfile_max_chunk 10m;
+        alias /media;
+    }
+
+
+    location /media/images/company {
+        alias /media/images/company;
+    }
+
+    location /protected {
         internal;
         root /protected_files;
     }

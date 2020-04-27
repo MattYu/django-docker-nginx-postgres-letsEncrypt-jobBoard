@@ -148,16 +148,12 @@ AUTH_PASSWORD_VALIDATORS = [
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
-  os.path.join(BASE_DIR, 'static_server/'),
+     os.path.join(BASE_DIR, 'static_server'),
 )
-
-# STATICFILES_DIRS = (
-#     os.path.join(BASE_DIR, 'static'),
-# )
 # print(STATICFILES_DIRS)
 #STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-STATIC_ROOT = "/static_files/"
+STATIC_ROOT = os.path.join(BASE_DIR,"static")
 
 MEDIA_URL = '/media/'
 
@@ -170,8 +166,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 SENDFILE_BACKEND = 'sendfile.backends.nginx'
 #SENDFILE_ROOT = os.path.join(BASE_DIR, 'protected')
 
-SENDFILE_ROOT = '/protected_files/'
-SENDFILE_URL = '/protected'
+SENDFILE_ROOT = '/media/'
+SENDFILE_URL = '/media'
 
 # Email notification settings
 # SECURITY WARNING: Not prod ready. Do not used in prod

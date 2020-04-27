@@ -20,7 +20,7 @@ DEBUG =True
 
 # Create your views here.
 @check_recaptcha
-def register_user(request):
+def register_user(request, employer=None):
     context = {}
     
     if (request.method == 'POST'):
@@ -62,7 +62,12 @@ def register_user(request):
 
 
     else:
-        form = RegistrationForm(registrationType=None, employerCompany=None, extra_language_count=1)
+        if employer and employer==1:
+            form = RegistrationForm(registrationType="employer", employerCompany=None, extra_language_count=1)
+        elif employer and employer==2:
+            form = RegistrationForm(registrationType=None, employerCompany="candidate", extra_language_count=1)
+        else:
+            form = RegistrationForm(registrationType=None, employerCompany=None, extra_language_count=1)
 
     if request.user.is_authenticated:
         return render(request, "404.html")

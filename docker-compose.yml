@@ -8,7 +8,8 @@ services:
       - "8000"
     volumes:
       - ./web:/web
-      - static_files:/static_files
+      - static:/static
+      - media:/media
     env_file: .env
     environment:
       DEBUG: 'true'
@@ -20,9 +21,11 @@ services:
     ports:
       - "80:80"
     volumes:
-      - static_files:/static_files
+      - static:/static
+      - media:/media
     links:
       - web:web
 
 volumes:
-  static_files:
+  static:
+  media:

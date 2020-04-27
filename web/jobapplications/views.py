@@ -147,7 +147,7 @@ def browse_job_applications(request, searchString = "", jobId= -1):
             query &= Q(candidate__user__email__contains=form["email"].value())
         if form["studentId"].value() != None and form["studentId"].value() != "":
             query &= Q(candidate__studentID__contains=form["studentId"].value())
-        if form["studentId"].value() != None and form["program"].value() != "ANY":
+        if form["program"].value() != None and form["program"].value() != "ANY":
             query &= Q(candidate__program= form["program"].value())
         if form["gpa_min"].value() != None and form["gpa_min"].value() != "1.7" :
             query &= Q(candidate__gpa__gte = float(form["gpa_min"].value()))
@@ -240,7 +240,6 @@ def browse_job_applications(request, searchString = "", jobId= -1):
             return response
 
     return render(request, "dashboard-manage-applications.html", context)
-
 
 def view_application_details(request, pk):
     context = {}

@@ -18,7 +18,7 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import re_path
-
+from django.contrib.auth import views
 
 from view import home_page
 from joblistings.views import job_details, post_job, download_jobPDF, manage_jobs, job_search
@@ -52,9 +52,10 @@ urlpatterns = [
     path('tinymce', include('tinymce.urls')),
     path('test/<int:pk>/', download_test),
     path('jobDescription/<int:pk>/', download_jobPDF),
-    path('register/', register_user),
+    path('register/<optional_int:employer>', register_user),
     path('logout/', logout_user),
     path('login/', login_user),
+    path('accounts/login/', login_user),
     path('activate/<uidb64>/<token>', activate, name="activate"),
     path('search/', job_search),
     path('jobApplications/<optional_int:jobId>', browse_job_applications),
@@ -68,8 +69,14 @@ urlpatterns = [
     path('matchDay/', admin_matchmaking),
     path('viewMatch/<optional_int:jobId>', view_matching),
     path('getFileWithAuth/<int:fileType>/<int:applicationId>/', get_protected_file_withAuth),
-
+    path('password_reset/', views.PasswordResetView.as_view(), name='password_reset'),
+    path('password_reset/done/', views.PasswordResetDoneView.as_view(), name='password_reset_done'),
+    path('reset/<uidb64>/<token>/', views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('reset/done/', views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
 ]
+
+urlpatterns = urlpatterns + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns = urlpatterns + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:
     urlpatterns = urlpatterns + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

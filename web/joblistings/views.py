@@ -7,46 +7,108 @@ from django.db.models import Q
 
 from ace.constants import USER_TYPE_CANDIDATE, USER_TYPE_EMPLOYER, USER_TYPE_SUPER
 from joblistings.models import Job, JobPDFDescription
-from joblistings.forms import JobForm, AdminAddRemoveJobPermission
+from joblistings.forms import JobForm, AdminAddRemoveJobPermission, FilterApplicationForm
 from companies.models import Company
 from accounts.models import Employer, Candidate
 from django_sendfile import sendfile
 from jobapplications.models import JobApplication
 from django.db.models import Q
-
+import json as simplejson
+from datetime import datetime, timedelta
 
 # Create your views here.
 def job_search(request, *args, **kwargs):
+    context = {}
+    jobApps = None
+    form = FilterApplicationForm()
+
+    args = []
+
+    
+    filterClasses = []
+    filterHTML = []
+    sortOrder = '-created_at'
+    query = Q()
+
     if request.method == 'POST':
+        form = FilterApplicationForm(request.POST)
+        print(request.POST)
+        if 'filter' in request.POST:
+            print(request.POST)
+            context['filterClasses'] = simplejson.dumps(form.getSelectedFilterClassAsList())
+            context['filterHTML'] = simplejson.dumps(form.getSelectedFilterHTMLAsList())
+
         keywords = request.POST['keyword']
-        location = request.POST['search-location']
 
-        args = []
         queries = keywords.split(" ")
-        for query in queries:
-            q1 = Q(company__name__icontains=query)
-            q2 = Q(description__icontains=query)
-            q3 = Q(title__icontains=query)
-            q4 = Q(responsabilities__icontains=query)
+        for q in queries:
+            q1 = Q(company__name__icontains=q)
+            q2 = Q(description__icontains=q)
+            q3 = Q(title__icontains=q)
+            q4 = Q(responsabilities__icontains=q)
             combined_q = q1 | q2 | q3 | q4
-            args.append(combined_q)
+            query &= (combined_q)
+            
+        filterSet = form.getSelectedFilterAsSet()
+        #if not request.user.is_authenticated or request.user.user_type != USER_TYPE_SUPER:
+            #query &=(Q(status= "Approved") | Q(status="Interviewing") | Q(status="Filled") | Q(status="Partially Filled") | Q(status="Closed"))
 
-        qs = Job.objects.filter(*args).distinct()
-        qs = list(set(qs))
+        if "Last 24 hours" in filterSet:
+            query &= Q(created_at__gte=datetime.now()-timedelta(days=1))
+        if "Last 7 days" in filterSet:
+            query &= Q(created_at__gte=datetime.now()-timedelta(days=7))
+        if "Last 14 days" in filterSet:
+            query &= Q(created_at__gte=datetime.now()-timedelta(days=14))
+        if "Last month" in filterSet:
+            query &= Q(created_at__gte=datetime.now()-timedelta(days=30))
+        if "Last 3 months" in filterSet:
+            query &= Q(created_at__gte=datetime.now()-timedelta(days=90))
+        if 'Oldest First' in filterSet:
+            sortOrder = 'created_at'
+        if "Active" in filterSet:
+            query &= (Q(status="Approved")  | Q(status="Interviewing"))
+        if "Closed" in filterSet:
+            query &= (Q(status="Filled") | Q(status="Partially Filled") | Q(status="Closed"))
+        if "Pending Approval" in filterSet:
+            query &= Q(status="Pending Review")
+        if "Approved" in filterSet:
+            query &= (Q(status= "Submitted") | Q(status="Not Selected"))
+        if "Not Approved" in filterSet:
+            query &= Q(status="Not Approved")
+        if "Interviewing" in filterSet:
+            query &= (Q(status= "Interviewing") | Q(status="Ranked") | Q(status= "1st"))
+        if "Matched" in filterSet:
+            query &= Q(status="Matched")
+        if "Not Matched/Closed" in filterSet:
+            query &= (Q(status= "Not Matched") | Q(status="Closed"))
+        if form["program"].value() != None and form["program"].value() != "ANY":
+            query &= (Q(category= form["program"].value()))
 
-        queryset = []
-        for q in qs:
-            if q.location.lower() == location or q.country.lower() == location:
-                queryset.append(q)
+
+        qs = Job.objects.filter(query).order_by(sortOrder).distinct()
+        queryset = qs
+        print(queryset)
  
-        context = {
-            'joblist': queryset,
-            'job_num': str(len(queryset))
-        }
+        context['joblist'] = queryset
+        context['job_num'] = str(len(queryset))
 
+        context["form"] = form
         return render(request, 'job-listing.html', context)
 
-    return HttpResponseRedirect("/")
+    query = Q()
+    if not request.user.is_authenticated or request.user.user_type != USER_TYPE_SUPER:
+        query =(Q(status= "Approved") | Q(status="Interviewing") | Q(status="Filled") | Q(status="Partially Filled") | Q(status="Closed"))
+    args.append(query)
+    queryset = Job.objects.filter(*args).order_by(sortOrder).distinct()
+
+    context = {
+        'joblist': queryset,
+        'job_num': str(len(queryset))
+    }
+    print(context['joblist'])
+    context["form"] = form
+
+    return render(request, 'job-listing.html', context)
 
 
 def job_details(request, pk=None, *args, **kwargs):

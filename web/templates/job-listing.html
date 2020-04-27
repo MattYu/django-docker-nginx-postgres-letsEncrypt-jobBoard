@@ -7,7 +7,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>Oficiona</title>
+    <title>Concordia Ace</title>
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href={% static "assets/css/bootstrap.min.css" %}>
@@ -25,12 +25,13 @@
 
     <!-- Custom Css -->
     <link rel="stylesheet" type="text/css" href={% static "css/main.css" %}>
+    <link rel="stylesheet" type="text/css" href={% static "dashboard/css/dashboard.css" %}>
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,600%7CRoboto:300i,400,500" rel="stylesheet">
 
     <!-- Favicon -->
-    <link rel="icon" href="{% static images/favicon.png">
+    <link rel="icon" href={% static "images/favicon.png" %}%> 
     <link rel="apple-touch-icon" href={% static "images/apple-touch-icon.png" %}>
     <link rel="apple-touch-icon" sizes="72x72" href={% static "images/icon-72x72.png" %}>
     <link rel="apple-touch-icon" sizes="114x114" href={% static "images/icon-114x114.png" %}>
@@ -114,10 +115,6 @@
                     </ul>
                   </div>
                 </div>
-                <select class="selectpicker select-language" data-width="fit">
-                  <option data-content='<span class="flag-icon flag-icon-us"></span> English'>English</option>
-                  <option  data-content='<span class="flag-icon flag-icon-mx"></span> Español'>Español</option>
-                </select>
               </div>
             </div>
             <nav class="navbar navbar-expand-lg cp-nav-2">
@@ -126,7 +123,7 @@
               </button>
               <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav">
-                  <li class="menu-item active"><a title="Home" href="home-1.html">Home</a></li>
+                  <li class="menu-item active"><a title="Home" href="/">Home</a></li>
                   <li class="menu-item dropdown">
                     <a href="#" data-toggle="dropdown" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Jobs</a>
                     <ul  class="dropdown-menu">
@@ -227,7 +224,7 @@
               <h1>Job Listing</h1>
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                  <li class="breadcrumb-item"><a href="#">Home</a></li>
+                  <li class="breadcrumb-item"><a href="/">Home</a></li>
                   <li class="breadcrumb-item active" aria-current="page">Job Listing</li>
                 </ol>
               </nav>
@@ -357,106 +354,65 @@
                   </nav>                
                 </div>
               </div>
-              <div class="job-filter-wrapper">
+              <form method="POST" class="job-post-form" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="job-filter-wrapper">
+                {{form.selected_filter}}
+                {{form.selected_filter_outerHTML}}
+                {{form.selected_filter_class}}
+                <center>
+                <input type="submit" class="add-new-field" formnovalidate value="Apply Filter" name="filter" id="filter">
+                </center>
                 <div class="selected-options same-pad">
                   <div class="selection-title">
                     <h4>You Selected</h4>
                     <a href="#">Clear All</a>
                   </div>
-                  <ul class="filtered-options">
+                  <ul class="filtered-options" id= "currentFilter">
                   </ul>
                 </div>
-                <div class="job-filter-dropdown same-pad category">
-                  <select class="selectpicker">
-                    <option value="" selected>Category</option>
-                    <option value="california">Accounting / Finance</option>
-                    <option value="california">Education</option>
-                    <option value="california">Design &amp; Creative</option>
-                    <option value="california">Health Care</option>
-                    <option value="california">Engineer &amp; Architects</option>
-                    <option value="california">Marketing &amp; Sales</option>
-                    <option value="california">Garments / Textile</option>
-                    <option value="california">Customer Support</option>
-                    <option value="california">Digital Media</option>
-                    <option value="california">Telecommunication</option>
-                  </select>
+                <div class="job-filter-dropdown same-pad category" style="max-width:230px">
+                    {{form.program}}
                 </div>
-                <div class="job-filter-dropdown same-pad location">
-                  <select class="selectpicker">
-                    <option value="" selected>Location</option>
-                    <option value="california">Chicago</option>
-                    <option value="california">New York City</option>
-                    <option value="california">San Francisco</option>
-                    <option value="california">Washington</option>
-                    <option value="california">Boston</option>
-                    <option value="california">Los Angeles</option>
-                    <option value="california">Seattle</option>
-                    <option value="california">Las Vegas</option>
-                    <option value="california">San Diego</option>
-                  </select>
+                <div class="job-filter same-pad">
+                <h4 class="option-title">Optional Keywords</h4>
+                <ul id="formInput" style="max-width:230px">
+                    {{form.keyword}}
+                </ul>
                 </div>
                 <div data-id="job-type" class="job-filter job-type same-pad">
-                  <h4 class="option-title">Job Type</h4>
+                  <h4 class="option-title">Date Posted</h4>
                   <ul>
-                    <li class="full-time"><i data-feather="clock"></i><a href="#" data-attr="Full Time">Full Time</a></li>
-                    <li class="part-time"><i data-feather="clock"></i><a href="#" data-attr="Part Time">Part Time</a></li>
-                    <li class="freelance"><i data-feather="clock"></i><a href="#" data-attr="Freelance">Freelance</a></li>
-                    <li class="temporary"><i data-feather="clock"></i><a href="#" data-attr="Temporary">Temporary</a></li>
+                    <li class="full-time"><i data-feather="clock"></i><a href="#" data-attr="Last 24 hours">Last 24h</a></li>
+                    <li class="part-time"><i data-feather="clock"></i><a href="#" data-attr="Last 7 days">Last 7 days</a></li>
+                    <li class="freelance"><i data-feather="clock"></i><a href="#" data-attr="Last 14 days">Last 14 days</a></li>
+                    <li class="temporary"><i data-feather="clock"></i><a href="#" data-attr="Last month">Last month</a></li>
+                    <li class="temporary"><i data-feather="clock"></i><a href="#" data-attr="Last 3 months">Last 3 months</a></li>
                   </ul>
                 </div>
                 <div data-id="experience" class="job-filter experience same-pad">
-                  <h4 class="option-title">Experience</h4>
+                  <h4 class="option-title">Status</h4>
                   <ul>
-                    <li><a href="#" data-attr="Fresh">Fresh</a></li>
-                    <li><a href="#" data-attr="Less than 1 year">Less than 1 year</a></li>
-                    <li><a href="#" data-attr="2 Year">2 Year</a></li>
-                    <li><a href="#" data-attr="3 Year">3 Year</a></li>
-                    <li><a href="#" data-attr="4 Year">4 Year</a></li>
-                    <li><a href="#" data-attr="5 Year">5 Year</a></li>
-                    <li><a href="#" data-attr="Above 5 Years">Above 5 Years</a></li>
+                    <li><a href="#" data-attr="Active">Active</a></li>
+                    <li><a href="#" data-attr="Closed">Closed</a></li>
+                    {% if user.user_type == 4 %}
+                    <li><a href="#" data-attr="Pending Approval">Pending Approval</a></li>
+                    <li><a href="#" data-attr="Not Approved">Not Approved</a></li>
+                    <li><a href="#" data-attr="Interviewing">Interviewing</a></li>
+                    <li><a href="#" data-attr="Matched">Matched</a></li>
+                    <li><a href="#" data-attr="Not Matched/Closed">Not Matched/Closed</a></li>
+                    {% endif %}
                   </ul>
-                </div>
-                <div class="job-filter same-pad">
-                  <h4 class="option-title">Salary Range</h4>
-                  <div class="price-range-slider">
-                    <div class="nstSlider" data-range_min="0" data-range_max="10000" 
-                     data-cur_min="0"    data-cur_max="6130">
-                      <div class="bar"></div>
-                      <div class="leftGrip"></div>
-                      <div class="rightGrip"></div>
-                      <div class="grip-label">
-                        <span class="leftLabel"></span>
-                        <span class="rightLabel"></span>
-                      </div>
-                    </div>
-                  </div>
                 </div>
                 <div data-id="post" class="job-filter post same-pad">
-                  <h4 class="option-title">Date Posted</h4>
+                  <h4 class="option-title">Order By</h4>
                   <ul>
-                    <li><a href="#" data-attr="Last hour">Last hour</a></li>
-                    <li><a href="#" data-attr="Last 24 hour">Last 24 hour</a></li>
-                    <li><a href="#" data-attr="Last 7 days">Last 7 days</a></li>
-                    <li><a href="#" data-attr="Last 14 days">Last 14 days</a></li>
-                    <li><a href="#" data-attr="Last 30 days">Last 30 days</a></li>
-                  </ul>
-                </div>
-                <div data-id="gender" class="job-filter same-pad gender">
-                  <h4 class="option-title">Gender</h4>
-                  <ul>
-                    <li><a href="#" data-attr="Male">Male</a></li>
-                    <li><a href="#" data-attr="Female">Female</a></li>
-                  </ul>
-                </div>
-                <div data-id="qualification" class="job-filter qualification same-pad">
-                  <h4 class="option-title">Qualification</h4>
-                  <ul>
-                    <li><a href="#" data-attr="Matriculation">Matriculation</a></li>
-                    <li><a href="#" data-attr="Intermidiate">Intermediate</a></li>
-                    <li><a href="#" data-attr="Gradute">Graduate</a></li>
+                    <li><a href="#" data-attr="Latest First">Latest First</a></li>
+                    <li><a href="#" data-attr="Oldest First">Oldest First</a></li>
                   </ul>
                 </div>
               </div>
+              </form>
             </div>
           </div>
         </div>
@@ -547,8 +503,50 @@
     <script src={% static "assets/js/jquery.ajaxchimp.min.js" %}></script>
 
     <script src={% static "js/custom.js" %}></script>
+    <script src={% static "dashboard/js/dashboard.js" %}></script>
+    <script src={% static "dashboard/js/datePicker.js" %}></script>
+    <script src={% static "dashboard/js/upload-input.js" %}></script>
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC87gjXWLqrHuLKR0CTV5jNLdP4pEHMhmg"></script>
     <script src={% static "js/map.js" %}></script>
+
+    <script>
+        {% if filterClasses %}
+        var oldCls =  unescape({{filterClasses | safe }}).split(',');
+        var oldHTMLs = unescape({{filterHTML| safe }}).split(',');
+        if (oldCls.length > 0) {
+          for (var i=0; i < oldCls.length; ++i){
+            if (oldCls[i] != ""){
+              $('.selected-options').slideDown();
+              $('.selected-options .filtered-options li.' + oldCls[i]).remove();
+              $('.selected-options .filtered-options').append(oldHTMLs[i]);
+            }
+          }
+        }
+        {% endif %}
+
+        $("#filter").click(function() {
+          var res = [];
+          var htmls = [];
+          var cls = [];
+          var lis = document.getElementById("currentFilter").getElementsByTagName("li");
+          for (var i = 0; i < lis.length; ++i) {
+            cls[i] = lis[i].className;
+            htmls[i] = lis[i].outerHTML;
+            res[i] = (lis[i].innerText || lis[i].textContent);
+          }
+          $("[name=selected_filter]").val(res);
+          $("[name=selected_filter_outerHTML]").val(htmls);
+          $("[name=selected_filter_class]").val(cls);
+        });
+
+        $('html').bind('keypress', function(e)
+        {
+          if(e.keyCode == 13)
+          {
+              return false;
+          }
+        });
+    </script>
   </body>
 </html>
