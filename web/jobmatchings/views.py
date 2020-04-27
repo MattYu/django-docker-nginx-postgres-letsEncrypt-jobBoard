@@ -188,7 +188,7 @@ def admin_matchmaking(request):
                 employer_prefs = {}
                 capacities = {}
 
-                for rank in Ranking.objects.filter(~Q(status="Matched") | ~Q(status="Not Matched")).order_by('employerRank'):
+                for rank in Ranking.objects.filter(~Q(status="Matched") & ~Q(status="Not Matched")).order_by('employerRank'):
                     jobId = rank.jobApplication.job.id
                     job = rank.jobApplication.job
 
@@ -201,7 +201,7 @@ def admin_matchmaking(request):
                         employer_prefs[jobId].append(rank.candidate.id)
                 
                 candidate_prefs = {}
-                for rank in Ranking.objects.filter(~Q(status="Matched") | ~Q(status="Not Matched")).order_by('candidateRank'):
+                for rank in Ranking.objects.filter(~Q(status="Matched") & ~Q(status="Not Matched")).order_by('candidateRank'):
                     candidate = rank.candidate.id
 
                     if candidate not in candidate_prefs:

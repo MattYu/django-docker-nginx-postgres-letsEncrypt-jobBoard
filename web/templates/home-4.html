@@ -18,7 +18,8 @@
     <link rel="stylesheet" href={% static  "assets/css/themify-icons.css"  %}/>
     <link rel="stylesheet" href={% static  "assets/css/et-line.css"  %}/>
     <link rel="stylesheet" href={% static  "assets/css/bootstrap-select.min.css"  %}/>
-    <link rel="stylesheet" href={% static  "assets/css/plyr.css"  %}/>
+    <link rel="stylesheet" href={% static  "assets/css/bootstrap-select.min.css"  %}/>
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.5.10/plyr.css" />
     <link rel="stylesheet" href={% static  "assets/css/flag.css"  %}/>
     <link rel="stylesheet" href={% static  "assets/css/slick.css"  %}/> 
     <link rel="stylesheet" href={% static  "assets/css/owl.carousel.min.css"  %}/>
@@ -143,6 +144,19 @@
           </div>
         </div>
         {% endif %}
+      </div>
+
+
+      <div class="section-padding">
+      <div class="container">
+        <div class="intor-video details-section">
+          <h4><i data-feather="video"></i>About Concordia Coop</h4>
+          <div class="video-area">
+            <!-- <div data-type="vimeo" data-video-id="126777001"></div> -->
+            <div id="player" data-plyr-provider="youtube" data-plyr-embed-id="https://www.youtube.com/watch?v=NwAxNFwEEbM"></div>
+          </div>
+        </div>
+      </div>
       </div>
 
     <!-- Registration Box -->
@@ -559,7 +573,7 @@
     <script src={% static "assets/js/visible.js" %}></script>
     <script src={% static "assets/js/jquery.countTo.js" %}></script>
     <script src={% static "assets/js/chart.js" %}></script>
-    <script src={% static "assets/js/plyr.js" %}></script>
+    <script src="https://cdn.plyr.io/3.5.10/plyr.js"></script>
     <script src={% static "assets/js/tinymce.min.js" %}></script>
     <script src={% static "assets/js/slick.min.js" %}></script>
     <script src={% static "assets/js/jquery.ajaxchimp.min.js" %}></script>
