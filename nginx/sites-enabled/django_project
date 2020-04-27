@@ -4,8 +4,10 @@ server {
     server_name localhost;
     charset utf-8;
 
-    location /static/ {
-        alias /static_files/;
+    location /static {
+        sendfile  on;
+        sendfile_max_chunk 10m;
+        alias /static;
     }
 
     location /media {

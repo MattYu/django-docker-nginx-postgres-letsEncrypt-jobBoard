@@ -33,9 +33,8 @@ def job_search(request, *args, **kwargs):
         qs = Job.objects.filter(*args).distinct()
         qs = list(set(qs))
 
-        queryset = []
-        for q in qs:
-            queryset.append(q)
+        queryset = qs
+
  
         context = {
             'joblist': queryset,
@@ -44,8 +43,14 @@ def job_search(request, *args, **kwargs):
 
         return render(request, 'job-listing.html', context)
 
-    return HttpResponseRedirect("/")
+    queryset = Job.objects.all()
 
+    context = {
+        'joblist': queryset,
+        'job_num': str(len(queryset))
+    }
+
+    return render(request, 'job-listing.html', context)
 
 def job_details(request, pk=None, *args, **kwargs):
     instance = get_object_or_404(Job, pk=pk)

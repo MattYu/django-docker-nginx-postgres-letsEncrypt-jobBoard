@@ -178,6 +178,7 @@
                   {% endif %}      
 
                 <br>
+                {% if form.is_candidate_selected or form.isAllFieldSelected %}
                 <div class="basic-info-input">
                   <h4><i data-feather="plus-circle"></i>About you</h4>
                 </div>
@@ -279,6 +280,7 @@
                 <div class="form-group">
                   {{form.passwordConfirm}}
                 </div>
+                {% endif %}
                 {% endif %}
                 {% if form.non_field_errors %}
                   <div class="non-field-errors">

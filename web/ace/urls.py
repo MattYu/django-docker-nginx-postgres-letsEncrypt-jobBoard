@@ -52,7 +52,7 @@ urlpatterns = [
     path('tinymce', include('tinymce.urls')),
     path('test/<int:pk>/', download_test),
     path('jobDescription/<int:pk>/', download_jobPDF),
-    path('register/', register_user),
+    path('register/<optional_int:employer>', register_user),
     path('logout/', logout_user),
     path('login/', login_user),
     path('accounts/login/', login_user),
