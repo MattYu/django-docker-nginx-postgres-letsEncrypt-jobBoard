@@ -290,8 +290,6 @@
       </div>
     </div>
     <!-- Breadcrumb End -->
-    <form method="POST" class="job-post-form" enctype="multipart/form-data">
-      {% csrf_token %}
     <div class="alice-bg section-padding-bottom">
       <div class="container no-gliters">
         <div class="row no-gliters">
@@ -299,7 +297,6 @@
             <div class="dashboard-container">
               <div class="dashboard-content-wrapper">
                 <div class="manage-candidate-container">
-                    <button class="button" class="add-new-field" name="pdf" id="pdf">Download Selection as one PDF</button>
                   <br>
                   {% if job %}
                       <h6>Applications for {{job.title}} [{{job.id}}] at {{job.company.name}}</h6>
@@ -307,35 +304,39 @@
                   <table class="table">
                     <thead>
                       <tr>
-                        <th>Job Title</th>
+                        <th>Employer Info</th>
                         <th>Status</th>
-                        <th class="action">Action</th>
+                        <th class="action">Approved/Not Approved</th>
                       </tr>
                     </thead>
                     <tbody>
                       
-                        {% if jobApplications %}
-                          {% for application in jobApplications %}
+                        {% if employers %}
+                          <form method="POST" class="job-post-form" enctype="multipart/form-data">
+                          {% csrf_token %}
+
+                          {% for employer in employers %}
                         <tr class="candidates-list">
                           <td class="title">
-                            <div class="thumb">
-                              <img src={{application.job.company.image.url}} class="img-fluid" alt="">
-                            </div>
                             <div class="body">
-                              <h5><a href="/jobApplicationDetails/{{application.id}}">{{application.firstName}} {{application.lastName}}</a></h5>
+                              <h5><a>{{employer.user.firstName}} {{employer.user.lastName}}</a></h5>
                               <div class="info">
-                                <span class="designation"><a href="/job-details/{{application.job.id}}"><i data-feather="check-square"></i>{{application.job.title}}</a></span>
-                                <span class="location"><a href="#"><i data-feather="map-pin"></i></a></span>
+                                <span class="designation"><a ><i data-feather="check-square"></i>Registered on: {{employer.created_at}}</a></span>
+                                <span class="location"><a href="/company-details/{{employer.company.pk}}"><i data-feather="map-pin"></i>{{employer.company.name}}</a></span>
+                                <span class="designation"><a ><i data-feather="check-square"></i>Phone number:  {{employer.user.phoneNumber}}</a></span>
+                                <span class="designation"><a ><i data-feather="check-square"></i>Email:  {{employer.user.email}}</a></span>
+                                <span class="designation"><a ><i data-feather="check-square"></i>Is Email CONFIRMED:  {{employer.user.is_email_confirmed}}</a></span>
                               </div>
                             </div>
                           </td>
-                          <td class="status"><i data-feather="check-circle"></i>{{application.status}}</td>
+                          <td class="status"><i data-feather="check-circle"></i>{{employer.status}}</td>
                           <td class="action">
-                            <a href="#" class="download"><i data-feather="download"></i></a>
-                            <a href="#" class="inbox"><i data-feather="mail"></i></a>
+                            <input type="submit" name="Approved" value="{{ employer.pk }}" onclick="return saveScreenPosition();">
+                            <input type="submit" style="background: #FF2400;" name="Not Approved" value="{{ employer.pk }}" onclick="return saveScreenPosition();">
                           </td>
                         </tr>
                           {% endfor %}
+                          </form>
                         {% endif %}
                     </tbody>
                   </table>
@@ -351,80 +352,6 @@
                       </div>
                     </nav>                
                   </div>
-                </div>
-              </div>
-                <div class="job-filter-wrapper">
-                {{form.selected_filter}}
-                {{form.selected_filter_outerHTML}}
-                {{form.selected_filter_class}}
-                {{form.gpa_min}}
-                {{form.gpa_max}}
-                <center>
-                <input type="submit" class="add-new-field" formnovalidate value="Apply Filter" name="filter" id="filter">
-                </center>
-                <div class="selected-options same-pad">
-                  <div class="selection-title">
-                    <h4>You Selected</h4>
-                    <a href="#">Clear All</a>
-                  </div>
-                  <ul class="filtered-options" id= "currentFilter">
-                  </ul>
-                </div>
-                <div class="job-filter-dropdown same-pad category">
-                    {{form.program}}
-                </div>
-                <div class="job-filter same-pad">
-                <h4 class="option-title">Optional Keywords</h4>
-                <ul id="formInput">
-                    {{form.firstName}}
-                    {{form.lastName}}
-                    {{form.email}}
-                    {{form.studentId}}
-                </ul>
-
-                </div>
-                <div class="job-filter same-pad">
-                  <h4 class="option-title">GPA</h4>
-                  <div class="price-range-slider">
-                    <div class="nstSlider" data-range_min="1.7" data-range_max="4.3" 
-                     data-cur_min="1.7"    data-cur_max="4.3">
-                      <div class="bar"></div>
-                      <div class="leftGrip"></div>
-                      <div class="rightGrip"></div>
-                      <div class="grip-label">
-                        <span class="leftLabel" id="minSlider"></span>
-                        <span class="rightLabel" id= "maxSlider"></span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div data-id="job-type" class="job-filter job-type same-pad">
-                  <h4 class="option-title">Date Posted</h4>
-                  <ul>
-                    <li class="full-time"><i data-feather="clock"></i><a href="#" data-attr="Last 24 hours">Last 24h</a></li>
-                    <li class="part-time"><i data-feather="clock"></i><a href="#" data-attr="Last 7 days">Last 7 days</a></li>
-                    <li class="freelance"><i data-feather="clock"></i><a href="#" data-attr="Last 14 days">Last 14 days</a></li>
-                    <li class="temporary"><i data-feather="clock"></i><a href="#" data-attr="Last month">Last month</a></li>
-                    <li class="temporary"><i data-feather="clock"></i><a href="#" data-attr="Last 3 months">Last 3 months</a></li>
-                  </ul>
-                </div>
-                <div data-id="experience" class="job-filter experience same-pad">
-                  <h4 class="option-title">Status</h4>
-                  <ul>
-                    <li><a href="#" data-attr="Pending Review">Pending Review</a></li>
-                    <li><a href="#" data-attr="Approved">Approved</a></li>
-                    <li><a href="#" data-attr="Not Approved">Not Approved</a></li>
-                    <li><a href="#" data-attr="Interviewing">Interviewing</a></li>
-                    <li><a href="#" data-attr="Matched">Matched</a></li>
-                    <li><a href="#" data-attr="Not Matched/Closed">Not Matched/Closed</a></li>
-                  </ul>
-                </div>
-                <div data-id="post" class="job-filter post same-pad">
-                  <h4 class="option-title">Order By</h4>
-                  <ul>
-                    <li><a href="#" data-attr="Latest First">Latest First</a></li>
-                    <li><a href="#" data-attr="Oldest First">Oldest First</a></li>
-                  </ul>
                 </div>
               </div>
               <div class="dashboard-sidebar">
@@ -451,13 +378,13 @@
                     <li><i class="fas fa-home"></i><a href="employer-dashboard.html">Dashboard</a></li>
                     <li><i class="fas fa-user"></i><a href="employer-dashboard-edit-profile.html">Edit Profile</a></li>
                     {% if user.user_type == 4 %}
-                    <li><i class="fas fa-users"></i><a href="/manageEmployers/">Manage Employer</a></li>
+                    <li class="active"><i class="fas fa-users"></i><a href="/manageEmployers/">Manage Employer</a></li>
                     <li><i class="fas fa-briefcase"></i><a href="/manageCompanies/">Manage Company</a></li>
                     {% endif %}
                     {% if user.user_type != 1 %}
                     <li><i class="fas fa-briefcase"></i><a href="/manageJobs/">Manage Jobs</a></li>
                     {% endif %}
-                    <li class="active"><i class="fas fa-users"></i><a href="/jobApplications/">Manage Applications</a></li>
+                    <li><i class="fas fa-users"></i><a href="/jobApplications/">Manage Applications</a></li>
                     <li><i class="fas fa-heart"></i><a href="/employerRanking">Interview Ranking</a></li>
                     {% if user.user_type == 4 %}
                     <li><i class="fas fa-plus-square"></i><a href="/matchDay">Admin Matchday</a></li>
@@ -502,7 +429,6 @@
         </div>
       </div>
     </div>
-    </form>
     <!-- Call to Action -->
     <div class="call-to-action-bg padding-top-90 padding-bottom-90">
       <div class="container">
@@ -664,49 +590,18 @@
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC87gjXWLqrHuLKR0CTV5jNLdP4pEHMhmg"></script>
     <script src={% static "js/map.js" %}></script>
-
-
     <script>
-        {% if filterClasses %}
-        var oldCls =  unescape({{filterClasses | safe }}).split(',');
-        var oldHTMLs = unescape({{filterHTML| safe }}).split(',');
-        if (oldCls.length > 0) {
-          for (var i=0; i < oldCls.length; ++i){
-            if (oldCls[i] != ""){
-              $('.selected-options').slideDown();
-              $('.selected-options .filtered-options li.' + oldCls[i]).remove();
-              $('.selected-options .filtered-options').append(oldHTMLs[i]);
-            }
-          }
-        }
 
-        {% endif %}
+      function saveScreenPosition() {
+          localStorage.setItem('my-scroll-pos', $(window).scrollTop());
+      }
 
-        $("#filter").click(function() {
-          var res = [];
-          var htmls = [];
-          var cls = [];
-          var lis = document.getElementById("currentFilter").getElementsByTagName("li");
-          for (var i = 0; i < lis.length; ++i) {
-            cls[i] = lis[i].className;
-            htmls[i] = lis[i].outerHTML;
-            res[i] = (lis[i].innerText || lis[i].textContent);
-          }
-          $("[name=selected_filter]").val(res);
-          $("[name=selected_filter_outerHTML]").val(htmls);
-          $("[name=selected_filter_class]").val(cls);
-          $("[name=gpa_min]").val(document.getElementById('minSlider').textContent);
-          $("[name=gpa_max]").val(document.getElementById('maxSlider').textContent);
-        });
+      $(function() {
+          var pos = localStorage.getItem('my-scroll-pos', 0);
+          if (pos)
+              $(window).scrollTop(pos)
+      });
 
-        $('html').bind('keypress', function(e)
-        {
-          if(e.keyCode == 13)
-          {
-              return false;
-          }
-        });
     </script>
-
   </body>
 </html>

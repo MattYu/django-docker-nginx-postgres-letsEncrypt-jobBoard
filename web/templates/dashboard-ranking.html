@@ -127,13 +127,13 @@
               </button>
               <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav">
-                  <li class="menu-item active"><a title="Home" href="home-1.html">Home</a></li>
+                  <li class="menu-item active"><a title="Home" href="/">Home</a></li>
                   <li class="menu-item dropdown">
                     <a href="#" data-toggle="dropdown" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Jobs</a>
                     <ul  class="dropdown-menu">
                       <li class="menu-item"><a  href="job-listing.html">Job Listing</a></li>
                       <li class="menu-item"><a  href="job-listing-with-map.html">Job Listing With Map</a></li>
-                      <li class="menu-item"><a  href="job-details.html">Job Details</a></li>
+                      <li class="menu-item"><a  href="/job-details/<int:pk>">Job Details</a></li>
                       <!-- <li class="menu-item"><a  href="post-job.html">Post Job</a></li> -->
                     </ul>
                   </li>
@@ -142,7 +142,7 @@
                     <ul  class="dropdown-menu">
                       <li class="menu-item"><a  href="candidate.html">Candidate Listing</a></li>
                       <li class="menu-item"><a  href="candidate-details.html">Candidate Details</a></li>
-                      <li class="menu-item"><a  href="add-resume.html">Add Resume</a></li>
+                      <li class="menu-item"><a  href="/add-resume/{{job.id}}">Add Resume</a></li>
                     </ul>
                   </li>
                   <li class="menu-item dropdown">
@@ -150,18 +150,15 @@
                     <ul  class="dropdown-menu">
                       <li class="menu-item"><a  href="employer-listing.html">Employer Listing</a></li>
                       <li class="menu-item"><a  href="employer-details.html">Employer Details</a></li>
-                      <li class="menu-item"><a  href="employer-dashboard-post-job.html">Post a Job</a></li>
                     </ul>
                   </li>
-                  <li class="menu-item dropdown">
-                    <a href="#" data-toggle="dropdown" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Dashboard</a>
-                    <ul  class="dropdown-menu">
+                   <!--Candidate Dashboard -->
+                     {%if user.user_type == 1%}
                       <li class="menu-item dropdown">
-                        <a href="#" data-toggle="dropdown"  class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Candidate Dashboard</a>
+                        <a href="#" data-toggle="dropdown"  class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Dashboard</a>
                         <ul class="dropdown-menu">
-                          <li class="menu-item"><a  href="dashboard.html">Dashboard</a></li>
                           <li class="menu-item"><a  href="dashboard-edit-profile.html">Edit Profile</a></li>
-                          <li class="menu-item"><a  href="add-resume.html">Add Resume</a></li>
+                          <li class="menu-item"><a  href="/add-resume/{{job.id}}">Add Resume</a></li>
                           <li class="menu-item"><a  href="resume.html">Resume</a></li>
                           <li class="menu-item"><a  href="edit-resume.html">Edit Resume</a></li>
                           <li class="menu-item"><a  href="dashboard-bookmark.html">Bookmarked</a></li>
@@ -171,20 +168,58 @@
                           <li class="menu-item"><a  href="dashboard-alert.html">Alert</a></li>
                         </ul>
                       </li>
+                      {% endif %}
+
+                      <!--Employee Dashboard-->
+                      {% if user.user_type == 2 %}
+                      <li class="menu-item dropdown">
+                        <a href="#" data-toggle="dropdown"  class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Dashboard</a>
+                        <ul class="dropdown-menu">
+                          <li class="menu-item"><a href="employer-dashboard-edit-profile.html">Edit Profile</a></li>
+                          <li class="menu-item"><a href="employer-dashboard-manage-candidate.html">Manage Candidate</a></li>
+                          <li class="menu-item"><a href="/manageJobs">Manage Job</a></li>
+                          <li class="menu-item"><a href="employer-dashboard-message.html">Dashboard Message</a></li>
+                          <li class="menu-item"><a href="employer-dashboard-pricing.html">Dashboard Pricing</a></li>
+                        </ul>
+                      </li>
+                      {% endif %}
+
+                  <!-- Admin Dashboard-->
+                  {% if user.user_type == 3 or user.user_type == 4 %}
+                  <li class="menu-item dropdown">
+                        <a href="#" data-toggle="dropdown"  class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Dashboard</a>
+                        <ul class="dropdown-menu">
+
+                      <!-- Admin access to Candidate -->
+                        <li class="menu-item dropdown">
+                        <a href="#" data-toggle="dropdown"  class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Candidate Dashboard</a>
+                        <ul class="dropdown-menu">
+                          <li class="menu-item"><a  href="dashboard-edit-profile.html">Edit Profile</a></li>
+                          <li class="menu-item"><a  href="/add-resume/{{job.id}}">Add Resume</a></li>
+                          <li class="menu-item"><a  href="resume.html">Resume</a></li>
+                          <li class="menu-item"><a  href="edit-resume.html">Edit Resume</a></li>
+                          <li class="menu-item"><a  href="dashboard-bookmark.html">Bookmarked</a></li>
+                          <li class="menu-item"><a  href="dashboard-applied.html">Applied</a></li>
+                          <li class="menu-item"><a  href="dashboard-pricing.html">Pricing</a></li>
+                          <li class="menu-item"><a  href="dashboard-message.html">Message</a></li>
+                          <li class="menu-item"><a  href="dashboard-alert.html">Alert</a></li>
+                        </ul>
+                      </li>
+                      <!--Admin access to Employer -->
                       <li class="menu-item dropdown">
                         <a href="#" data-toggle="dropdown"  class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Employer Dashboard</a>
                         <ul class="dropdown-menu">
-                          <li class="menu-item"><a href="employer-dashboard.html">Employer Dashboard</a></li>
                           <li class="menu-item"><a href="employer-dashboard-edit-profile.html">Edit Profile</a></li>
                           <li class="menu-item"><a href="employer-dashboard-manage-candidate.html">Manage Candidate</a></li>
-                          <li class="menu-item"><a href="employer-dashboard-manage-job.html">Manage Job</a></li>
+                          <li class="menu-item"><a href="/manageJobs">Manage Job</a></li>
                           <li class="menu-item"><a href="employer-dashboard-message.html">Dashboard Message</a></li>
                           <li class="menu-item"><a href="employer-dashboard-pricing.html">Dashboard Pricing</a></li>
-                          <li class="menu-item"><a href="employer-dashboard-post-job.html">Post Job</a></li>
                         </ul>
                       </li>
                     </ul>
                   </li>
+                  {% endif %}
+
                   <li class="menu-item dropdown">
                     <a title="" href="#" data-toggle="dropdown" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Pages</a>
                     <ul  class="dropdown-menu">
@@ -204,13 +239,12 @@
                       <li class="menu-item"><a href="payment-complete.html">Payment Complete</a></li>
                       <li class="menu-item"><a href="invoice.html">Invoice</a></li>
                       <li class="menu-item"><a href="terms-and-condition.html">Terms And Condition</a></li>
-                      <li class="menu-item"><a href="404.html">404 Page</a></li>
-                      <li class="menu-item"><a href="login.html">Login</a></li>
-                      <li class="menu-item"><a href="register.html">Register</a></li>
                     </ul>
                   </li>
                   <li class="menu-item"><a href="contact.html">Contact Us</a></li>
-                  <li class="menu-item post-job"><a href="post-job.html"><i class="fas fa-plus"></i>Post a Job</a></li>
+                  {% if user.user_type == 2 or user.user_type == 3 or user.user_type == 4 %}
+                  <li class="menu-item post-job"><a href="/employer-dashboard-post-job"><i class="fas fa-plus"></i>Post a Job</a></li>
+                  {% endif %}
                 </ul>
               </div>
             </nav>
@@ -218,7 +252,6 @@
         </div>
       </div>
     </header>
-
     <!-- Breadcrumb -->
     <div class="alice-bg padding-top-70 padding-bottom-70">
       <div class="container">
@@ -228,7 +261,7 @@
               <h1>Employer Dashboard</h1>
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                  <li class="breadcrumb-item"><a href="#">Home</a></li>
+                  <li class="breadcrumb-item"><a href="/">Home</a></li>
                   <li class="breadcrumb-item active" aria-current="page">Employer Dashboard</li>
                 </ol>
               </nav>
@@ -330,8 +363,8 @@
                     <img src="dashboard/images/company-logo.png" class="img-fluid" alt="">
                   </div>
                   <div class="company-body">
-                    <h5>Degoin</h5>
-                    <span>@username</span>
+                    <h5>{{user.firstName}} {{user.lastName}}</h5>
+                    <span>{{user.email}}</span>
                   </div>
                 </div>
                 <div class="profile-progress">
@@ -351,16 +384,26 @@
                   <ul>
                     <li><i class="fas fa-home"></i><a href="employer-dashboard.html">Dashboard</a></li>
                     <li><i class="fas fa-user"></i><a href="employer-dashboard-edit-profile.html">Edit Profile</a></li>
+                    {% if user.user_type == 4 %}
+                    <li><i class="fas fa-users"></i><a href="/manageEmployers/">Manage Employer</a></li>
+                    <li><i class="fas fa-briefcase"></i><a href="/manageCompanies/">Manage Company</a></li>
+                    {% endif %}
+                    {% if user.user_type != 1 %}
                     <li><i class="fas fa-briefcase"></i><a href="/manageJobs/">Manage Jobs</a></li>
+                    {% endif %}
                     <li><i class="fas fa-users"></i><a href="/jobApplications/">Manage Applications</a></li>
                     <li class="active"><i class="fas fa-heart"></i><a href="/employerRanking">Interview Ranking</a></li>
-                    <li><i class="fas fa-plus-square"></i><a href="employer-dashboard-post-job.html">Post New Job</a></li>
-                    <li><i class="fas fa-comment"></i><a href="employer-dashboard-message.html">Message</a></li>
-                    <li><i class="fas fa-calculator"></i><a href="employer-dashboard-pricing.html">Pricing Plans</a></li>
+                    {% if user.user_type == 4 %}
+                    <li><i class="fas fa-plus-square"></i><a href="/matchDay">Admin Matchday</a></li>
+                    {% endif %}
+                    <li><i class="fas fa-plus-square"></i><a href="/viewMatch">View Match</a></li>
+                    <li><i class="fas fa-plus-square"></i><a href="/employer-dashboard-post-job">Post New Job</a></li>
                   </ul>
                   <ul class="delete">
-                    <li><i class="fas fa-power-off"></i><a href="#">Logout</a></li>
-                    <li><i class="fas fa-trash-alt"></i><a href="#" data-toggle="modal" data-target="#modal-delete">Delete Profile</a></li>
+                    {% if user.user_type == 4 %}
+                    <li><i class="fas fa-power-off"></i><a href="/">Add New Admin</a></li>
+                    {% endif %}
+                    <li><i class="fas fa-power-off"></i><a href="/logout">Logout</a></li>
                   </ul>
                   <!-- Modal -->
                   <div class="modal fade modal-delete" id="modal-delete" tabindex="-1" role="dialog" aria-hidden="true">
@@ -405,9 +448,9 @@
                 <p>Add resume or post a job. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec.</p>
               </div>
               <div class="call-to-action-button">
-                <a href="add-resume.html" class="button">Add Resume</a>
+                <a href="/add-resume/{{job.id}}" class="button">Add Resume</a>
                 <span>Or</span>
-                <a href="post-job.html" class="button">Post A Job</a>
+                <a href="/employer-dashboard-post-job" class="button">Post A Job</a>
               </div>
             </div>
           </div>
@@ -463,7 +506,7 @@
                 <h4>Job Seekers</h4>
                 <div class="widget-inner">
                   <ul>
-                    <li><a href="#">Create Account</a></li>
+                    <li><a href="/register">Create Account</a></li>
                     <li><a href="#">Career Counseling</a></li>
                     <li><a href="#">My Oficiona</a></li>
                     <li><a href="#">FAQ</a></li>
@@ -477,9 +520,9 @@
                 <h4>Employers</h4>
                 <div class="widget-inner">
                   <ul>
-                    <li><a href="#">Create Account</a></li>
+                    <li><a href="/register">Create Account</a></li>
                     <li><a href="#">Products/Service</a></li>
-                    <li><a href="#">Post a Job</a></li>
+                    <li><a href="/employer-dashboard-post-job">Post a Job</a></li>
                     <li><a href="#">FAQ</a></li>
                   </ul>
                 </div>

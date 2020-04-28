@@ -10,7 +10,7 @@ class JobApplication(models.Model):
 
     firstName = models.CharField(max_length = MAX_LENGTH_STANDARDFIELDS,  default= "")
     lastName = models.CharField(max_length = MAX_LENGTH_STANDARDFIELDS,  default= "")
-    preferredName = models.CharField(max_length = MAX_LENGTH_STANDARDFIELDS,  default= "")
+    #preferredName = models.CharField(max_length = MAX_LENGTH_STANDARDFIELDS,  default= "")
     #studentID = models.CharField(max_length = MAX_LENGTH_STANDARDFIELDS,  default= "")
     #category = models.CharField(max_length = MAX_LENGTH_STANDARDFIELDS, default= "Any", choices= CATEGORY_CHOICES)
     #location = models.CharField(max_length = MAX_LENGTH_STANDARDFIELDS, default= "")
@@ -24,7 +24,7 @@ class JobApplication(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.job.title + ' - ' + self.candidate.user.email
+        return self.job.title + "[" + job.pk + "]" + ' - ' + self.job.company.name + " : " + self.candidate.user.email
 
 class Education(models.Model):
     institute = models.CharField(max_length = MAX_LENGTH_STANDARDFIELDS, default= "")
@@ -48,7 +48,7 @@ class Experience(models.Model):
 
 class Resume(models.Model):
     fileName = models.CharField(max_length = MAX_LENGTH_STANDARDFIELDS, default= "")
-    resume = models.FileField(upload_to='protected_files/resume', default= "")
+    resume = models.FileField(upload_to='user/resume/', default= "")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -56,7 +56,7 @@ class Resume(models.Model):
 
 class SupportingDocument(models.Model):
     fileName = models.CharField(max_length = MAX_LENGTH_STANDARDFIELDS, default= "")
-    document = models.FileField(upload_to='protected_files/doc', default= "")
+    document = models.FileField(upload_to='user/document/', default= "")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -64,7 +64,7 @@ class SupportingDocument(models.Model):
 
 class CoverLetter(models.Model):
     fileName = models.CharField(max_length = MAX_LENGTH_STANDARDFIELDS, default= "")
-    coverLetter = models.FileField(upload_to='protected_files/coverletter/', default= "")
+    coverLetter = models.FileField(upload_to='user/coverletter/', default= "")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

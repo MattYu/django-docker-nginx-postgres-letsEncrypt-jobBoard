@@ -1,30 +1,31 @@
 <!doctype html>
+{% load static %}
 <html lang="en">
   <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>Oficiona</title>
+    <title>Concordia Ace</title>
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href={% static  "assets/css/bootstrap.min.css" %}>
+    <link rel="stylesheet" href={% static "assets/css/bootstrap.min.css" %}>
 
     <!-- External Css -->
-    <link rel="stylesheet" href={% static  "assets/css/fontawesome-all.min.css" %}>
-    <link rel="stylesheet" href={% static  "assets/css/themify-icons.css" %} />
-    <link rel="stylesheet" href={% static  "assets/css/et-line.css" %} />
-    <link rel="stylesheet" href={% static  "assets/css/bootstrap-select.min.css" %} />
-    <link rel="stylesheet" href={% static  "assets/css/plyr.css" %} />
-    <link rel="stylesheet" href={% static  "assets/css/flag.css" %} />
-    <link rel="stylesheet" href={% static  "assets/css/slick.css" %} /> 
-    <link rel="stylesheet" href={% static  "assets/css/owl.carousel.min.css" %} />
-    <link rel="stylesheet" href={% static  "assets/css/jquery.nstSlider.min.css" %} />
+    <link rel="stylesheet" href={% static "assets/css/fontawesome-all.min.css" %}>
+    <link rel="stylesheet" href={% static "assets/css/themify-icons.css" %} />
+    <link rel="stylesheet" href={% static "assets/css/et-line.css" %} />
+    <link rel="stylesheet" href={% static "assets/css/bootstrap-select.min.css" %} />
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.5.10/plyr.css" />
+    <link rel="stylesheet" href={% static "assets/css/flag.css" %} />
+    <link rel="stylesheet" href={% static "assets/css/slick.css" %} /> 
+    <link rel="stylesheet" href={% static "assets/css/owl.carousel.min.css" %} />
+    <link rel="stylesheet" href={% static "assets/css/jquery.nstSlider.min.css" %} />
 
 
 
     <!-- Custom Css -->
-    <link rel="stylesheet" type={% static "text/css" href="css/main.css" %}>
+    <link rel="stylesheet" type="text/css"  href={% static "css/main.css" %}>
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,600%7CRoboto:300i,400,500" rel="stylesheet">
@@ -50,7 +51,7 @@
           <div class="col">
             <div class="header-top">
               <div class="logo-area">
-                <a href="index.html"><img src="images/logo-2.png" alt=""></a>
+                <a href="/"><img src={% static "images/concordia-logo.png" %} alt=""></a>
               </div>
               <div class="header-top-toggler">
                 <div class="header-top-toggler-button"></div>
@@ -114,10 +115,6 @@
                     </ul>
                   </div>
                 </div>
-                <select class="selectpicker select-language" data-width="fit">
-                  <option data-content='<span class="flag-icon flag-icon-us"></span> English'>English</option>
-                  <option  data-content='<span class="flag-icon flag-icon-mx"></span> Español'>Español</option>
-                </select>
               </div>
             </div>
             <nav class="navbar navbar-expand-lg cp-nav-2">
@@ -130,9 +127,7 @@
                   <li class="menu-item dropdown">
                     <a href="#" data-toggle="dropdown" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Jobs</a>
                     <ul  class="dropdown-menu">
-                      <li class="menu-item"><a  href="job-listing.html">Job Listing</a></li>
-                      <li class="menu-item"><a  href="job-listing-with-map.html">Job Listing With Map</a></li>
-                      <li class="menu-item"><a  href="/job-details/<int:pk>">Job Details</a></li>
+                      <li class="menu-item"><a  href="/search/">Job Listing</a></li>
                       <!-- <li class="menu-item"><a  href="post-job.html">Post Job</a></li> -->
                     </ul>
                   </li>
@@ -240,7 +235,6 @@
                       <li class="menu-item"><a href="terms-and-condition.html">Terms And Condition</a></li>
                     </ul>
                   </li>
-                  <li class="menu-item"><a href="contact.html">Contact Us</a></li>
                   {% if user.user_type == 2 or user.user_type == 3 or user.user_type == 4 %}
                   <li class="menu-item post-job"><a href="/employer-dashboard-post-job"><i class="fas fa-plus"></i>Post a Job</a></li>
                   {% endif %}
@@ -260,132 +254,71 @@
               <div class="title-and-info">
                 <div class="title">
                   <div class="thumb">
-                    <img src="images/company/company-logo-1.png" class="img-fluid" alt="">
+                    <img src={{company.image.url}} class="img-fluid" alt="">
                   </div>
                   <div class="title-body">
-                    <h4>Theoreo Digital LTD</h4>
+                    <h4>{{company.name}}</h4>
                     <div class="info">
-                      <span class="company-type"><i data-feather="briefcase"></i>Software Firm</span>
-                      <span class="office-location"><i data-feather="map-pin"></i>Los Angeles</span>
+                      <span class="company-type"><i data-feather="briefcase"></i>{{company.website}}</span>
                     </div>
                   </div>
+                    {% if user.is_authenticated and user.user_type == 4 %}
+                    <div class="buttons">
+                    <a class="save" href="/admin/companies/company/{{company.pk}}/change/"><i data-feather="heart"></i>Edit</a>
+                    </div>
+                    {% endif %}
                 </div>
                 <div class="download-resume">
-                  <a href="#" class="save-btn"><i data-feather="heart"></i>Save</a>
-                  <a href="#">4 Open Positions</a>
+                  <form action="/search/" class="search-form" method="POST">
+                    {% csrf_token %}
+                    <button name="keyword" value="{{company.name}}" id="keyword" type="submit">View all, {{jobsLen}} Open Positions</button>
+                  </form>
                 </div>
+                  {% if user.is_authenticated and user.user_type == 4 %}
+                  <form method="POST" class="candidate-details">
+                  {% csrf_token %}
+                    <div>
+                      <input type="submit" class="add-new-field" formnovalidate value="Approved" name="Approved" id="Approved">
+                      <input type="submit" class="add-new-field" formnovalidate value="Not Approved" name="Not Approved" id="Not Approved">
+                      {{form.validCompany}}
+                      {{form.employer}}
+                      <input type="submit" class="add-new-field" formnovalidate value="Migrate" name="Migrate" id="Migrate">
+                    </div>
+                  </form>
+                  {% endif %}
               </div>
               <div class="details-information padding-top-60">
                 <div class="row">
                   <div class="col-xl-7 col-lg-8">
                     <div class="about-details details-section">
                       <h4><i data-feather="align-left"></i>About Us</h4>
-                      <p>Combined with a handful of model sentence structures, to generate lorem Ipsum which  It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including.</p>
-                      <p>Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable </p>
+                      {{company.profile}}
                     </div>
                     <div class="intor-video details-section">
                       <h4><i data-feather="video"></i>Intro Video</h4>
                       <div class="video-area">
                         <!-- <div data-type="vimeo" data-video-id="126777001"></div> -->
-                        <div id="player" data-plyr-provider="youtube" data-plyr-embed-id="https://www.youtube.com/watch?v=NwAxNFwEEbM"></div>
-                      </div>
-                    </div>
-                    <div class="portfolio details-section">
-                      <h4><i data-feather="grid"></i>Image Gallery</h4>
-                      <div class="portfolio-slider owl-carousel">
-                        <div class="portfolio-item">
-                          <img src="images/portfolio/thumb-3.jpg" class="img-fluid" alt="">
-                          <div class="overlay">
-                            <a href="#"><i data-feather="eye"></i></a>
-                            <a href="#"><i data-feather="link"></i></a>
-                          </div>
-                        </div>
-                        <div class="portfolio-item">
-                          <img src="images/portfolio/thumb-1.jpg" class="img-fluid" alt="">
-                          <div class="overlay">
-                            <a href="#"><i data-feather="eye"></i></a>
-                            <a href="#"><i data-feather="link"></i></a>
-                          </div>
-                        </div>
-                        <div class="portfolio-item">
-                          <img src="images/portfolio/thumb-2.jpg" class="img-fluid" alt="">
-                          <div class="overlay">
-                            <a href="#"><i data-feather="eye"></i></a>
-                            <a href="#"><i data-feather="link"></i></a>
-                          </div>
-                        </div>
-                        <div class="portfolio-item">
-                          <img src="images/portfolio/thumb-3.jpg" class="img-fluid" alt="">
-                          <div class="overlay">
-                            <a href="#"><i data-feather="eye"></i></a>
-                            <a href="#"><i data-feather="link"></i></a>
-                          </div>
-                        </div>
-                        <div class="portfolio-item">
-                          <img src="images/portfolio/thumb-2.jpg" class="img-fluid" alt="">
-                          <div class="overlay">
-                            <a href="#"><i data-feather="eye"></i></a>
-                            <a href="#"><i data-feather="link"></i></a>
-                          </div>
-                        </div>
+                        <div id="player" data-plyr-provider="{{company.videoType}}" data-plyr-embed-id="{{company.videoLink}}"></div>
                       </div>
                     </div>
                     <div class="open-job details-section">
                       <h4><i data-feather="check-circle"></i>Open Job</h4>
+                      {% for job in jobs %}
                       <div class="job-list">
                         <div class="body">
                           <div class="content">
-                            <h4><a href="job-details.html">Restaurant Team Member - Crew </a></h4>
-                            <div class="info">
-                              <span class="office-location"><a href="#"><i data-feather="map-pin"></i>New Orleans</a></span>
-                              <span class="job-type temporary"><a href="#"><i data-feather="clock"></i>Temporary</a></span>
+                            <h4><a href="/job-details/{{job.pk}}">{{job.title}}</a></h4>
                             </div>
                           </div>
                           <div class="more">
                             <div class="buttons">
-                              <a href="#" class="button">Apply Now</a>
-                              <a href="#" class="favourite"><i data-feather="heart"></i></a>
+                              <a href="/add-resume/{{job.pk}}" class="button">Apply Now</a>
                             </div>
-                            <p class="deadline">Deadline: Oct 31,  2019</p>
+                            <p class="deadline">Deadline: {{job.expirationDate}}</p>
                           </div>
                         </div>
                       </div>
-                      <div class="job-list">
-                        <div class="body">
-                          <div class="content">
-                            <h4><a href="job-details.html">Restaurant Team Member - Crew </a></h4>
-                            <div class="info">
-                              <span class="office-location"><a href="#"><i data-feather="map-pin"></i>New Orleans</a></span>
-                              <span class="job-type temporary"><a href="#"><i data-feather="clock"></i>Temporary</a></span>
-                            </div>
-                          </div>
-                          <div class="more">
-                            <div class="buttons">
-                              <a href="#" class="button">Apply Now</a>
-                              <a href="#" class="favourite"><i data-feather="heart"></i></a>
-                            </div>
-                            <p class="deadline">Deadline: Oct 31,  2019</p>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="job-list">
-                        <div class="body">
-                          <div class="content">
-                            <h4><a href="job-details.html">Restaurant Team Member - Crew </a></h4>
-                            <div class="info">
-                              <span class="office-location"><a href="#"><i data-feather="map-pin"></i>New Orleans</a></span>
-                              <span class="job-type temporary"><a href="#"><i data-feather="clock"></i>Temporary</a></span>
-                            </div>
-                          </div>
-                          <div class="more">
-                            <div class="buttons">
-                              <a href="#" class="button">Apply Now</a>
-                              <a href="#" class="favourite"><i data-feather="heart"></i></a>
-                            </div>
-                            <p class="deadline">Deadline: Oct 31,  2019</p>
-                          </div>
-                        </div>
-                      </div>
+                      {% endfor %}
                     </div>
                   </div>
                   <div class="col-xl-4 offset-xl-1 col-lg-4">
@@ -393,12 +326,7 @@
                       <div class="information">
                         <h4>Information</h4>
                         <ul>
-                          <li><span>Category:</span> Design & Creative</li>
-                          <li><span>Location:</span> Los Angeles</li>
-                          <li><span>Hotline:</span> 0145636941</li>
-                          <li><span>Email:</span> theoreodigital@hotmail.com</li>
-                          <li><span>Company Size:</span> 20-50</li>
-                          <li><span>Website:</span> <a href="#">www.theoreodigital.com</a></li>
+                          <li><span>Website:</span> <a href="{{company.website}}">{{company.website}}</a></li>
                         </ul>
                       </div>
                       <div class="buttons">
@@ -458,11 +386,11 @@
           <div class="col">
             <div class="call-to-action-2">
               <div class="call-to-action-content">
-                <h2>For Find Your Dream Job or Candidate</h2>
-                <p>Add resume or post a job. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec.</p>
+                <h2>Concordia University Ace Program</h2>
+                <p>Find your next 8-16 months internship</p>
               </div>
               <div class="call-to-action-button">
-                <a href="/add-resume/{{job.id}}" class="button">Add Resume</a>
+                <a href="/search/" class="button">Browse</a>
                 <span>Or</span>
                 <a href="/employer-dashboard-post-job" class="button">Post A Job</a>
               </div>
@@ -565,14 +493,8 @@
             <div class="col">
               <div class="footer-bottom border-top">
                 <div class="row">
-                  <div class="col-xl-4 col-lg-5 order-lg-2">
-                    <div class="footer-app-download">
-                      <a href="#" class="apple-app">Apple Store</a>
-                      <a href="#" class="android-app">Google Play</a>
-                    </div>
-                  </div>
                   <div class="col-xl-4 col-lg-4 order-lg-1">
-                    <p class="copyright-text">Copyright <a href="#">Oficiona</a> 2019, All right reserved</p>
+                    <p class="copyright-text">Copyright <a href="#">Software Developped by Concordia Ace Capstone Team</a> 2020, HTML template license: Oficiona </p>
                   </div>
                   <div class="col-xl-4 col-lg-3 order-lg-3">
                     <div class="back-to-top">
@@ -601,7 +523,7 @@
     <script src={% static "assets/js/visible.js" %}></script>
     <script src={% static "assets/js/jquery.countTo.js" %}></script>
     <script src={% static "assets/js/chart.js" %}></script>
-    <script src={% static "assets/js/plyr.js" %}></script>
+    <script src="https://cdn.plyr.io/3.5.10/plyr.js"></script>
     <script src={% static "assets/js/tinymce.min.js" %}></script>
     <script src={% static "assets/js/slick.min.js" %}></script>
     <script src={% static "assets/js/jquery.ajaxchimp.min.js" %}></script>
@@ -612,6 +534,6 @@
     <script src={% static "dashboard/js/upload-input.js" %}></script>
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC87gjXWLqrHuLKR0CTV5jNLdP4pEHMhmg"></script>
-    <script src={% static "js/map.js"> %}</script>
+    <script src={% static "js/map.js" %}></script>
   </body>
 </html>

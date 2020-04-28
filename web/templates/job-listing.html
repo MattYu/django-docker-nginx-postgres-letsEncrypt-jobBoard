@@ -276,15 +276,15 @@
                   {% for job in joblist %}
                   <div class="job-list">
                     <div class="thumb">
-                      <a href="#">
+                      <a href="/job-details/{{job.pk}}/">
                         <img src= {{job.company.image.url}} class="img-fluid" alt="">
                       </a>
                     </div>
                     <div class="body">
                       <div class="content">
-                        <h4><a href="../job-details/{{job.pk}}/">{{job.title}}</a></h4>
+                        <h4><a href="/job-details/{{job.pk}}/">{{job.title}}</a></h4>
                         <div class="info">
-                          <span class="company"><a href="#"><i data-feather="briefcase"></i>{{job.company.name}}</a></span>
+                          <span class="company"><a href="/company-details/{{job.company.pk}}"><i data-feather="briefcase"></i>{{job.company.name}}</a></span>
                           <span class="office-location"><a href="#"><i data-feather="map-pin"></i>{{job.location}}</a></span>
                           <span class="job-type full-time"><a href="#"><i data-feather="clock"></i>{{job.jobtype}}</a></span>
                         </div>

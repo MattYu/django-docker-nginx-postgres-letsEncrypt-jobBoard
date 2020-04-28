@@ -23,7 +23,8 @@ from django.contrib.auth import views
 from view import home_page
 from joblistings.views import job_details, post_job, download_jobPDF, manage_jobs, job_search
 from jobapplications.views import add_resume, download_test, browse_job_applications, get_protected_file, get_protected_file_withAuth, view_application_details
-from accounts.views import register_user, logout_user, login_user, activate
+from companies.views import view_company_details, manage_companies
+from accounts.views import register_user, logout_user, login_user, activate, manage_employers
 from django.urls import include
 from django.urls import register_converter
 
@@ -64,6 +65,8 @@ urlpatterns = [
     path('jobApplicationDetails/<int:pk>/', view_application_details),
     path('getFile/<str:uid>/<str:candidateId>/<str:filetype>/<str:fileid>/<token>/', get_protected_file),
     path('manageJobs/', manage_jobs),
+    path('manageCompanies/', manage_companies),
+    path('manageEmployers/', manage_employers),
     path('employerRanking/<optional_int:jobId>', employer_view_rankings),
     path('candidateRanking/', candidate_view_rankings),
     path('matchDay/', admin_matchmaking),
@@ -73,6 +76,7 @@ urlpatterns = [
     path('password_reset/done/', views.PasswordResetDoneView.as_view(), name='password_reset_done'),
     path('reset/<uidb64>/<token>/', views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('reset/done/', views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
+    path('company-details/<int:pk>/', view_company_details),
 ]
 
 urlpatterns = urlpatterns + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

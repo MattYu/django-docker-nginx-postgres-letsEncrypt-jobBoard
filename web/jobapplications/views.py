@@ -140,7 +140,7 @@ def browse_job_applications(request, searchString = "", jobId= -1):
         if "Last 3 months" in filterSet:
             query &= Q(created_at__gte=datetime.now()-timedelta(days=90))
         if form["firstName"].value() != None and form["firstName"].value() != "":
-            query &= (Q(firstName__contains= form["firstName"].value()) | Q(preferredName__contains=form["firstName"].value()))
+            query &= (Q(firstName__contains= form["firstName"].value()) | Q(candidate__user_preferredName_contains=form["firstName"].value()))
         if form["lastName"].value() != None and form["lastName"].value() != "":
             query &= Q(lastName__contains= form["lastName"].value())
         if form["email"].value() != None and form["email"].value() != "":
@@ -241,6 +241,7 @@ def browse_job_applications(request, searchString = "", jobId= -1):
 
     return render(request, "dashboard-manage-applications.html", context)
 
+
 def view_application_details(request, pk):
     context = {}
 
@@ -262,9 +263,21 @@ def view_application_details(request, pk):
             if request.POST.get('Reject'):
                 jobApplication.status= "Not Approved"
                 jobApplication.save()
+            if request.POST.get('Interview'):
+                ranking = Ranking()
+                ranking.jobApplication = jobApplication
+                ranking.job = jobApplication.job
+                ranking.candidate = jobApplication.candidate
+                ranking.save()
+                jobApplication.status= "Interviewing"
+                jobApplication.job.status= "Interviewing"
+                jobApplication.save()
 
         if jobApplication.status == "Pending Review" or jobApplication.status== "Not Approved":
             context['showButton'] = True
+        
+        if jobApplication.status == "Submitted":
+            context['showInterview'] = True
 
 
     if request.user.user_type == USER_TYPE_EMPLOYER:
@@ -292,21 +305,8 @@ def view_application_details(request, pk):
                 jobApplication.status= "Not Selected"
                 jobApplication.save()
 
-            if request.POST.get('Interview'):
-                ranking = Ranking()
-                ranking.jobApplication = jobApplication
-                ranking.job = jobApplication.job
-                ranking.candidate = jobApplication.candidate
-                ranking.save()
-                jobApplication.status= "Interviewing"
-                jobApplication.job.status= "Interviewing"
-                jobApplication.save()
-
-        if jobApplication.status == "Pending Review" or jobApplication.status== "Not Approved":
+        if jobApplication.status == "Submitted" or jobApplication.status== "Not Selected":
             context['showButton'] = True
-        
-        if jobApplication.status == "Submitted":
-            context['showInterview'] = True
 
 
     if request.user.user_type == USER_TYPE_CANDIDATE:
@@ -317,13 +317,14 @@ def view_application_details(request, pk):
     educations = Education.objects.filter(JobApplication=jobApplication)
 
     experience = Experience.objects.filter(JobApplication=jobApplication)
-
-    preferredName = PreferredName.objects.get(user=jobApplication.candidate.user)
+    preferredName = None
+    if request.user.preferredName != "":
+        preferredName = request.user.preferredName
 
     context['educations'] = educations
     context['experience'] = experience
     if preferredName:
-        context['preferredName'] = preferredName.preferredName
+        context['preferredName'] = preferredName
 
     context['user'] = request.user
 

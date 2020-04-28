@@ -61,7 +61,7 @@
               <h1>Find your Next ACE Internship</h1>
               <p> Concordia Institute for Co-operative Education</p>
                   <div id="container">
-                    <div class="button_2" id="button-5">
+                    <div class="button_2" id="button-5" onclick="window.location='/search';">
                       <div id="translate"></div>
                       <a href="/search/">Browse Jobs</a>
                     </div>
@@ -150,7 +150,7 @@
       <div class="section-padding">
       <div class="container">
         <div class="intor-video details-section">
-          <h4><i data-feather="video"></i>About Concordia Coop</h4>
+          <h4><i data-feather="video"></i>About Concordia Co-op</h4>
           <div class="video-area">
             <!-- <div data-type="vimeo" data-video-id="126777001"></div> -->
             <div id="player" data-plyr-provider="youtube" data-plyr-embed-id="https://www.youtube.com/watch?v=NwAxNFwEEbM"></div>
@@ -430,11 +430,9 @@
         <div class="row">
           <div class="col">
             <div class="app-download">
-              <h2>Get Oficiona App</h2>
-              <p>Searching for jobs never been that easy. Now you can find job matched your career expectation</p>
+              <h2>Concordia ACE Service </h2>
+              <p>Gives Concordia Students the ability to find 8-16 months co-op internships</p>
               <div class="app-download-button">
-                <a href= "#" class="apple-app">Apple Store</a>
-                <a href= "#" class="android-app">Google Play</a>
               </div>
             </div>
           </div>
@@ -458,18 +456,12 @@
             <div class="col-md-6">
               <div class="footer-social">
                 <ul class="social-icons">
-                  <li><a href= "#"><i data-feather="facebook"></i></a></li>
-                  <li><a href= "#"><i data-feather="twitter"></i></a></li>
-                  <li><a href= "#"><i data-feather="linkedin"></i></a></li>
-                  <li><a href= "#"><i data-feather="instagram"></i></a></li>
-                  <li><a href= "#"><i data-feather="youtube"></i></a></li>
+                  <li><a href= "https://www.facebook.com/concordiacoop"><i data-feather="facebook"></i></a></li>
+                  <li><a href= "https://twitter.com/concordiacoop"><i data-feather="twitter"></i></a></li>
+                  <li><a href= "http://www.linkedin.com/groups/Concordia-Coop-Institute-Cooperative-Education-3214761/about"><i data-feather="linkedin"></i></a></li>
+                  <li><a href= "https://www.instagram.com/concordiacoop/?hl=en"><i data-feather="instagram"></i></a></li>
+                  <li><a href= "https://www.youtube.com/user/ConcordiaUni"><i data-feather="youtube"></i></a></li>
                 </ul>
-                <select class="selectpicker select-language" id="select-country">
-                  <option value="United States of America" selected>EN</option>
-                  <option value="United Kingdom">GB</option>
-                  <option value="Spain">ES</option>
-                  <option value="Portugal">PT</option>
-                </select>
               </div>
             </div>
           </div>
@@ -483,10 +475,10 @@
                 <h4>Information</h4>
                 <div class="widget-inner">
                   <ul>
-                    <li><a href= "#">About Us</a></li>
-                    <li><a href= "#">Contact Us</a></li>
-                    <li><a href= "#">Privacy Policy</a></li>
-                    <li><a href= "#">Terms &amp; Conditions</a></li>
+                    <li><a href= "https://www.concordia.ca/academics/co-op.html">About Us</a></li>
+                    <li><a href= "https://www.concordia.ca/academics/co-op/contact.html">Contact Us</a></li>
+                    <li><a href= "https://www.concordia.ca/academics/co-op/programs/accelerated-career-experience.html">Terms &amp; Conditions</a></li>
+                    <li><a href= "https://www.concordia.ca/academics/co-op/students/fees.html">Fees</a></li>
                   </ul>
                 </div>
               </div>
@@ -496,11 +488,8 @@
                 <h4>Job Seekers</h4>
                 <div class="widget-inner">
                   <ul>
-                    <li><a href= "#">Create Account</a></li>
-                    <li><a href= "#">Career Counseling</a></li>
-                    <li><a href= "#">My Oficiona</a></li>
-                    <li><a href= "#">FAQ</a></li>
-                    <li><a href= "#">Video Guides</a></li>
+                    <li><a href= "/register/2">Create Account</a></li>
+                    <li><a href= "https://www.concordia.ca/academics/co-op/students/career-development/services-counselling.html">Career Counseling</a></li>
                   </ul>
                 </div>
               </div>
@@ -510,10 +499,10 @@
                 <h4>Employers</h4>
                 <div class="widget-inner">
                   <ul>
-                    <li><a href= "#">Create Account</a></li>
-                    <li><a href= "#">Products/Service</a></li>
+                    <li><a href= "/register/2">Create Account</a></li>
                     <li><a href= "/employer-dashboard-post-job">Post a Job</a></li>
-                    <li><a href= "#">FAQ</a></li>
+                    <li><a href= "https://www.concordia.ca/academics/co-op/employers/benefits-for-employers.html">FAQ</a></li>
+                    <li><a href= "https://www.concordia.ca/academics/co-op/students/fees.html">Fees</a></li>
                   </ul>
                 </div>
               </div>
@@ -521,14 +510,12 @@
             <div class="col-lg-5 offset-lg-1 col-sm-6">
               <div class="footer-widget footer-newsletter">
                 <h4>Newsletter</h4>
-                <p>Get e-mail updates about our latest news and Special offers.</p>
+                <p>Get e-mail updates about our latest news and upcoming events.</p>
                 <form action="#" class="newsletter-form form-inline">
                   <div class="form-group">
                     <input type="text" class="form-control" placeholder="Email address...">
                   </div>
-                  <button class="btn button primary-bg">Submit<i class="fas fa-caret-right"></i></button>
-                  <p class="newsletter-error">0 - Please enter a value</p>
-                  <p class="newsletter-success">Thank you for subscribing!</p>
+                  <button class="btn button primary-bg">Coming soon<i class="fas fa-caret-right"></i></button>
                 </form>
               </div>
             </div>
@@ -585,3 +572,4 @@
 
   </body>
 </html>
+
