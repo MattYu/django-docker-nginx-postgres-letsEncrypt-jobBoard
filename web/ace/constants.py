@@ -120,10 +120,8 @@ JOB_APPLICATION_STATUS = (
 
 COMPANY_STATUS = (
     ("Pending Review", "Pending Coop Review"),
-    ("Not Approved", "Not Approved"),
-    ("Not Approved", "Pending Coop Review"),
-    ("Approved", "Approved"),
-    ("Not Approved", "Not Approved"),
+    ("Not Approved", "Not approved"),
+    ("Approved", "Approved")
 )
 
 # Job 
@@ -135,6 +133,12 @@ JOB_STATUS = (
     ("Filled", "Filled"),
     ("Partially Filled", "Partially Filled"),
     ("Closed", "Closed")
+)
+
+EMPLOYER_STATUS = (
+    ("Pending Review", "Pending Coop Review"),
+    ("Not Approved", "Not approved"),
+    ("Approved", "Approved")
 )
 
 # Download

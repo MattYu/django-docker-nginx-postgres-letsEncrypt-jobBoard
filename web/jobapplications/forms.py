@@ -203,7 +203,6 @@ class ApplicationForm(forms.Form):
         cleaned_data = self.cleaned_data
         jobApplication.firstName = cleaned_data.get('firstName')
         jobApplication.lastName = cleaned_data.get('lastName')
-        jobApplication.preferredName = cleaned_data.get('preferredName')
         jobApplication.job = get_object_or_404(Job, pk=pk.pk)
         jobApplication.candidate = Candidate.objects.get(user=user)
         jobApplication.save()

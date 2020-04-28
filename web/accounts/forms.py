@@ -189,8 +189,6 @@ class RegistrationForm(forms.Form):
         if self.is_createCompany_selected() and self.is_createCompany_selected() and self.is_valid():
             if not cleaned_data.get('image'):
                 raise forms.ValidationError('You have to upload a logo for your company')
-            if not cleaned_data.get('profile'):
-                raise forms.ValidationError('Please enter a short company profile description (This can be changed later)')
 
         if self.is_candidate_selected() and self.is_valid():
             if not cleaned_data.get('transcript'):
@@ -205,6 +203,7 @@ class RegistrationForm(forms.Form):
         email = cleaned_data.get('email')
         firstName = cleaned_data.get('firstName')
         lastName = cleaned_data.get('lastName')
+        phoneNumber = cleaned_data.get('phoneNumber')
         user_type = None
         if self.is_employer_selected():
             user_type = USER_TYPE_EMPLOYER
@@ -218,6 +217,7 @@ class RegistrationForm(forms.Form):
         user.email = email
         user.firstName = firstName
         user.lastName = lastName
+        user.phoneNumber = phoneNumber
         user.user_type = user_type
 
 
@@ -225,10 +225,8 @@ class RegistrationForm(forms.Form):
         user.save()
         
         if cleaned_data.get('preferredName') != '' and cleaned_data.get('preferredName') !=None:
-            preferredName = PreferredName()
-            preferredName.user = user
-            preferredName.preferredName = cleaned_data.get('preferredName')
-            preferredName.save()
+            user.preferredName = cleaned_data.get('preferredName')
+            user.save()
 
         if self.is_employer_selected():
             employer = Employer()

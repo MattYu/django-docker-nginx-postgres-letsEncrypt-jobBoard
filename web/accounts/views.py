@@ -1,7 +1,12 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from accounts.forms import RegistrationForm, LoginForm
 from django.contrib.auth import logout
 from django.http import HttpResponseRedirect
+from django.db.models import Q
+from accounts.models import Employer
+from joblistings.models import Job
+
+from ace.constants import USER_TYPE_SUPER
 
 from django.contrib import messages
 from django.contrib.auth import login, authenticate
@@ -151,3 +156,35 @@ def activate(request, uidb64, token):
         return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
     else:
         return HttpResponse('Activation link is invalid!')
+
+def manage_employers(request):
+    if request.user.is_authenticated and request.user.user_type == USER_TYPE_SUPER:
+        
+        if (request.method == 'POST'):
+            if "Approved" in  request.POST:
+                employer = get_object_or_404(Employer, pk = int(request.POST.get("Approved")))
+                employer.status = "Approved"
+                employer.save()
+            if "Not Approved" in  request.POST:
+                employer = get_object_or_404(Employer, pk = int(request.POST.get("Not Approved")))
+                employer.status = "Not Approved"
+                employer.save()
+
+                allJobs = Job.objects.all()
+                if allJobs:
+                    for job in allJobs:
+                        if employer in job.jobAccessPermission.all():
+                            job.jobAccessPermission.remove(employer)
+                            job.save()
+
+        filterquery = Q()
+        employers = Employer.objects.filter(filterquery).order_by('-created_at').all()
+        
+        context = {
+            "employers": employers,
+        }
+
+        return render(request, "dashboard-manage-employer.html", context)
+
+    else:
+        return HttpResponse('Invalid permission')

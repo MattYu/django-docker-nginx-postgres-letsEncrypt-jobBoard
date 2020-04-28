@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser , BaseUserManager, PermissionsMixin
-from ace.constants import MAX_LENGTH_STANDARDFIELDS, LANGUAGE_CHOICES, LANGUAGE_FLUENCY_CHOICES, YES_NO, CATEGORY_CHOICES
+from ace.constants import MAX_LENGTH_STANDARDFIELDS, LANGUAGE_CHOICES, LANGUAGE_FLUENCY_CHOICES, YES_NO, CATEGORY_CHOICES, EMPLOYER_STATUS
 from companies.models import Company
 from django.contrib.auth.models import UserManager
 
@@ -19,7 +19,7 @@ account_activation_token = TokenGenerator()
 class ApplicationsTokenGenerator(PasswordResetTokenGenerator):
     def _make_hash_value(self, user, timestamp):
         return (
-            six.text_type(user.pk) + six.text_type(timestamp) + six.text_type(user.username)
+            six.text_type(user.pk) + six.text_type(timestamp) + six.text_type(user.protect_file_temp_download_key)
         )
 downloadProtectedFile_token = ApplicationsTokenGenerator()
 
@@ -77,6 +77,9 @@ class User(AbstractBaseUser , PermissionsMixin):
     firstName = models.CharField(max_length = MAX_LENGTH_STANDARDFIELDS,  default= "")
     lastName = models.CharField(max_length = MAX_LENGTH_STANDARDFIELDS,  default= "")
     user_type = models.PositiveSmallIntegerField(choices=USER_TYPE_CHOICES)
+    
+    phoneNumber = models.CharField(max_length = MAX_LENGTH_STANDARDFIELDS,  default= "")
+    preferredName = models.CharField(max_length = MAX_LENGTH_STANDARDFIELDS,  default= "")
 
     protect_file_temp_download_key = models.CharField(max_length = MAX_LENGTH_STANDARDFIELDS,  default= "")
 
@@ -86,6 +89,9 @@ class User(AbstractBaseUser , PermissionsMixin):
     objects = MyUserManager()
 
     object = MyUserManager()
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.email
@@ -108,6 +114,10 @@ class Candidate(models.Model):
     travel = models.CharField(choices=YES_NO, max_length = 3, default="No")
     timeCommitment = models.CharField(choices=YES_NO, max_length = 3, default="No")
     transcript = models.FileField(upload_to='candidate/transcript/', default="")
+    status = models.CharField(choices=EMPLOYER_STATUS, max_length = 20, default="Pending Review")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.user.email
@@ -115,6 +125,10 @@ class Candidate(models.Model):
 class Employer(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, default= "")
     company = models.ForeignKey(Company, on_delete=models.CASCADE, default= "")
+    status = models.CharField(choices=EMPLOYER_STATUS, max_length = 20, default="Pending Review")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.user.email
