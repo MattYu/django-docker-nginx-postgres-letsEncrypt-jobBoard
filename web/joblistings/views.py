@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.db.models import Q
 
 
-from ace.constants import USER_TYPE_CANDIDATE, USER_TYPE_EMPLOYER, USER_TYPE_SUPER
+from ace.constants import USER_TYPE_CANDIDATE, USER_TYPE_EMPLOYER, USER_TYPE_SUPER, DEFAULT_VIDEO
 from joblistings.models import Job, JobPDFDescription
 from joblistings.forms import JobForm, AdminAddRemoveJobPermission, FilterApplicationForm
 from companies.models import Company
@@ -118,6 +118,12 @@ def job_details(request, pk=None, *args, **kwargs):
         'object': instance,
         'pk': pk
     }
+
+
+    context["similarJobs"] = Job.objects.filter(company=instance.company).order_by("-created_at").distinct()[:]
+    if instance.company.videoLink != DEFAULT_VIDEO:
+        print("NOT EQUAL")
+        context["video"] = True
 
     jobPDF = JobPDFDescription.objects.filter(job=pk)
 
@@ -242,4 +248,3 @@ def manage_jobs(request):
 def download_jobPDF(request, pk):
     download = get_object_or_404(JobPDFDescription, job=pk)
     return sendfile(request, download.descriptionFile.path)
-

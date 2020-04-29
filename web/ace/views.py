@@ -1,9 +1,22 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 
+from companies.models import Company
+from jobapplications.models import JobApplication
+from joblistings.models import Job
+from accounts.models import Candidate
+
 def home_page(request):
     context = {}
-    print("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT1")
+    
+    context["jobCount"] = Job.objects.count()
+
+    context["companyCount"] = Company.objects.count()
+
+    context["applicationCount"] = JobApplication.objects.count()
+
+    context["candidateCount"] = Candidate.objects.count()
+
     if 'warning' in request.session:
         context['warning'] = request.session['warning']
         del request.session['warning']
@@ -11,7 +24,6 @@ def home_page(request):
         context['success'] = request.session['success']
         del request.session['success']
     if 'info' in request.session:
-        print("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
         context['info'] = request.session['info']
         del request.session['info']
     if 'danger' in request.session:

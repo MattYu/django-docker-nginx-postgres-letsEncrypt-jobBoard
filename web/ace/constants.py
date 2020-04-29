@@ -147,3 +147,8 @@ FILE_TYPE_RESUME = 1
 FILE_TYPE_COVER_LETTER = 2
 FILE_TYPE_TRANSCRIPT = 3
 FILE_TYPE_OTHER = 4
+
+
+# Default video link
+
+DEFAULT_VIDEO = "https://www.youtube.com/watch?v=NwAxNFwEEbM"
