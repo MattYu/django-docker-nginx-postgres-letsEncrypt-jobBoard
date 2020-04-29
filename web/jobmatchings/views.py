@@ -184,42 +184,49 @@ def admin_matchmaking(request):
                         rank.jobApplication.save()
                         rank.save()
 
+                    if rank.candidateRank == 1 and rank.employerRank == 1:
+                        rank.candidateRank = 0
+                        rank.employerRank = 0
+                        rank.save()
+
 
                 employer_prefs = {}
                 capacities = {}
 
-                for rank in Ranking.objects.filter(~Q(status="Matched") & ~Q(status="Not Matched")).order_by('employerRank'):
+                for rank in Ranking.objects.filter(~Q(status="Not Matched")).order_by('employerRank'):
                     jobId = rank.jobApplication.job.id
                     job = rank.jobApplication.job
+
+                    print("Rank***********")
+                    print(rank.employerRank)
+                    print(rank.candidateRank)
 
                     if jobId not in employer_prefs:
                         employer_prefs[jobId] = [rank.candidate.id]
                         capacities[jobId] = job.vacancy
-                        print("Capacity**************************************")
                         print(capacities[jobId])
                     else:
                         employer_prefs[jobId].append(rank.candidate.id)
+
+                print("Hospital***********")
+                print(employer_prefs)
                 
                 candidate_prefs = {}
-                for rank in Ranking.objects.filter(~Q(status="Matched") & ~Q(status="Not Matched")).order_by('candidateRank'):
+                for rank in Ranking.objects.filter(~Q(status="Matched") | ~Q(status="Not Matched")).order_by('candidateRank'):
                     candidate = rank.candidate.id
 
                     if candidate not in candidate_prefs:
                         candidate_prefs[candidate] = [rank.jobApplication.job.id]
                     else:
                         candidate_prefs[candidate].append(rank.jobApplication.job.id)
-                print("Candidate Pref*****************")
+                print("Candidate***********")
                 print(candidate_prefs)
-                print("employer_prefs*****************")
-                print(employer_prefs)
-                print("CAPACITY")
-                print(capacities)
 
                 match = ranking.HospitalResident.create_from_dictionaries( candidate_prefs, employer_prefs, capacities)
-                print("MATCH*****************")
-                print(match)
+                print("MATCH*****************")               
 
-                matchResult = match.solve(optimal="hospital")
+                matchResult = match.solve(optimal="resident")
+                print(matchResult)
 
                 for j in matchResult:
                     print(j)
