@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from joblistings.models import Job
-from jobapplications.models import JobApplication, Resume, CoverLetter, Education, Experience, Ranking
+from jobapplications.models import JobApplication, Resume, CoverLetter, Education, Experience, Ranking, SupportingDocument
 from jobapplications.forms import ApplicationForm, resumeUpload, FilterApplicationForm
 from django_sendfile import sendfile
 import uuid
@@ -314,17 +314,27 @@ def view_application_details(request, pk):
 
         context = {"jobApplication" : jobApplication}
 
-    educations = Education.objects.filter(JobApplication=jobApplication)
+    educations = Education.objects.filter(JobApplication=jobApplication).all()
 
-    experience = Experience.objects.filter(JobApplication=jobApplication)
+    experience = Experience.objects.filter(JobApplication=jobApplication).all()
+
+    print(experience)
+
+
+    supportingDocuments = SupportingDocument.objects.filter(JobApplication=jobApplication)
+
+    languages = Language.objects.filter(user=jobApplication.candidate.user)
     preferredName = None
     if request.user.preferredName != "":
         preferredName = request.user.preferredName
+        context['preferredName'] = preferredName
 
     context['educations'] = educations
     context['experience'] = experience
-    if preferredName:
-        context['preferredName'] = preferredName
+    context['languages'] = languages
+
+    if supportingDocuments:
+        context['supportingDocuments'] = supportingDocuments
 
     context['user'] = request.user
 
@@ -380,7 +390,7 @@ def get_protected_file(request, uid, candidateId, filetype, fileid, token):
         return HttpResponse('Invalid permission token')
 
 
-def get_protected_file_withAuth(request, fileType, applicationId):
+def get_protected_file_withAuth(request, fileType, applicationId, supportID=""):
 
     if not request.user.is_authenticated:
 
@@ -409,8 +419,11 @@ def get_protected_file_withAuth(request, fileType, applicationId):
             
 
         if fileType == (FILE_TYPE_OTHER):
-            filePath = None
-
+            supportingDocument = SupportingDocument.objects.filter(JobApplication=applicationId, pk=supportID)[0]
+            if not supportingDocument:
+                return HttpResponse('File ID does not exist')
+            document = supportingDocument
+            filePath = document.path
 
         return sendfile(request, filePath)
 
@@ -439,7 +452,11 @@ def get_protected_file_withAuth(request, fileType, applicationId):
             
 
         if fileType == (FILE_TYPE_OTHER):
-            filePath = None
+            supportingDocument = SupportingDocument.objects.filter(JobApplication=applicationId, pk=supportID)[0]
+            if not supportingDocument:
+                return HttpResponse('File ID does not exist')
+            document = supportingDocument
+            filePath = document.path
 
         return sendfile(request, filePath)
 
@@ -469,7 +486,11 @@ def get_protected_file_withAuth(request, fileType, applicationId):
             
 
         if fileType == (FILE_TYPE_OTHER):
-            filePath = None  
+            supportingDocument = SupportingDocument.objects.filter(JobApplication=applicationId, pk=supportID)[0]
+            if not supportingDocument:
+                return HttpResponse('File ID does not exist')
+            document = supportingDocument
+            filePath = document.path
         return sendfile(request, filePath)     
     else:
         return HttpResponse('Invalid permission token')

@@ -34,6 +34,7 @@ ALLOWED_HOSTS = [
     "aceconcordia.azurecr.io",
     "localhost",
     "127.0.0.1",
+    "138.197.132.31",
 ]
 
 
@@ -54,6 +55,7 @@ INSTALLED_APPS = [
     'jobapplications',
     'accounts',
     'jobmatchings',
+    'announcements',
 ]
 
 MIDDLEWARE = [

@@ -24,7 +24,7 @@ class JobApplication(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.job.title + "[" + job.pk + "]" + ' - ' + self.job.company.name + " : " + self.candidate.user.email
+        return self.job.title + "[" + str(self.job.pk) + "]" + ' - ' + self.job.company.name + " : " + self.candidate.user.email
 
 class Education(models.Model):
     institute = models.CharField(max_length = MAX_LENGTH_STANDARDFIELDS, default= "")

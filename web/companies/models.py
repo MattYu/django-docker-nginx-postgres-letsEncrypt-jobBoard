@@ -1,5 +1,5 @@
 from django.db import models
-from ace.constants import COMPANY_STATUS
+from ace.constants import COMPANY_STATUS, DEFAULT_VIDEO
 
 # Create your models here.
 class Company(models.Model):
@@ -8,7 +8,7 @@ class Company(models.Model):
     website = models.CharField(max_length = 100, default= "")
     profile = models.TextField(max_length = 1000, default= "")
     videoType = models.CharField(max_length = 30, default= "youtube")
-    videoLink = models.CharField(max_length = 200, default= "https://www.youtube.com/watch?v=NwAxNFwEEbM")
+    videoLink = models.CharField(max_length = 200, default= DEFAULT_VIDEO)
     image =   models.ImageField(upload_to='images/company/', default="images/company/company-logo-1")
     status = models.CharField(max_length = 20, default= "Pending", choices= COMPANY_STATUS)
     is_approved = models.BooleanField(default=False)

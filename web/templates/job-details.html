@@ -16,7 +16,7 @@
     <link rel="stylesheet" href={% static "assets/css/themify-icons.css" %} />
     <link rel="stylesheet" href={% static "assets/css/et-line.css" %} />
     <link rel="stylesheet" href={% static "assets/css/bootstrap-select.min.css" %} />
-    <link rel="stylesheet" href={% static "assets/css/plyr.css" %} />
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.5.10/plyr.css" />
     <link rel="stylesheet" href={% static "assets/css/flag.css" %} />
     <link rel="stylesheet" href={% static "assets/css/slick.css" %} /> 
     <link rel="stylesheet" href={% static "assets/css/owl.carousel.min.css" %} />
@@ -56,46 +56,16 @@
                 <div class="header-top-toggler-button"></div>
               </div>
               <div class="top-nav">
-                <div class="dropdown header-top-notification">
-                  <a href="#" class="notification-button">Notification</a>
-                  <div class="notification-card">
-                    <div class="notification-head">
-                      <span>Notifications</span>
-                      <a href="#">Mark all as read</a>
-                    </div>
-                    <div class="notification-body">
-                      <a href="home-2.html" class="notification-list">
-                        <i class="fas fa-bolt"></i>
-                        <p>Your Resume Updated!</p>
-                        <span class="time">5 hours ago</span>
-                      </a>
-                      <a href="#" class="notification-list">
-                        <i class="fas fa-arrow-circle-down"></i>
-                        <p>Someone downloaded resume</p>
-                        <span class="time">11 hours ago</span>
-                      </a>
-                      <a href="#" class="notification-list">
-                        <i class="fas fa-check-square"></i>
-                        <p>You applied for Project Manager <span>@homeland</span></p>
-                        <span class="time">11 hours ago</span>
-                      </a>
-                      <a href="#" class="notification-list">
-                        <i class="fas fa-user"></i>
-                        <p>You changed password</p>
-                        <span class="time">5 hours ago</span>
-                      </a>
-                      <a href="#" class="notification-list">
-                        <i class="fas fa-arrow-circle-down"></i>
-                        <p>Someone downloaded resume</p>
-                        <span class="time">11 hours ago</span>
-                      </a>
-                    </div>
-                    <div class="notification-footer">
-                      <a href="#">See all notification</a>
-                    </div>
-                  </div>
-                </div>
+                    {% if user.user_type == 2%}
+                      <a href="/jobApplications/"><span class="ti-user"></span> Dashboard </a>
+                    {% endif %}
+
+                    {% if user.user_type == 4 %}
+                      <a href="/jobApplications/"><span class="ti-user"></span> Dashboard </a>
+                      <a href="/admin"><span class="ti-user"></span> Admin DB </a>
+                    {% endif %}
                 <div class="dropdown header-top-account">
+                {% if user.is_authenticated %}
                   <a href="#" class="account-button">My Account</a>
                   <div class="account-card">
                     <div class="header-top-account-info">
@@ -103,21 +73,19 @@
                         <img src="images/account/thumb-1.jpg" class="img-fluid" alt="">
                       </a>
                       <div class="account-body">
-                        <h5><a href="#">Robert Chavez</a></h5>
-                        <span class="mail">chavez@domain.com</span>
+                        <h5><a href="#">{{user.firstName}} {{user.lastName}}</a></h5>
+                        <span class="mail">{{user.email}}</span>
                       </div>
                     </div>
                     <ul class="account-item-list">
-                      <li><a href="#"><span class="ti-user"></span>Account</a></li>
-                      <li><a href="#"><span class="ti-settings"></span>Settings</a></li>
-                      <li><a href="#"><span class="ti-power-off"></span>Log Out</a></li>
+                      <li><a href="/logout"><span class="ti-power-off"></span>Log Out</a></li>
                     </ul>
                   </div>
+                  {% else %}
+                  <a href="/login">Login</a>
+                  <a href="/register">Register</a>
+                  {% endif %}
                 </div>
-                <select class="selectpicker select-language" data-width="fit">
-                  <option data-content='<span class="flag-icon flag-icon-us"></span> English'>English</option>
-                  <option  data-content='<span class="flag-icon flag-icon-mx"></span> Español'>Español</option>
-                </select>
               </div>
             </div>
             <nav class="navbar navbar-expand-lg cp-nav-2">
@@ -127,123 +95,6 @@
               <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav">
                   <li class="menu-item active"><a title="Home" href="/">Home</a></li>
-                  <li class="menu-item dropdown">
-                    <a href="#" data-toggle="dropdown" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Jobs</a>
-                    <ul  class="dropdown-menu">
-                      <li class="menu-item"><a  href="job-listing.html">Job Listing</a></li>
-                      <li class="menu-item"><a  href="job-listing-with-map.html">Job Listing With Map</a></li>
-                      <li class="menu-item"><a  href="/job-details/<int:pk>">Job Details</a></li>
-                      <!-- <li class="menu-item"><a  href="post-job.html">Post Job</a></li> -->
-                    </ul>
-                  </li>
-                  <li class="menu-item dropdown">
-                    <a title="" href="#" data-toggle="dropdown" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Candidates</a>
-                    <ul  class="dropdown-menu">
-                      <li class="menu-item"><a  href="candidate.html">Candidate Listing</a></li>
-                      <li class="menu-item"><a  href="candidate-details.html">Candidate Details</a></li>
-                      <li class="menu-item"><a  href="/add-resume/{{job.id}}">Add Resume</a></li>
-                    </ul>
-                  </li>
-                  <li class="menu-item dropdown">
-                    <a title="" href="#" data-toggle="dropdown" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Employers</a>
-                    <ul  class="dropdown-menu">
-                      <li class="menu-item"><a  href="employer-listing.html">Employer Listing</a></li>
-                      <li class="menu-item"><a  href="employer-details.html">Employer Details</a></li>
-                    </ul>
-                  </li>
-                   <!--Candidate Dashboard -->
-                     {%if user.user_type == 1%}
-                      <li class="menu-item dropdown">
-                        <a href="#" data-toggle="dropdown"  class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Dashboard</a>
-                        <ul class="dropdown-menu">
-                          <li class="menu-item"><a  href="dashboard-edit-profile.html">Edit Profile</a></li>
-                          <li class="menu-item"><a  href="/add-resume/{{job.id}}">Add Resume</a></li>
-                          <li class="menu-item"><a  href="resume.html">Resume</a></li>
-                          <li class="menu-item"><a  href="edit-resume.html">Edit Resume</a></li>
-                          <li class="menu-item"><a  href="dashboard-bookmark.html">Bookmarked</a></li>
-                          <li class="menu-item"><a  href="dashboard-applied.html">Applied</a></li>
-                          <li class="menu-item"><a  href="dashboard-pricing.html">Pricing</a></li>
-                          <li class="menu-item"><a  href="dashboard-message.html">Message</a></li>
-                          <li class="menu-item"><a  href="dashboard-alert.html">Alert</a></li>
-                        </ul>
-                      </li>
-                      {% endif %}
-
-                      <!--Employee Dashboard-->
-                      {% if user.user_type == 2 %}
-                      <li class="menu-item dropdown">
-                        <a href="#" data-toggle="dropdown"  class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Dashboard</a>
-                        <ul class="dropdown-menu">
-                          <li class="menu-item"><a href="employer-dashboard-edit-profile.html">Edit Profile</a></li>
-                          <li class="menu-item"><a href="employer-dashboard-manage-candidate.html">Manage Candidate</a></li>
-                          <li class="menu-item"><a href="/manageJobs">Manage Job</a></li>
-                          <li class="menu-item"><a href="employer-dashboard-message.html">Dashboard Message</a></li>
-                          <li class="menu-item"><a href="employer-dashboard-pricing.html">Dashboard Pricing</a></li>
-                        </ul>
-                      </li>
-                      {% endif %}
-
-                  <!-- Admin Dashboard-->
-                  {% if user.user_type == 3 or user.user_type == 4 %}
-                  <li class="menu-item dropdown">
-                        <a href="#" data-toggle="dropdown"  class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Dashboard</a>
-                        <ul class="dropdown-menu">
-
-                      <!-- Admin access to Candidate -->
-                        <li class="menu-item dropdown">
-                        <a href="#" data-toggle="dropdown"  class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Candidate Dashboard</a>
-                        <ul class="dropdown-menu">
-                          <li class="menu-item"><a  href="dashboard-edit-profile.html">Edit Profile</a></li>
-                          <li class="menu-item"><a  href="/add-resume/{{job.id}}">Add Resume</a></li>
-                          <li class="menu-item"><a  href="resume.html">Resume</a></li>
-                          <li class="menu-item"><a  href="edit-resume.html">Edit Resume</a></li>
-                          <li class="menu-item"><a  href="dashboard-bookmark.html">Bookmarked</a></li>
-                          <li class="menu-item"><a  href="dashboard-applied.html">Applied</a></li>
-                          <li class="menu-item"><a  href="dashboard-pricing.html">Pricing</a></li>
-                          <li class="menu-item"><a  href="dashboard-message.html">Message</a></li>
-                          <li class="menu-item"><a  href="dashboard-alert.html">Alert</a></li>
-                        </ul>
-                      </li>
-                      <!--Admin access to Employer -->
-                      <li class="menu-item dropdown">
-                        <a href="#" data-toggle="dropdown"  class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Employer Dashboard</a>
-                        <ul class="dropdown-menu">
-                          <li class="menu-item"><a href="employer-dashboard-edit-profile.html">Edit Profile</a></li>
-                          <li class="menu-item"><a href="employer-dashboard-manage-candidate.html">Manage Candidate</a></li>
-                          <li class="menu-item"><a href="/manageJobs">Manage Job</a></li>
-                          <li class="menu-item"><a href="employer-dashboard-message.html">Dashboard Message</a></li>
-                          <li class="menu-item"><a href="employer-dashboard-pricing.html">Dashboard Pricing</a></li>
-                        </ul>
-                      </li>
-                    </ul>
-                  </li>
-                  {% endif %}
-
-                  <li class="menu-item dropdown">
-                    <a title="" href="#" data-toggle="dropdown" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">Pages</a>
-                    <ul  class="dropdown-menu">
-                      <li class="menu-item"><a href="about-us.html">About Us</a></li>
-                      <li class="menu-item"><a href="how-it-work.html">How It Works</a></li>
-                      <li class="menu-item"><a href="pricing.html">Pricing Plan</a></li>
-                      <li class="menu-item"><a href="faq.html">FAQ</a></li>
-                      <li class="menu-item dropdown">
-                        <a href="#" data-toggle="dropdown"  class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">News &amp; Advices</a>
-                        <ul class="dropdown-menu">
-                          <li class="menu-item"><a href="blog.html">News</a></li>
-                          <li class="menu-item"><a href="blog-grid.html">News Grid</a></li>
-                          <li class="menu-item"><a href="blog-details.html">News Details</a></li>
-                        </ul>
-                      </li>
-                      <li class="menu-item"><a href="checkout.html">Checkout</a></li>
-                      <li class="menu-item"><a href="payment-complete.html">Payment Complete</a></li>
-                      <li class="menu-item"><a href="invoice.html">Invoice</a></li>
-                      <li class="menu-item"><a href="terms-and-condition.html">Terms And Condition</a></li>
-                    </ul>
-                  </li>
-                  <li class="menu-item"><a href="contact.html">Contact Us</a></li>
-                  {% if user.user_type == 2 or user.user_type == 3 or user.user_type == 4 %}
-                  <li class="menu-item post-job"><a href="/employer-dashboard-post-job"><i class="fas fa-plus"></i>Post a Job</a></li>
-                  {% endif %}
                 </ul>
               </div>
             </nav>
@@ -266,7 +117,7 @@
                   <div class="title-body">
                     <h4>{{object.title}}</h4>
                     <div class="info">
-                      <span class="company"><a href="#"><i data-feather="briefcase"></i>{{object.company.name}}</a></span>
+                      <span class="company"><a href="/company-details/{{object.company.pk}}"><i data-feather="briefcase"></i>{{object.company.name}}</a></span>
                       <span class="office-location"><a href="#"><i data-feather="map-pin"></i>{{object.location}}</a></span>
                       <span class="job-type full-time"><a href="#"><i data-feather="clock"></i>Status: {{object.status}}</a></span>
                     </div>
@@ -283,9 +134,10 @@
                   </div>
                 </div>
                 <div class="buttons">
-                  
-                  {% if user.user_type == 1 %}
-                  <a class="apply" href="/add-resume/{{pk}}" data-toggle="modal" data-target="#apply-popup-id">Apply Online</a>
+                {% if user.user_type != 2 and user.user_type != 4 and object.status != "Approved" and object.status != "Interviewing"%}
+                  <a class="apply" href="#">Application Currently Closed</a>
+                  {% elif user.user_type != 2 and user.user_type != 4 %}
+                  <a class="apply" href="/add-resume/{{pk}}">Apply Online</a>
                   {% endif %}
                   {% if download %}
                   {% if user.is_authenticated and user.user_type == 4 %}
@@ -327,15 +179,6 @@
                         {{object.requirements|safe}}
                       </ul>
                     </div>
-                    <div class="other-benifit details-section">
-                      <h4><i data-feather="gift"></i>Other Benefits</h4>
-                      <ul>
-                        <li>Health and life insurance </li>
-                        <li>2 days of weekend </li>
-                        <li>2 annual performanc Bonuses</li>
-                        <li>Lunch &amp; Snacks</li>
-                      </ul>
-                    </div>
                     <div class="job-apply-buttons">
                       <a href="/add-resume/{{pk}}" class="apply"  data-toggle="modal" data-target="#apply-popup-id">Apply Online</a>
                       <a href="#" class="email"><i data-feather="mail"></i>Email Job</a>
@@ -346,27 +189,13 @@
                       <div class="job-summary">
                         <h4>Job Summary</h4>
                         <ul>
-                          <li><span>Published on:</span> Oct 6,  2019</li>
-                          <li><span>Vacancy:</span> 08</li>
-                          <li><span>Employment Status:</span> Full-time</li>
+                          <li><span>Published on:</span> {{object.created_at}}</li>
+                          <li><span>Vacancy:</span>{{object.vacancy}}</li>
                           <li><span>Experience:</span> {{object.jobtype}}</li>
                           <li><span>Job Location:</span> {{object.location}}</li>
                           <li><span>Salary:</span> {{object.salaryRange}}</li>
                           <li><span>Application Deadline:</span> {{object.expirationDate}}</li>
                         </ul>
-                      </div>
-                      <div class="share-job-post">
-                        <span class="share"><i class="fas fa-share-alt"></i>Share:</span>
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#"><i class="fab fa-google-plus-g"></i></a>
-                        <a href="#"><i class="fab fa-pinterest-p"></i></a>
-                        <a href="#" class="add-more"><span class="ti-plus"></span></a>
-                      </div>
-                      <div class="buttons">
-                        <a href="#" class="button print"><i data-feather="printer"></i>Print Job</a>
-                        <a href="#" class="button report"><i data-feather="flag"></i>Report Job</a>
                       </div>
                       <div class="job-location">
                         <h4>Job Location</h4>
@@ -388,8 +217,17 @@
                       <li><span>Address:</span> {{object.company.address}}</li>
                       <li><span>Website:</span> <a href={{object.company.website}}>{{object.company.website}}</a></li>
                       <li><span>Company Profile:</span></li>
-                      <li>{{object.company.profile|linebreaks}}</li>
                     </ul>
+                    {% if video %}
+                    <div class="container">
+                      <div class="intor-video details-section">
+                        <div class="video-area">
+                          <!-- <div data-type="vimeo" data-video-id="126777001"></div> -->
+                          <div id="player" data-plyr-provider="{{object.company.videoType}}" data-plyr-embed-id="{{object.company.videoLink}}"></div>
+                        </div>
+                      </div>
+                    </div>
+                    {% endif %}
                   </div>
                 </div>
               </div>
@@ -448,133 +286,38 @@
         <div class="row">
           <div class="col">
             <div class="section-header section-header-2 section-header-with-right-content">
-              <h2>Simillar Jobs</h2>
-              <a href="#" class="header-right">+ Browse All Jobs</a>
+              <h2>Similar Jobs</h2>
+              <a href="/search/" class="header-right">+ Browse All Jobs</a>
             </div>
           </div>
         </div>
         <div class="row">
           <div class="col">
+            {% for job in similarJobs %}
             <div class="job-list">
               <div class="thumb">
                 <a href="#">
-                  <img src={% static "images/job/company-logo-1.png" %}class="img-fluid" alt="">
+                  <img src={{job.company.image.url}} class="img-fluid" alt="">
                 </a>
               </div>
               <div class="body">
                 <div class="content">
-                  <h4><a href="job-details.html">{{object.title}}</a></h4>
+                  <h4><a href="/job-details/{{job.pk}}">{{job.title}}</a></h4>
                   <div class="info">
-                    <span class="company"><a href="#"><i data-feather="briefcase"></i>{{object.company}}</a></span>
-                    <span class="office-location"><a href="#"><i data-feather="map-pin"></i>{{object.city}}</a></span>
-                    <span class="job-type full-time"><a href="#"><i data-feather="clock"></i>Full Time</a></span>
+                    <span class="company"><a href="#"><i data-feather="briefcase"></i>{{job.company}}</a></span>
+                    <span class="office-location"><a href="#"><i data-feather="map-pin"></i>{{job.city}}</a></span>
                   </div>
                 </div>
                 <div class="more">
                   <div class="buttons">
-                    <a href="/add-resume/{{pk}}" class="button">Apply Now</a>
+                    <a href="/add-resume/{{job.pk}}" class="button">Apply Now</a>
                     <a href="#" class="favourite"><i data-feather="heart"></i></a>
                   </div>
-                  <p class="deadline">Deadline: Oct 31,  2019</p>
+                  <p class="deadline">Deadline: {{job.expirationDate}}</p>
                 </div>
               </div>
             </div>
-            <div class="job-list">
-              <div class="thumb">
-                <a href="#">
-                  <img src="images/job/company-logo-2.png" class="img-fluid" alt="">
-                </a>
-              </div>
-              <div class="body">
-                <div class="content">
-                  <h4><a href="job-details.html">Project Manager</a></h4>
-                  <div class="info">
-                    <span class="company"><a href="#"><i data-feather="briefcase"></i>Degoin</a></span>
-                    <span class="office-location"><a href="#"><i data-feather="map-pin"></i>San Francisco</a></span>
-                    <span class="job-type part-time"><a href="#"><i data-feather="clock"></i>Part Time</a></span>
-                  </div>
-                </div>
-                <div class="more">
-                  <div class="buttons">
-                    <a href="#" class="button">Apply Now</a>
-                    <a href="#" class="favourite"><i data-feather="heart"></i></a>
-                  </div>
-                  <p class="deadline">Deadline: Oct 31,  2019</p>
-                </div>
-              </div>
-            </div>
-            <div class="job-list">
-              <div class="thumb">
-                <a href="#">
-                  <img src="images/job/company-logo-8.png" class="img-fluid" alt="">
-                </a>
-              </div>
-              <div class="body">
-                <div class="content">
-                  <h4><a href="job-details.html">Restaurant Team Member - Crew </a></h4>
-                  <div class="info">
-                    <span class="company"><a href="#"><i data-feather="briefcase"></i>Geologitic</a></span>
-                    <span class="office-location"><a href="#"><i data-feather="map-pin"></i>New Orleans</a></span>
-                    <span class="job-type temporary"><a href="#"><i data-feather="clock"></i>Temporary</a></span>
-                  </div>
-                </div>
-                <div class="more">
-                  <div class="buttons">
-                    <a href="#" class="button">Apply Now</a>
-                    <a href="#" class="favourite"><i data-feather="heart"></i></a>
-                  </div>
-                  <p class="deadline">Deadline: Oct 31,  2019</p>
-                </div>
-              </div>
-            </div>
-            <div class="job-list">
-              <div class="thumb">
-                <a href="#">
-                  <img src="images/job/company-logo-9.png" class="img-fluid" alt="">
-                </a>
-              </div>
-              <div class="body">
-                <div class="content">
-                  <h4><a href="job-details.html">Nutrition Advisor</a></h4>
-                  <div class="info">
-                    <span class="company"><a href="#"><i data-feather="briefcase"></i>Theoreo</a></span>
-                    <span class="office-location"><a href="#"><i data-feather="map-pin"></i>New York City</a></span>
-                    <span class="job-type full-time"><a href="#"><i data-feather="clock"></i>Full Time</a></span>
-                  </div>
-                </div>
-                <div class="more">
-                  <div class="buttons">
-                    <a href="#" class="button">Apply Now</a>
-                    <a href="#" class="favourite"><i data-feather="heart"></i></a>
-                  </div>
-                  <p class="deadline">Deadline: Oct 31,  2019</p>
-                </div>
-              </div>
-            </div>
-            <div class="job-list">
-              <div class="thumb">
-                <a href="#">
-                  <img src="images/job/company-logo-3.png" class="img-fluid" alt="">
-                </a>
-              </div>
-              <div class="body">
-                <div class="content">
-                  <h4><a href="job-details.html">Land Development Marketer</a></h4>
-                  <div class="info">
-                    <span class="company"><a href="#"><i data-feather="briefcase"></i>Realouse</a></span>
-                    <span class="office-location"><a href="#"><i data-feather="map-pin"></i>Washington, D.C.</a></span>
-                    <span class="job-type freelance"><a href="#"><i data-feather="clock"></i>Freelance</a></span>
-                  </div>
-                </div>
-                <div class="more">
-                  <div class="buttons">
-                    <a href="#" class="button">Apply Now</a>
-                    <a href="#" class="favourite"><i data-feather="heart"></i></a>
-                  </div>
-                  <p class="deadline">Deadline: Oct 31,  2019</p>
-                </div>
-              </div>
-            </div>
+              {% endfor %}
           </div>
         </div>
       </div>
@@ -588,11 +331,11 @@
           <div class="col">
             <div class="call-to-action-2">
               <div class="call-to-action-content">
-                <h2>For Find Your Dream Job or Candidate</h2>
-                <p>Add resume or post a job. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec.</p>
+                <h2>Concordia University Ace Program</h2>
+                <p>Find your next 8-16 months internship</p>
               </div>
               <div class="call-to-action-button">
-                <a href="/add-resume/{{job.id}}" class="button">Add Resume</a>
+                <a href="/search/" class="button">Browse</a>
                 <span>Or</span>
                 <a href="/employer-dashboard-post-job" class="button">Post A Job</a>
               </div>
@@ -610,7 +353,7 @@
           <div class="row">
             <div class="col-md-6">
               <div class="footer-logo">
-                <a href="#">
+                <a href= "#">
                   <img src="images/footer-logo.png" class="img-fluid" alt="">
                 </a>
               </div>
@@ -618,11 +361,11 @@
             <div class="col-md-6">
               <div class="footer-social">
                 <ul class="social-icons">
-                  <li><a href="#"><i data-feather="facebook"></i></a></li>
-                  <li><a href="#"><i data-feather="twitter"></i></a></li>
-                  <li><a href="#"><i data-feather="linkedin"></i></a></li>
-                  <li><a href="#"><i data-feather="instagram"></i></a></li>
-                  <li><a href="#"><i data-feather="youtube"></i></a></li>
+                  <li><a href= "https://www.facebook.com/concordiacoop"><i data-feather="facebook"></i></a></li>
+                  <li><a href= "https://twitter.com/concordiacoop"><i data-feather="twitter"></i></a></li>
+                  <li><a href= "http://www.linkedin.com/groups/Concordia-Coop-Institute-Cooperative-Education-3214761/about"><i data-feather="linkedin"></i></a></li>
+                  <li><a href= "https://www.instagram.com/concordiacoop/?hl=en"><i data-feather="instagram"></i></a></li>
+                  <li><a href= "https://www.youtube.com/user/ConcordiaUni"><i data-feather="youtube"></i></a></li>
                 </ul>
               </div>
             </div>
@@ -637,10 +380,10 @@
                 <h4>Information</h4>
                 <div class="widget-inner">
                   <ul>
-                    <li><a href="#">About Us</a></li>
-                    <li><a href="#">Contact Us</a></li>
-                    <li><a href="#">Privacy Policy</a></li>
-                    <li><a href="#">Terms &amp; Conditions</a></li>
+                    <li><a href= "https://www.concordia.ca/academics/co-op.html">About Us</a></li>
+                    <li><a href= "https://www.concordia.ca/academics/co-op/contact.html">Contact Us</a></li>
+                    <li><a href= "https://www.concordia.ca/academics/co-op/programs/accelerated-career-experience.html">Terms &amp; Conditions</a></li>
+                    <li><a href= "https://www.concordia.ca/academics/co-op/students/fees.html">Fees</a></li>
                   </ul>
                 </div>
               </div>
@@ -650,11 +393,8 @@
                 <h4>Job Seekers</h4>
                 <div class="widget-inner">
                   <ul>
-                    <li><a href="/register">Create Account</a></li>
-                    <li><a href="#">Career Counseling</a></li>
-                    <li><a href="#">My Oficiona</a></li>
-                    <li><a href="#">FAQ</a></li>
-                    <li><a href="#">Video Guides</a></li>
+                    <li><a href= "/register/2">Create Account</a></li>
+                    <li><a href= "https://www.concordia.ca/academics/co-op/students/career-development/services-counselling.html">Career Counseling</a></li>
                   </ul>
                 </div>
               </div>
@@ -664,10 +404,10 @@
                 <h4>Employers</h4>
                 <div class="widget-inner">
                   <ul>
-                    <li><a href="/register">Create Account</a></li>
-                    <li><a href="#">Products/Service</a></li>
-                    <li><a href="/employer-dashboard-post-job">Post a Job</a></li>
-                    <li><a href="#">FAQ</a></li>
+                    <li><a href= "/register/2">Create Account</a></li>
+                    <li><a href= "/employer-dashboard-post-job">Post a Job</a></li>
+                    <li><a href= "https://www.concordia.ca/academics/co-op/employers/benefits-for-employers.html">FAQ</a></li>
+                    <li><a href= "https://www.concordia.ca/academics/co-op/students/fees.html">Fees</a></li>
                   </ul>
                 </div>
               </div>
@@ -675,14 +415,12 @@
             <div class="col-lg-5 offset-lg-1 col-sm-6">
               <div class="footer-widget footer-newsletter">
                 <h4>Newsletter</h4>
-                <p>Get e-mail updates about our latest news and Special offers.</p>
+                <p>Get e-mail updates about our latest news and upcoming events.</p>
                 <form action="#" class="newsletter-form form-inline">
                   <div class="form-group">
                     <input type="text" class="form-control" placeholder="Email address...">
                   </div>
-                  <button class="btn button primary-bg">Submit<i class="fas fa-caret-right"></i></button>
-                  <p class="newsletter-error">0 - Please enter a value</p>
-                  <p class="newsletter-success">Thank you for subscribing!</p>
+                  <button class="btn button primary-bg">Coming soon<i class="fas fa-caret-right"></i></button>
                 </form>
               </div>
             </div>
@@ -695,18 +433,13 @@
             <div class="col">
               <div class="footer-bottom border-top">
                 <div class="row">
-                  <div class="col-xl-4 col-lg-5 order-lg-2">
-                    <div class="footer-app-download">
-                      <a href="#" class="apple-app">Apple Store</a>
-                      <a href="#" class="android-app">Google Play</a>
-                    </div>
+                  <div class="col-lg-6">
+                    <p class="copyright-text">Software developped by Concordia Capstone ACE team. <a href= "#"></a> 2020</p>
+                    <p class="copyright-text"><a href= "#">Style Templates used under license, Oficiona 2019</a></p>
                   </div>
-                  <div class="col-xl-4 col-lg-4 order-lg-1">
-                    <p class="copyright-text">Copyright <a href="#">Oficiona</a> 2019, All right reserved</p>
-                  </div>
-                  <div class="col-xl-4 col-lg-3 order-lg-3">
+                  <div class="col-lg-6">
                     <div class="back-to-top">
-                      <a href="#">Back to top<i class="fas fa-angle-up"></i></a>
+                      <a href= "#">Back to top<i class="fas fa-angle-up"></i></a>
                     </div>
                   </div>
                 </div>
@@ -721,25 +454,28 @@
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="assets/js/jquery.min.js"></script>
-    <script src="assets/js/popper.min.js"></script>
-    <script src="assets/js/bootstrap.min.js"></script>
-    <script src="assets/js/feather.min.js"></script>
-    <script src="assets/js/bootstrap-select.min.js"></script>
-    <script src="assets/js/jquery.nstSlider.min.js"></script>
-    <script src="assets/js/owl.carousel.min.js"></script>
-    <script src="assets/js/visible.js"></script>
-    <script src="assets/js/jquery.countTo.js"></script>
-    <script src="assets/js/chart.js"></script>
-    <script src="assets/js/plyr.js"></script>
-    <script src="assets/js/tinymce.min.js"></script>
-    <script src="assets/js/slick.min.js"></script>
-    <script src="assets/js/jquery.ajaxchimp.min.js"></script>
+    <script src={% static "assets/js/jquery.min.js" %}></script>
+    <script src={% static "assets/js/popper.min.js" %}></script>
+    <script src={% static "assets/js/bootstrap.min.js" %}></script>
+    <script src={% static "assets/js/feather.min.js" %}></script>
+    <script src={% static "assets/js/bootstrap-select.min.js" %}></script>
+    <script src={% static "assets/js/jquery.nstSlider.min.js" %}></script>
+    <script src={% static "assets/js/owl.carousel.min.js" %}></script>
+    <script src={% static "assets/js/visible.js" %}></script>
+    <script src={% static "assets/js/jquery.countTo.js" %}></script>
+    <script src={% static "assets/js/chart.js" %}></script>
+    <script src="https://cdn.plyr.io/3.5.10/plyr.js"></script>
+    <script src={% static "assets/js/tinymce.min.js" %}></script>
+    <script src={% static "assets/js/slick.min.js" %}></script>
+    <script src={% static "assets/js/jquery.ajaxchimp.min.js" %}></script>
 
-    <script src="js/custom.js"></script>
+    <script src={% static "js/custom.js" %}></script>
+    <script src={% static "dashboard/js/dashboard.js" %}></script>
+    <script src={% static "dashboard/js/datePicker.js" %}></script>
+    <script src={% static "dashboard/js/upload-input.js" %}></script>
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC87gjXWLqrHuLKR0CTV5jNLdP4pEHMhmg"></script>
-    <script src="js/map.js"></script>
+    <script src={% static "js/map.js" %}></script>
 
   </body>
 </html>
