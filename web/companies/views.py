@@ -28,7 +28,7 @@ def view_company_details(request, pk):
             if request.POST.get('Migrate'):
                 if request.POST.get("validCompany") != "Approved Companies" and request.POST.get("employer") != "Company's employees":
                     employer = get_object_or_404(Employer, pk=int(request.POST.get("employer")))
-                    employer.company = int(request.POST.get("validCompany"))
+                    employer.company = get_object_or_404(Company, pk=int(request.POST.get("validCompany")))
                     employer.save()
 
         form = AdminMigrateCompany(pk=pk)
