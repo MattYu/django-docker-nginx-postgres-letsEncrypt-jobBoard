@@ -10,20 +10,28 @@ server {
         alias /static;
     }
 
+    location /media/user {
+        sendfile  on;
+        sendfile_max_chunk 50m;
+        internal;
+        alias /media/user;
+    }
+
+    location /media/protected {
+        sendfile  on;
+        sendfile_max_chunk 50m;
+        internal;
+        alias /media/protected;
+    }
+
     location /media {
         sendfile  on;
         sendfile_max_chunk 10m;
         alias /media;
     }
 
-
     location /media/images/company {
         alias /media/images/company;
-    }
-
-    location /protected {
-        internal;
-        root /protected_files;
     }
 
     location / {

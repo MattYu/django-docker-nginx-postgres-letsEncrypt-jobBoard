@@ -10,7 +10,7 @@ from ace.constants import USER_TYPE_EMPLOYER, USER_TYPE_CANDIDATE
 from django.contrib.sites.shortcuts import get_current_site
 from django.http import HttpResponse
 from io import BytesIO, StringIO
-from PyPDF2 import PdfFileWriter, PdfFileReader
+from PyPDF2 import PdfFileWriter, PdfFileReader, PdfFileMerger
 import requests
 
 from ace.constants import FILE_TYPE_RESUME, FILE_TYPE_COVER_LETTER, FILE_TYPE_TRANSCRIPT, FILE_TYPE_OTHER, USER_TYPE_SUPER, USER_TYPE_CANDIDATE, USER_TYPE_EMPLOYER
@@ -75,7 +75,7 @@ def add_resume(request, pk= None, *args, **kwargs):
 
 def download_test(request, pk):
     download = get_object_or_404(Job, pk=pk)
-    return sendfile(request, download.company.image.path)
+    return sendfile(request, "/" + download.company.image.path)
 
 @transaction.atomic
 def browse_job_applications(request, searchString = "", jobId= -1):
@@ -178,63 +178,99 @@ def browse_job_applications(request, searchString = "", jobId= -1):
 
     if (request.method == 'POST'):
         if 'pdf' in request.POST:
+            '''
+        if fileType == (FILE_TYPE_RESUME):
+            fileId = Resume.objects.get(JobApplication__id=applicationId).id
+            resume = Resume.objects.get(id=fileId).resume
+            filePath = resume.path
+
+
+        if fileType == (FILE_TYPE_COVER_LETTER):
+            fileId = CoverLetter.objects.get(JobApplication__id=applicationId).id
+            coverLetter = CoverLetter.objects.get(id=fileId).coverLetter
+            filePath = coverLetter.path
+ 
+
+        if fileType == (FILE_TYPE_TRANSCRIPT):
+            candidateId = JobApplication.objects.get(id=applicationId).candidate.id
+            transcript = Candidate.objects.get(id=candidateId).transcript
+            filePath = transcript.path
+            
+
+        if fileType == (FILE_TYPE_OTHER):
+            supportingDocument = SupportingDocument.objects.filter(JobApplication=applicationId, pk=supportID)[0]
+            if not supportingDocument:
+                return HttpResponse('File ID does not exist')
+            document = supportingDocument
+            filePath = document.path
+            '''
+
             # PDF download request
             response = HttpResponse()
             response['Content-Disposition'] = 'attachment; filename=downloadApplications.pdf'
             writer = PdfFileWriter()
             # Change to https in prod (although django should automatically force https if settings.py is configured corretly in prod)
-            base_url = "http://" + str(get_current_site(request).domain)  + "/getFile"
+            # base_url = "http://" + str(get_current_site(request).domain)  + "/getFile"
         
-            User.objects.filter(id=request.user.id).update(protect_file_temp_download_key=str(uuid.uuid4().hex))
-            token = downloadProtectedFile_token.make_token(request.user)
+            #User.objects.filter(id=request.user.id).update(protect_file_temp_download_key=str(uuid.uuid4().hex))
+            #token = downloadProtectedFile_token.make_token(request.user)
+
+            merger = PdfFileMerger()
 
             for application in jobApplications:
-                uid = urlsafe_base64_encode(force_bytes(request.user.pk))
-                candidateId = urlsafe_base64_encode(force_bytes(application.candidate.pk))
+                #uid = urlsafe_base64_encode(force_bytes(request.user.pk))
+                #candidateId = urlsafe_base64_encode(force_bytes(application.candidate.pk))
+
+                fileId = Resume.objects.get(JobApplication__id=application.pk).id
+                resume = Resume.objects.get(id=fileId).resume
+                filePath = resume.path
+
+                fs = FileSystemStorage()
+
+                try:
+                    if fs.exists(filePath):
+                        with fs.open(filePath, 'rb') as doc:
+                            merger.append(PdfFileReader(doc))
+                except:
+                    pass
+
+                fileId = CoverLetter.objects.get(JobApplication__id=application.pk).id
+                coverLetter = CoverLetter.objects.get(id=fileId).coverLetter
+                filePath = coverLetter.path
+                
+                try:
+                    if fs.exists(filePath):
+                        with fs.open(filePath, 'rb') as doc:
+                            merger.append(PdfFileReader(doc))
+                except:
+                    pass
+
+                candidateId = JobApplication.objects.get(id=application.pk).candidate.id
+                transcript = Candidate.objects.get(id=candidateId).transcript
+                filePath = transcript.path
+
+                try:
+                    if fs.exists(filePath):
+                        with fs.open(filePath, 'rb') as doc:
+                            merger.append(PdfFileReader(doc))
+                except:
+                    pass
 
 
-                fileId = Resume.objects.get(JobApplication=application).id
-                fileId = urlsafe_base64_encode(force_bytes(fileId))
-                fileType =  urlsafe_base64_encode(force_bytes(FILE_TYPE_RESUME))
 
-                url = base_url + "/" + str(uid) + "/" + str(candidateId) + "/"+ str(fileType) + "/" + str(fileId) + "/" + str(token) + "/"
-                getFile = requests.get(url).content
-                memoryFile = BytesIO(getFile)
-                pdfFile = PdfFileReader(memoryFile)
-    
-                for pageNum in range(pdfFile.getNumPages()):
-                    currentPage = pdfFile.getPage(pageNum)
-                    #currentPage.mergePage(watermark.getPage(0))
-                    writer.addPage(currentPage)
+                supportingDocuments = SupportingDocument.objects.filter(JobApplication=application.pk)
 
-                fileId = CoverLetter.objects.get(JobApplication=application).id
-                fileId = urlsafe_base64_encode(force_bytes(fileId))
-                fileType =  urlsafe_base64_encode(force_bytes(FILE_TYPE_COVER_LETTER))
-
-                url = base_url + "/" + str(uid) + "/" + str(candidateId) + "/"+ str(fileType) + "/" + str(fileId) + "/" + str(token) + "/"
-                getFile = requests.get(url).content
-                memoryFile = BytesIO(getFile)
-                pdfFile = PdfFileReader(memoryFile)
-
-                for pageNum in range(pdfFile.getNumPages()):
-                    currentPage = pdfFile.getPage(pageNum)
-                    #currentPage.mergePage(watermark.getPage(0))
-                    writer.addPage(currentPage)
-
-                fileType =  urlsafe_base64_encode(force_bytes(FILE_TYPE_TRANSCRIPT))
-                url = base_url + "/" + str(uid) + "/" + str(candidateId) + "/"+ str(fileType) + "/" + str(fileId) + "/" + str(token) + "/"
-
-                getFile = requests.get(url).content
-                memoryFile = BytesIO(getFile)
-                pdfFile = PdfFileReader(memoryFile)
-
-                for pageNum in range(pdfFile.getNumPages()):
-                    currentPage = pdfFile.getPage(pageNum)
-                    #currentPage.mergePage(watermark.getPage(0))
-                    writer.addPage(currentPage)
-
+                for supportingDoc in supportingDocuments:
+                    filePath = supportingDoc.path
+                    try:
+                        if fs.exists(filePath):
+                            with fs.open(filePath, 'rb') as doc:
+                                merger.append(PdfFileReader(doc))
+                    except:
+                        pass
+                
             outputStream = BytesIO()
-            writer.write(outputStream)
+            merger.write(outputStream)
             response.write(outputStream.getvalue())
 
             User.objects.filter(id=request.user.id).update(protect_file_temp_download_key="")
@@ -364,30 +400,9 @@ def get_protected_file(request, uid, candidateId, filetype, fileid, token):
         user = None
     if user is not None and downloadProtectedFile_token.check_token(user, token):
 
-        fileType = force_text(urlsafe_base64_decode(filetype))
-        fileId = force_text(urlsafe_base64_decode(fileid))
-        candidateId = force_text(urlsafe_base64_decode(candidateId))
-
-        if fileType == str(FILE_TYPE_RESUME):
-            resume = Resume.objects.get(id=fileId).resume
-            filePath = resume.path
-
-
-        if fileType == str(FILE_TYPE_COVER_LETTER):
-            coverLetter = CoverLetter.objects.get(id=fileId).coverLetter
-            filePath = coverLetter.path
- 
-
-        if fileType == str(FILE_TYPE_TRANSCRIPT):
-            transcript = Candidate.objects.get(id=candidateId).transcript
-            filePath = transcript.path
-            
-
-        if fileType == str(FILE_TYPE_OTHER):
-            filePath = None
-
-        return sendfile(request, filePath)
-    else:
+        # Future proof section intentionally left blank. Web currently has not need for this functionality.
+        # Could enable valid users to access protected file with a tokenized link. 
+        
         return HttpResponse('Invalid permission token')
 
 
@@ -426,7 +441,7 @@ def get_protected_file_withAuth(request, fileType, applicationId, supportID=""):
             document = supportingDocument
             filePath = document.path
 
-        return sendfile(request, filePath)
+        return sendfile(request, "/" + filePath)
 
     if request.user.user_type == USER_TYPE_EMPLOYER:
         jobApplications = JobApplication.objects.filter(job__jobAccessPermission=Employer.objects.get(user=request.user), id=applicationId).count()
@@ -459,7 +474,7 @@ def get_protected_file_withAuth(request, fileType, applicationId, supportID=""):
             document = supportingDocument
             filePath = document.path
 
-        return sendfile(request, filePath)
+        return sendfile(request, "/" + filePath)
 
     if request.user.user_type == USER_TYPE_CANDIDATE:
         jobApplications = JobApplication.objects.filter(candidate=Candidate.objects.get(user=request.user), id=applicationId).count()
@@ -492,6 +507,6 @@ def get_protected_file_withAuth(request, fileType, applicationId, supportID=""):
                 return HttpResponse('File ID does not exist')
             document = supportingDocument
             filePath = document.path
-        return sendfile(request, filePath)     
+        return sendfile(request, "/" + filePath)     
     else:
         return HttpResponse('Invalid permission token')
