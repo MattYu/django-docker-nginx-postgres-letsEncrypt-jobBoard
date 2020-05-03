@@ -1,4 +1,4 @@
-psycopg2==2.7.7
+psycopg2-binary==2.7.7
 redis==3.2.1
 asgiref==3.2.3
 certifi==2019.11.28

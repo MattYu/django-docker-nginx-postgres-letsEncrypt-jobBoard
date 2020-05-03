@@ -25,6 +25,7 @@ from django.db.models import Q
 
 import json as simplejson
 from datetime import datetime, timedelta
+from django.core.files.storage import FileSystemStorage
 
 #u = uuid.uuid4()
 #u.hex
