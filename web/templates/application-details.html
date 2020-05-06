@@ -214,7 +214,7 @@
                   </div>
                 </div>
                 <div class="download-resume">
-                  <a href="/getFileWithAuth/2/{{jobApplication.pk}}">Download CV <i data-feather="download"></i></a>
+                  <a href="/getFileWithAuth/1/{{jobApplication.pk}}">Download CV <i data-feather="download"></i></a>
                 </div>
               </div>
               <div class="details-information section-padding-60">
@@ -303,7 +303,7 @@
                       {% endif %}
                       <div class="buttons">
                         <a href="#" class="button contact-button" data-toggle="modal" data-target="#exampleModal">Contact Me</a>
-                        <a href="/getFileWithAuth/1/{{jobApplication.pk}}/" class="button cover-download"><i data-feather="download"></i>Cover Letter</a>
+                        <a href="/getFileWithAuth/2/{{jobApplication.pk}}/" class="button cover-download"><i data-feather="download"></i>Cover Letter</a>
                         <a href="/getFileWithAuth/3/{{jobApplication.pk}}/" class="button contact-download"><i data-feather="download"></i>Transcript</a>
                       </div>
                       <!-- Modal -->
@@ -339,7 +339,7 @@
                     <h4><i data-feather="user-plus"></i>Additional Attached document</h4>
                     {% for doc in supportingDocuments%}
                     <div class="download-resume">
-                      <a href="/getFileWithAuth/4/{{jobApplication.pk}}/{{doc.pk}}">Download Additional Document <i data-feather="download"></i></a>
+                      <a href="/getFileWithAuth/4/{{jobApplication.pk}}/{{doc.pk}}">Download Additional Document: {{doc.fileName}} <i data-feather="download"></i></a>
                     </div>
                     {% endfor %}
                   </div>
