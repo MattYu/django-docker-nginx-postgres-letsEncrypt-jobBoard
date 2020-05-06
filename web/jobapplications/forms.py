@@ -356,12 +356,15 @@ class ApplicationForm(forms.Form):
             experience.save()
 
         for doc in self.documentsFieldsNames:
-            document = SupportingDocument()
-            document.candidate = candidate
-            document.fileName = cleaned_data.get(doc['name'])
-            document.document = cleaned_data.get(doc['file'])
-            document.JobApplication.add(jobApplication)
-            document.save()
+            try:
+                document = SupportingDocument()
+                document.candidate = candidate
+                document.fileName = cleaned_data.get(doc['name'])
+                document.document = cleaned_data.get(doc['file'])
+                document.JobApplication.add(jobApplication)
+                document.save()
+            except:
+                pass
 
 
         return jobApplication

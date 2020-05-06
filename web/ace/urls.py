@@ -29,6 +29,8 @@ from django.urls import include
 from django.urls import register_converter
 
 from jobmatchings.views import employer_view_rankings, candidate_view_rankings, admin_matchmaking, view_matching
+import notifications.urls
+
 
 class OptionalIntConverter:
     regex = '[0-9]*'
@@ -77,6 +79,7 @@ urlpatterns = [
     path('reset/<uidb64>/<token>/', views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('reset/done/', views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
     path('company-details/<int:pk>/', view_company_details),
+    path('inbox/notifications/', include(notifications.urls, namespace='notifications')),
 ]
 
 urlpatterns = urlpatterns + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -49,7 +49,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_cleanup', # Auto delete storage files upon model deletion
     'tinymce',
-    'django_sendfile', # Secure file storage and retrieval 
+    'django_sendfile', # Secure file storage and retrieval
+    'notifications', 
     # User apps
     'joblistings',
     'companies',
