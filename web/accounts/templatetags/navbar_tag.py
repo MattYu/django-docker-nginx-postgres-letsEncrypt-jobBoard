@@ -11,8 +11,9 @@ def get_navbar(*args, **kwargs):
     queryset = None
 
     user = kwargs["user"]
-
-    notifications = user.notifications.unread()
+    notifications= []
+    if user.is_authenticated:
+        notifications = user.notifications.unread()
 
 
     return {

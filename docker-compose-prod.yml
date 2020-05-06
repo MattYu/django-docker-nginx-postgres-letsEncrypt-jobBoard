@@ -19,6 +19,8 @@ services:
       - static:/static
       - media:/media
     env_file: .env
+    stdin_open: true
+    tty: true
     depends_on: 
       - db
     environment:
