@@ -3,11 +3,11 @@ server {
     listen 80;
     server_name localhost;
     charset utf-8;
-    client_max_body_size 50M;
+    client_max_body_size 150M;
 
     location /static {
         sendfile  on;
-        sendfile_max_chunk 10m;
+        sendfile_max_chunk 25m;
         alias /static;
     }
 
@@ -34,7 +34,7 @@ server {
 
     location /media {
         sendfile  on;
-        sendfile_max_chunk 10m;
+        sendfile_max_chunk 25m;
         alias /media;
     }
 
