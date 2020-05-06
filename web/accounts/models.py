@@ -6,6 +6,10 @@ from django.contrib.auth.models import UserManager
 
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 import six as six
+import uuid
+import os
+import datetime
+import re
 
 # Create your models here.
 class TokenGenerator(PasswordResetTokenGenerator):
@@ -102,6 +106,11 @@ class User(AbstractBaseUser , PermissionsMixin):
     def has_module_perms(self, app_label):
         return True
 
+def get_transcript_path(instance, filename):
+    now = datetime.datetime.now()
+    return re.sub('[^\w\-_\./ ]', '_', os.path.join(
+      "protected", str(now.year), str(instance.user.lastName) + "_" + str(instance.user.firstName) + "_" + str(instance.studentID), "transcript", str(uuid.uuid4().hex), filename))
+
 class Candidate(models.Model):
 
     studentID = models.CharField(max_length = MAX_LENGTH_STANDARDFIELDS,  default= "")
@@ -113,7 +122,7 @@ class Candidate(models.Model):
     internationalStudent = models.CharField(choices=YES_NO, max_length = 3, default="No")
     travel = models.CharField(choices=YES_NO, max_length = 3, default="No")
     timeCommitment = models.CharField(choices=YES_NO, max_length = 3, default="No")
-    transcript = models.FileField(upload_to='candidate/transcript/', default="")
+    transcript = models.FileField(upload_to=get_transcript_path, default="")
     status = models.CharField(choices=EMPLOYER_STATUS, max_length = 20, default="Pending Review")
 
     created_at = models.DateTimeField(auto_now_add=True)

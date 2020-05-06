@@ -59,7 +59,8 @@ def add_resume(request, pk= None, *args, **kwargs):
             request.FILES,
             extra_edu_count=request.POST.get('extra_edu_count'), 
             extra_exp_count=request.POST.get('extra_exp_count'), 
-            extra_doc_count=request.POST.get('extra_doc_count'), 
+            extra_doc_count=request.POST.get('extra_doc_count'),
+            initWithHistory=False
             )
         #request.session['form'] = form.as_p()
         if form.is_valid():
@@ -68,7 +69,7 @@ def add_resume(request, pk= None, *args, **kwargs):
 
             return HttpResponseRedirect('/')
     else:
-        form = ApplicationForm(extra_edu_count=1, extra_exp_count=1, extra_doc_count=0, user=request.user)
+        form = ApplicationForm(extra_edu_count=1, extra_exp_count=1, extra_doc_count=0, user=request.user, initWithHistory=True)
     context['form'] = form
     return render(request, "add-resume.html", context)
 

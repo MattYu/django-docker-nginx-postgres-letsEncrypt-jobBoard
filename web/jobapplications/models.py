@@ -3,6 +3,11 @@ from ace.constants import CATEGORY_CHOICES, MAX_LENGTH_STANDARDFIELDS, MAX_LENGT
 from joblistings.models import Job
 from accounts.models import Candidate, User
 from tinymce import models as tinymce_models
+import uuid
+import os
+import datetime
+import re
+
 
 # Create your models here.
 
@@ -46,27 +51,45 @@ class Experience(models.Model):
 
     JobApplication = models.ManyToManyField(JobApplication)
 
+def get_resume_path(instance, filename):
+    now = datetime.datetime.now()
+    return re.sub('[^\w\-_\./ ]', '_', os.path.join(
+      "protected", str(now.year), str(instance.candidate.user.lastName) + "_" + str(instance.candidate.user.firstName) + "_" + str(instance.candidate.studentID), "resume", str(uuid.uuid4().hex), filename))
+
 class Resume(models.Model):
     fileName = models.CharField(max_length = MAX_LENGTH_STANDARDFIELDS, default= "")
-    resume = models.FileField(upload_to='user/resume/', default= "")
+    resume = models.FileField(upload_to=get_resume_path, default= "")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE, default= "1")
 
     JobApplication = models.ManyToManyField(JobApplication)
+
+def get_suppDoc_path(instance, filename):
+    now = datetime.datetime.now()
+    return re.sub('[^\w\-_\./ ]', '_', os.path.join(
+      "protected", str(now.year), str(instance.candidate.user.lastName) + "_" + str(instance.candidate.user.firstName) + "_" + str(instance.candidate.studentID), "supportingDoc", str(uuid.uuid4().hex), filename))
 
 class SupportingDocument(models.Model):
     fileName = models.CharField(max_length = MAX_LENGTH_STANDARDFIELDS, default= "")
-    document = models.FileField(upload_to='user/document/', default= "")
+    document = models.FileField(upload_to=get_suppDoc_path, default= "")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE, default= "1")
 
     JobApplication = models.ManyToManyField(JobApplication)
 
+def get_covLetter_path(instance, filename):
+    now = datetime.datetime.now()
+    return re.sub('[^\w\-_\./ ]', '_', os.path.join(
+      "protected", str(now.year), str(instance.candidate.user.lastName) + "_" + str(instance.candidate.user.firstName) + "_" + str(instance.candidate.studentID), "coverLetter", str(uuid.uuid4().hex), filename))
+
 class CoverLetter(models.Model):
     fileName = models.CharField(max_length = MAX_LENGTH_STANDARDFIELDS, default= "")
-    coverLetter = models.FileField(upload_to='user/coverletter/', default= "")
+    coverLetter = models.FileField(upload_to=get_covLetter_path, default= "")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE, default= "1")
 
     JobApplication = models.ManyToManyField(JobApplication)
 
