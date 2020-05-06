@@ -47,8 +47,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_cleanup', # Auto delete storage files upon model deletion
     'tinymce',
-    'django_sendfile',
+    'django_sendfile', # Secure file storage and retrieval 
     # User apps
     'joblistings',
     'companies',
@@ -105,12 +106,19 @@ WSGI_APPLICATION = 'ace.wsgi.application'
 #     }
 # }
 
+
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+'default': {
+    'ENGINE': 'django.db.backends.postgresql',
+    'NAME': 'postgres',
+    'USER': 'postgres',
+    'PASSWORD': 'postgres',
+    'HOST': 'db',
+    'PORT': 5432,
     }
 }
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
@@ -181,3 +189,35 @@ EMAIL_PORT = 587
 
 # SECURITY WARNING: Uncomment below in production once certificate at hand to force HTTPS 
 #SECURE_SSL_REDIRECT = True
+
+LOGGING = {
+    'version': 1,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': '/ace.log',
+            'formatter': 'simple'
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file', 'console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    }
+}

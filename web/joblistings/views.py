@@ -247,4 +247,4 @@ def manage_jobs(request):
 
 def download_jobPDF(request, pk):
     download = get_object_or_404(JobPDFDescription, job=pk)
-    return sendfile(request, download.descriptionFile.path)
+    return sendfile(request, "/" + download.descriptionFile.path)

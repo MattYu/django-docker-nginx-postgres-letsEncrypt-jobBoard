@@ -7,6 +7,46 @@ from django.shortcuts import get_object_or_404
 from joblistings.models import Job
 from accounts.models import Candidate
 import uuid
+from django.db.models import Q
+
+from django.core.files.storage import FileSystemStorage
+
+#jobApplication = JobApplication.objects.filter(job__pk=pk, candidate=Candidate.objects.get(user=request.user)).count()
+'''
+    def __init__(self, *args, **kwargs):
+        jobId = kwargs.pop('jobId', None)
+        super().__init__(*args, **kwargs)
+
+        if jobId:
+
+            currentPermission = []
+
+            job = Job.objects.filter(pk= jobId).all()[0]
+            employerSet = set()
+            for employer in job.jobAccessPermission.all():
+                currentPermission.append((employer.pk, employer.user.email))
+                employerSet.add(employer)
+
+            employerOfSameCompanyWithoutPermission = Employer.objects.filter(company = job.company).all()
+
+            sameCompany = []
+
+            for employer in employerOfSameCompanyWithoutPermission.all():
+                if employer not in employerSet:
+                    sameCompany.append((employer.pk, employer.user.email))
+
+            sorted(currentPermission, key=lambda x: x[1])
+            sorted(sameCompany, key=lambda x: x[1])
+            currentPermission.insert(0, ("Remove Permission", "Revoke Permission"))
+            sameCompany.insert(0, ("Add Permission", "Add Permission from " + job.company.name))
+            self.fields['addEmployer'].choices = sameCompany
+            self.fields['removeEmployer'].choices = currentPermission
+'''
+'''
+    educations = Education.objects.filter(JobApplication=jobApplication).all()
+
+    experience = Experience.objects.filter(JobApplication=jobApplication).all()
+'''
 
 class resumeUpload(forms.ModelForm):
     class Meta:
@@ -56,27 +96,50 @@ class ApplicationForm(forms.Form):
         model = JobApplication
 
     def __init__(self, *args, **kwargs):
-        extra_edu_fields = kwargs.pop('extra_edu_count', 1)
-        extra_exp_fields = kwargs.pop('extra_exp_count', 1)
-        extra_doc_fields = kwargs.pop('extra_doc_count', 0)
+
+        initWithHistory = kwargs.pop('initWithHistory', True)
+        self.educationFields = []
+        self.educationFieldsNames = []
+        self.experienceFields = [] 
+        self.experienceFieldsNames = []
         user = kwargs.pop('user', None)
+        educations = None
+        experience = None
+        if initWithHistory:
+            jobApplication = JobApplication.objects.filter(candidate=Candidate.objects.get(user=user)).order_by("-created_at").first()
+
+            educations = Education.objects.filter(Q(JobApplication=jobApplication) & Q(JobApplication__candidate=Candidate.objects.get(user=user))).distinct()
+            experience = Experience.objects.filter(Q(JobApplication=jobApplication) & Q(JobApplication__candidate=Candidate.objects.get(user=user))).distinct()
+            kwargs.pop('extra_edu_count', 1)
+            kwargs.pop('extra_exp_count', 1)
+            extra_edu_fields = max(len(educations), 1)
+            extra_exp_fields = max(len(experience), 1)
+        else:
+            extra_edu_fields = kwargs.pop('extra_edu_count', 1)
+            extra_exp_fields = kwargs.pop('extra_exp_count', 1)
+        
+        extra_doc_fields = kwargs.pop('extra_doc_count', 0)
+
         super().__init__(*args, **kwargs)
     
         if user:
             self.fields['firstName'].initial = user.firstName
             self.fields['lastName'].initial = user.lastName
+            self.fields['preferredName'].initial = user.preferredName
 
         self.fields['extra_edu_count'].initial = max(min(int(extra_edu_fields), 10),1)
-        self.educationFields = []
-        self.educationFieldsNames = []
         for i in range(int(self.fields['extra_edu_count'].initial)):
-            self.add_education(i)
+            if initWithHistory:
+                self.add_education(i,  education=educations[i])
+            else:
+                self.add_education(i)
 
         self.fields['extra_exp_count'].initial = max(min(int(extra_exp_fields), 10),1)
-        self.experienceFields = [] 
-        self.experienceFieldsNames = []
         for i in range(int(self.fields['extra_exp_count'].initial)):
-            self.add_experience(i)
+            if initWithHistory:
+                self.add_experience(i, experience=experience[i])
+            else:
+                self.add_experience(i)
 
 
         resume = forms.FileField()
@@ -97,7 +160,7 @@ class ApplicationForm(forms.Form):
     def get_document_fields(self):
         return self.documentsFields
 
-    def add_education(self, i:int = None):
+    def add_education(self, i:int = None, education = None):
         if i == None:
             i = len(self.educationFields)
         field_name = '_educations_%s' % (i,)
@@ -132,9 +195,15 @@ class ApplicationForm(forms.Form):
         self.educationFields.append(educationDict)
         self.educationFieldsNames.append(eduNameDict)
 
+        if education:
+            self.fields['institute' + field_name].initial = education.institute
+            self.fields['title' + field_name].initial = education.title
+            self.fields['period' + field_name].initial = education.period
+            self.fields['description' + field_name].initial = education.description
+
         return educationDict
 
-    def add_experience(self, i:int):
+    def add_experience(self, i:int, experience=None):
         field_name = '_experience_%s' % (i,)
         experienceDict = {}
         expNameDict = {}
@@ -166,6 +235,12 @@ class ApplicationForm(forms.Form):
 
         self.experienceFields.append(experienceDict)
         self.experienceFieldsNames.append(expNameDict)
+
+        if experience:
+            self.fields['companyName' + field_name].initial = experience.companyName
+            self.fields['title' + field_name].initial = experience.title
+            self.fields['period' + field_name].initial = experience.period
+            self.fields['description' + field_name].initial = experience.description
 
         return experienceDict
 
@@ -207,17 +282,19 @@ class ApplicationForm(forms.Form):
         jobApplication.candidate = Candidate.objects.get(user=user)
         jobApplication.save()
 
+        candidate=Candidate.objects.get(user=user)
+
         resume = Resume()
+        resume.candidate = candidate
         resume.fileName = cleaned_data.get('resume').name
-        resume.resume.upload_to = 'protected/application/' + pk.title + '/resume/' + uuid.uuid4().hex  + '/'
         resume.resume = cleaned_data.get('resume')
         resume.save()
         resume.JobApplication.add(jobApplication)
         resume.save()
 
         coverLetter = CoverLetter()
+        coverLetter.candidate = candidate
         coverLetter.fileName = cleaned_data.get('coverLetter').name
-        coverLetter.coverLetter.upload_to = 'protected/application/' + pk.title + '/coverletter/' + uuid.uuid4().hex + '/'
         coverLetter.coverLetter = cleaned_data.get('coverLetter')
         coverLetter.save()
         coverLetter.JobApplication.add(jobApplication)
@@ -246,8 +323,8 @@ class ApplicationForm(forms.Form):
 
         for doc in self.documentsFieldsNames:
             document = SupportingDocument()
+            document.candidate = candidate
             document.fileName = cleaned_data.get(doc['name'])
-            document.document.upload_to  = 'protected/application/' + pk.title + '/supportingDocument/' + uuid.uuid4().hex  + '/'
             document.document = cleaned_data.get(doc['file'])
             document.save()
 

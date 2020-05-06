@@ -21,6 +21,10 @@ from django.http import HttpResponse
 
 from .decorators import check_recaptcha
 
+import uuid
+import os
+import datetime
+
 DEBUG =True
 
 # Create your views here.
@@ -37,8 +41,9 @@ def register_user(request, employer=None):
             extra_language_count=request.POST.get('extra_language_count'),
             )
         print(form.errors)
-        if form.is_valid() and request.recaptcha_is_valid:
-            
+        #if form.is_valid() and request.recaptcha_is_valid:
+        if form.is_valid():
+            print("test7")
             form.save()
             email = form.cleaned_data.get('email')
             raw_password = form.cleaned_data.get('password')

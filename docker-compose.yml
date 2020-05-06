@@ -1,23 +1,34 @@
 version: '3.3'
 
 services:
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
   web:
     restart: always
     build: ./web
+    image: web
     expose:
       - "8000"
     volumes:
-      - ./web:/web
+      - code:/web
       - static:/static
       - media:/media
     env_file: .env
+    depends_on: 
+      - db
     environment:
       DEBUG: 'true'
-    command: bash -c "python manage.py makemigrations && python manage.py migrate --run-syncdb && /usr/local/bin/gunicorn ace.wsgi:application -w 2 -b :8000 &&  python manage.py collectstatic --noinput --clear"
-
+    command: bash -c "/usr/local/bin/gunicorn ace.wsgi:application -w 2 -b :8000 &&  python manage.py collectstatic --noinput --clear && python manage.py makemigrations && python manage.py migrate"
   nginx:
     restart: always
     build: ./nginx/
+    image: nginx
     ports:
       - "80:80"
     volumes:
@@ -29,3 +40,5 @@ services:
 volumes:
   static:
   media:
+  pgdata:
+  code:
