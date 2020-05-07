@@ -1,5 +1,6 @@
 # ConcordiaAce
 [![Website shields.io](https://img.shields.io/website-up-down-green-red/http/shields.io.svg)](http://aceconcordia.ca)
+[![PyPI license](https://img.shields.io/pypi/l/ansicolortags.svg)](https://pypi.python.org/pypi/ansicolortags/) (Except Templates)
 
 Job board made for Concordia University, Montreal, Canada, Co-op ACE program. 
 # Features
