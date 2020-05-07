@@ -13,7 +13,7 @@ Job board made for Concordia University, Montreal, Canada, Co-op ACE program.
 | Email activation|  ["hospital-resident" matching algorithm](https://pypi.org/project/matching/)      |   [Dynamic Plyr video player](https://github.com/sampotts/plyr)  | Email notification| Post jobs, interview invite, job matching | | Persistent Volumes and migrations
 | Nginx-Sendfile Firewall |  |   Dynamic upload forms | Annoncements | Apply to jobs | | 95% Code shared between prod and test docker-compose setups
 | uuid protected dynamic file paths |  |    Secured resume caching and reuse| | Search and filter jobs
-| Email password reset |  | | | Search and filter candidates
+| Email password reset |  | Sendfile + auth protected media| | Search and filter candidates
 | Let's Encrypt SSL with autorenewal | |  | | Full Admin Control (approval, permission assignment, etc.)
 | | |  | | Google Map,  PDF Concatination
 # Licensing
