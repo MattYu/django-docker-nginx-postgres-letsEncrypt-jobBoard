@@ -5,6 +5,8 @@ services:
     image: postgres
     restart: always
     container_name: db
+    ports:
+      - 5432:5432
     env_file:
       - db.env.dev
     volumes:
