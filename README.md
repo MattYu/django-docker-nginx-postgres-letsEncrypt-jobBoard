@@ -2,15 +2,15 @@
 
 # Features
 
-| Security        | Job Ranking           | Media servicing  | User Notification  | Services  | Data  |
-| ------------- |:-------------:| :-----:|:-----:| :-----:|-----:|
-| Google Captcha      | Candidate-Employer preference ranking system| Nginx file servicing | [django-notifications-hq](https://pypi.org/project/django-notifications-hq/) | Login as Admin, Candidate or Employer | Postgres Db
-| Email activation|  ["hospital-resident" matching algorithm](https://pypi.org/project/matching/)      |   [Dynamic Plyr video player](https://github.com/sampotts/plyr)  | Email notification| Post jobs, interview invite, job matching
+| Security        | Job Ranking           | Media servicing  | User Notification  | Other Job Board Services  | Data  | CI/CD  |
+| ------------- |:-------------:| :-----:|:-----:| :-----:|-----:|-----:|
+| Google Captcha      | Candidate-Employer preference ranking system| Nginx file servicing | [django-notifications-hq](https://pypi.org/project/django-notifications-hq/) | Login as Admin, Candidate or Employer | Postgres Db| Prod Ready 2 step Docker-Compose setup
+| Email activation|  ["hospital-resident" matching algorithm](https://pypi.org/project/matching/)      |   [Dynamic Plyr video player](https://github.com/sampotts/plyr)  | Email notification| Post jobs, interview invite, job matching | | Persistent Volumes
 | Nginx-Sendfile Firewall |  |   Dynamic upload forms | | Apply to jobs
 | uuid dynamic file paths |  |    Resume caching and reuse| | Search and filter jobs
 | Email password reset |  | | | Search and filter candidates
-| SSL | |  | | Full Admin Control (approval, permission assignment, etc.)
-|  | |  | | Google Map,  PDF Concatination
+| Let's Encrypt SSL | |  | | Full Admin Control (approval, permission assignment, etc.)
+| | |  | | Google Map,  PDF Concatination
 # Licensing
 - All python/django code are created by us and available under MIT licence
 - html template license was purchased for single app use for Concordia ACE website on http://preview.themeforest.net/item/oficiona-job-board-html-template/full_screen_preview/23042674 License must be re-purchased for other project. Permission to reuse template not under MIT license. 
