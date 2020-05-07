@@ -1,5 +1,9 @@
-FROM tutum/nginx
+FROM linuxserver/letsencrypt
 
-RUN rm /etc/nginx/sites-enabled/default
+RUN rm -r /config/nginx/site-confs/default
+RUN rm -r /config/
 
-COPY sites-enabled/ /etc/nginx/sites-enabled
+COPY config/ /config
+COPY config/nginx.conf /config/nginx/site-confs/default
+COPY config/ssl.conf /config/nginx/ssl.conf
+
