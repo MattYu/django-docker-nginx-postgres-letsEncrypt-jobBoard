@@ -6,9 +6,9 @@ services:
     restart: always
     container_name: db
     env_file:
-      - db.env
+      - db.env.dev
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pgdata-prod:/var/lib/postgresql/data
   web:
     restart: always
     build: ./web
@@ -17,31 +17,38 @@ services:
     expose:
       - "8000"
     volumes:
-      - static:/static
-      - media:/media
-    env_file: .env
+      - static-prod:/static
+      - media-prod:/media
     stdin_open: true
     tty: true
     depends_on: 
       - db
     env_file:
-      - web.env
+      - web.env.dev
     command: bash -c "python manage.py collectstatic --noinput && python manage.py makemigrations --noinput && python manage.py migrate --noinput && /usr/local/bin/gunicorn ace.wsgi:application -w 2 -b :8000"
   nginx:
     restart: always
-    build: ./nginx/
+    build: ./nginx-prod/
     image: nginx
     container_name: nginx
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - static:/static
-      - media:/media
+      - static-prod:/static
+      - media-prod:/media
     links:
       - web:web
+    environment: 
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Toronto
+      - URL=concordia-ace.com
+      - SUBDOMAINS=www,
+      - VALIDATION=http
+      - STAGING=true #optional
 
 volumes:
-  static:
-  media:
-  pgdata:
+  static-prod:
+  media-prod:
+  pgdata-prod:
