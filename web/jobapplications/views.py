@@ -60,7 +60,8 @@ def add_resume(request, pk= None, *args, **kwargs):
             extra_edu_count=request.POST.get('extra_edu_count'), 
             extra_exp_count=request.POST.get('extra_exp_count'), 
             extra_doc_count=request.POST.get('extra_doc_count'),
-            initWithHistory=False
+            initWithHistory=False,
+            user=request.user
             )
         #request.session['form'] = form.as_p()
         if form.is_valid():
@@ -142,7 +143,7 @@ def browse_job_applications(request, searchString = "", jobId= -1):
         if "Last 3 months" in filterSet:
             query &= Q(created_at__gte=datetime.now()-timedelta(days=90))
         if form["firstName"].value() != None and form["firstName"].value() != "":
-            query &= (Q(firstName__contains= form["firstName"].value()) | Q(candidate__user_preferredName_contains=form["firstName"].value()))
+            query &= (Q(firstName__contains= form["firstName"].value()) | Q(candidate__user__preferredName__contains=form["firstName"].value()))
         if form["lastName"].value() != None and form["lastName"].value() != "":
             query &= Q(lastName__contains= form["lastName"].value())
         if form["email"].value() != None and form["email"].value() != "":
@@ -439,7 +440,7 @@ def get_protected_file_withAuth(request, fileType, applicationId, supportID=""):
             supportingDocument = SupportingDocument.objects.filter(JobApplication=applicationId, pk=supportID)[0]
             if not supportingDocument:
                 return HttpResponse('File ID does not exist')
-            document = supportingDocument
+            document = supportingDocument.document
             filePath = document.path
 
         return sendfile(request, "/" + filePath)

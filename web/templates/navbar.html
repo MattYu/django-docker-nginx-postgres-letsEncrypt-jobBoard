@@ -21,21 +21,26 @@
             {% endif %}
           </ul>
           <ul class="navbar-nav ml-auto account-nav">
+            {% if user.is_authenticated %}
+              <div class="notifier new">
+                <i class="bell fa fa-bell-o"></i>
+                <div class="badge"> {{notificationsCount}} </a></div>
+              </div>
             <li class="dropdown menu-item header-top-notification">
-              {% if user.user_type == 1 %}
-              <a href= "#" class="notification-button"></a>
-              
+              <a href= "#" class="notification-button">
               <div class="notification-card">
                 <div class="notification-head">
                   <span>Notifications</span>
                   <a href= "#">Mark all as read</a>
                 </div>
                 <div class="notification-body">
+                  {% for notification in notifications %}
                   <a href={% static  "home-2.html"  %} class="notification-list">
                     <i class="fas fa-bolt"></i>
-                    <p>Your Resume Updated!</p>
-                    <span class="time">5 hours ago</span>
+                    <p>{{notification.verb}}</p>
+                    <span class="time">{{notification.timestamp}}</span>
                   </a>
+                  {% endfor %}
                   <a href= "#" class="notification-list">
                     <i class="fas fa-arrow-circle-down"></i>
                     <p>Someone downloaded resume</p>
@@ -61,8 +66,8 @@
                   <a href= "#">See all notification</a>
                 </div>
               </div>
-              {% endif %}
             </li>
+            {% endif %}
             {% if user.is_authenticated %}
             <li class="menu-item login-popup"><a> {{user.email}}</a></li>
             <li class="menu-item login-popup"><a href="/logout">Logout</a></li>

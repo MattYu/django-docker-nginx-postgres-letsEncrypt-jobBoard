@@ -29,13 +29,8 @@ GOOGLE_MAPS_API_KEY = None
 #DEBUG = os.getenv('DEBUG', 'NO').lower() in ('on', 'true', 'y', 'yes')
 DEBUG = False
 
-ALLOWED_HOSTS = [
-    "coopaceconcordia.azurewebsites.net",
-    "aceconcordia.azurecr.io",
-    "localhost",
-    "127.0.0.1",
-    "138.197.132.31",
-]
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
+#"138.197.132.31"
 
 
 # Application definition
@@ -49,7 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_cleanup', # Auto delete storage files upon model deletion
     'tinymce',
-    'django_sendfile', # Secure file storage and retrieval 
+    'django_sendfile', # Secure file storage and retrieval
+    'notifications', 
     # User apps
     'joblistings',
     'companies',
@@ -125,7 +121,7 @@ DATABASES = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'EST'
 
 USE_I18N = True
 
@@ -218,6 +214,11 @@ LOGGING = {
             'handlers': ['file', 'console'],
             'level': 'DEBUG',
             'propagate': True,
+        },
+        'django.template': {
+            'handlers': ['file', 'console'],
+            'level': 'INFO',
+            'propagate': False,
         },
     }
 }

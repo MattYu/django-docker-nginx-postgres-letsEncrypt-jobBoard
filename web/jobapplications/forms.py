@@ -8,6 +8,7 @@ from joblistings.models import Job
 from accounts.models import Candidate
 import uuid
 from django.db.models import Q
+import os
 
 from django.core.files.storage import FileSystemStorage
 
@@ -73,6 +74,11 @@ class ApplicationForm(forms.Form):
     extra_exp_count = forms.IntegerField(widget=forms.HiddenInput())
     extra_doc_count = forms.IntegerField(widget=forms.HiddenInput())
 
+    oldResumes = forms.ChoiceField(
+        required = False,
+        widget=forms.Select(attrs={'class': 'form-control', 'placeholder': 'Select Resume'})
+    )
+
 
     firstName = forms.CharField(max_length=MAX_LENGTH_STANDARDFIELDS,
                                 widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'First name'})
@@ -108,17 +114,19 @@ class ApplicationForm(forms.Form):
         if initWithHistory:
             jobApplication = JobApplication.objects.filter(candidate=Candidate.objects.get(user=user)).order_by("-created_at").first()
 
-            educations = Education.objects.filter(Q(JobApplication=jobApplication) & Q(JobApplication__candidate=Candidate.objects.get(user=user))).distinct()
-            experience = Experience.objects.filter(Q(JobApplication=jobApplication) & Q(JobApplication__candidate=Candidate.objects.get(user=user))).distinct()
+            educations = Education.objects.filter(JobApplication=jobApplication).distinct()
+            experience = Experience.objects.filter(JobApplication=jobApplication).distinct()
+            supportingDocuments = SupportingDocument.objects.filter(JobApplication=jobApplication).distinct()
             kwargs.pop('extra_edu_count', 1)
             kwargs.pop('extra_exp_count', 1)
+            kwargs.pop('extra_doc_count', 0)
             extra_edu_fields = max(len(educations), 1)
             extra_exp_fields = max(len(experience), 1)
+            extra_doc_fields = max(len(supportingDocuments), 0)
         else:
             extra_edu_fields = kwargs.pop('extra_edu_count', 1)
             extra_exp_fields = kwargs.pop('extra_exp_count', 1)
-        
-        extra_doc_fields = kwargs.pop('extra_doc_count', 0)
+            extra_doc_fields = kwargs.pop('extra_doc_count', 0)
 
         super().__init__(*args, **kwargs)
     
@@ -141,15 +149,21 @@ class ApplicationForm(forms.Form):
             else:
                 self.add_experience(i)
 
-
-        resume = forms.FileField()
-
         
         self.fields['extra_doc_count'].initial = max(min(int(extra_doc_fields), 10), 0)
         self.documentsFields = []
         self.documentsFieldsNames = []
         for i in range(int(self.fields['extra_doc_count'].initial)):
             self.add_document(i)
+
+
+        currentOptions = []
+        resumes = Resume.objects.filter(candidate= Candidate.objects.get(user=user)).order_by("-created_at").distinct()
+        for resume in resumes:
+            currentOptions.append((resume.pk, os.path.basename(resume.resume.file.name)))
+
+        currentOptions.insert(0, ("OR Select an Existing CV from the List", "OR Select an Existing CV from the List"))
+        self.fields['oldResumes'].choices = currentOptions
 
     def get_education_fields(self):
         return self.educationFields
@@ -267,8 +281,23 @@ class ApplicationForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
 
-        if not cleaned_data.get('resume') and self.is_valid():
+        if not cleaned_data.get('resume') and self.is_valid() and cleaned_data.get("oldResumes") == "OR Select an Existing CV from the List":
             raise forms.ValidationError('You have to upload a resume')
+        
+        if not cleaned_data.get('coverLetter') and self.is_valid():
+            raise forms.ValidationError('You have to upload a cover letter')
+        
+        if cleaned_data.get('resume') and self.is_valid() and cleaned_data.get("oldResumes") != "OR Select an Existing CV from the List":
+            if not cleaned_data.get('resume').name.endswith(".pdf"):
+                raise forms.ValidationError('Files must be in pdf format')
+        if self.is_valid() and cleaned_data.get('coverLetter') and not cleaned_data.get('coverLetter').name.endswith(".pdf"):
+            raise forms.ValidationError('Files must be in pdf format')
+        
+        '''
+        for doc in self.documentsFieldsNames:
+            if doc and cleaned_data.get(doc['name']) and not cleaned_data.get(doc['name']).endswith(".pdf"):
+                raise forms.ValidationError('Files must be in pdf format')
+        '''
 
         self.cleaned_data = cleaned_data
 
@@ -284,13 +313,18 @@ class ApplicationForm(forms.Form):
 
         candidate=Candidate.objects.get(user=user)
 
-        resume = Resume()
-        resume.candidate = candidate
-        resume.fileName = cleaned_data.get('resume').name
-        resume.resume = cleaned_data.get('resume')
-        resume.save()
-        resume.JobApplication.add(jobApplication)
-        resume.save()
+        if cleaned_data.get("oldResumes") != "OR Select an Existing CV from the List":
+            resume = Resume.objects.filter(candidate=Candidate.objects.get(user=user)).first()
+            resume.JobApplication.add(jobApplication)
+            resume.save()
+        else: 
+            resume = Resume()
+            resume.candidate = candidate
+            resume.fileName = cleaned_data.get('resume').name
+            resume.resume = cleaned_data.get('resume')
+            resume.save()
+            resume.JobApplication.add(jobApplication)
+            resume.save()
 
         coverLetter = CoverLetter()
         coverLetter.candidate = candidate
@@ -322,11 +356,15 @@ class ApplicationForm(forms.Form):
             experience.save()
 
         for doc in self.documentsFieldsNames:
-            document = SupportingDocument()
-            document.candidate = candidate
-            document.fileName = cleaned_data.get(doc['name'])
-            document.document = cleaned_data.get(doc['file'])
-            document.save()
+            try:
+                document = SupportingDocument()
+                document.candidate = candidate
+                document.fileName = cleaned_data.get(doc['name'])
+                document.document = cleaned_data.get(doc['file'])
+                document.JobApplication.add(jobApplication)
+                document.save()
+            except:
+                pass
 
 
         return jobApplication
