@@ -3,14 +3,15 @@ version: '3.3'
 services:
   db:
     image: postgres
-    environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+    restart: always
+    container_name: db
+    env_file:
+      - db.env.dev
     volumes:
       - pgdata:/var/lib/postgresql/data
   web:
     restart: always
+    container_name: web
     build: ./web
     image: web
     expose:
@@ -18,15 +19,17 @@ services:
     volumes:
       - static:/static
       - media:/media
-    env_file: .env
+    stdin_open: true
+    tty: true
     depends_on: 
       - db
-    environment:
-      DEBUG: 'true'
+    env_file:
+      - ./web.env.dev
     command: bash -c "python manage.py collectstatic --noinput && python manage.py makemigrations --noinput && python manage.py migrate --noinput && /usr/local/bin/gunicorn ace.wsgi:application -w 2 -b :8000"
   nginx:
     restart: always
     build: ./nginx/
+    container_name: nginx
     image: nginx
     ports:
       - "80:80"
@@ -36,10 +39,9 @@ services:
       - media:/media
     links:
       - web:web
-  certbot:
-    image: certbot/certbot
 
 volumes:
   static:
   media:
   pgdata:
+

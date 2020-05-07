@@ -29,13 +29,8 @@ GOOGLE_MAPS_API_KEY = None
 #DEBUG = os.getenv('DEBUG', 'NO').lower() in ('on', 'true', 'y', 'yes')
 DEBUG = False
 
-ALLOWED_HOSTS = [
-    "coopaceconcordia.azurewebsites.net",
-    "aceconcordia.azurecr.io",
-    "localhost",
-    "127.0.0.1",
-    "138.197.132.31",
-]
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
+#"138.197.132.31"
 
 
 # Application definition
