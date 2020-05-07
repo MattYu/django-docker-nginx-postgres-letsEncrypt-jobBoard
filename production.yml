@@ -26,26 +26,24 @@ services:
     env_file:
       - web.env.dev
     command: bash -c "python manage.py collectstatic --noinput && python manage.py makemigrations --noinput && python manage.py migrate --noinput && /usr/local/bin/gunicorn ace.wsgi:application -w 2 -b :8000"
-  nginx:
-    image: linuxserver/letsencrypt
-    restart: always
-    container_name: nginx
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - static-prod:/static
-      - media-prod:/media
-      - ./docker-prod/config:/config
-      - ./docker-prod/config/nginx.conf:/config/nginx/site-confs/default
-      - ./docker-prod/config/ssl.conf:/config/nginx/ssl.conf
+    nginx:
+      image: linuxserver/letsencrypt
+      ports:
+        - 80:80
+        - 443:443
+      volumes:
+        - ./nginx-prod/config:/config
+        - ./nginx-prod/config/nginx.conf:/config/nginx/site-confs/default
+        - ./nginx-prod/config/ssl.conf:/config/nginx/ssl.conf
+      container_name: nginx
+      restart: unless-stopped
     links:
       - web:web
     environment: 
       - PUID=1000
       - PGID=1000
       - TZ=America/Toronto
-      - URL=concordia-ace.com
+      - URL=concordia-ace.ca
       - SUBDOMAINS=www,
       - VALIDATION=http
       - STAGING=true #optional

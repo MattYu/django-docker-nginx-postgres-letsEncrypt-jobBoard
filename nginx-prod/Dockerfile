@@ -1,9 +1,7 @@
 FROM linuxserver/letsencrypt
 
-RUN rm -r /config/nginx/site-confs/
-RUN rm -r /config/
+RUN rm /config/nginx/site-confs/default
 
-COPY config/ /config
-COPY config/nginx.conf /config/nginx/site-confs/default
+COPY sites-enabled/ /config/nginx/site-confs
 COPY config/ssl.conf /config/nginx/ssl.conf
 
