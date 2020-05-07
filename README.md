@@ -10,7 +10,7 @@ Job board made for Concordia University, Montreal, Canada, Co-op ACE program.
 | Nginx-Sendfile Firewall |  |   Dynamic upload forms | Annoncements | Apply to jobs
 | uuid dynamic file paths |  |    Secured resume caching and reuse| | Search and filter jobs
 | Email password reset |  | | | Search and filter candidates
-| Let's Encrypt SSL | |  | | Full Admin Control (approval, permission assignment, etc.)
+| Let's Encrypt SSL with autorenewal | |  | | Full Admin Control (approval, permission assignment, etc.)
 | | |  | | Google Map,  PDF Concatination
 # Licensing
 - All python/django code are created by us and available under MIT licence
