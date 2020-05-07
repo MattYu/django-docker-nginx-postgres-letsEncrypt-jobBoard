@@ -27,16 +27,16 @@ services:
       - web.env.dev
     command: bash -c "python manage.py collectstatic --noinput && python manage.py makemigrations --noinput && python manage.py migrate --noinput && /usr/local/bin/gunicorn ace.wsgi:application -w 2 -b :8000"
   nginx:
-      image: linuxserver/letsencrypt
-      ports:
-        - 80:80
-        - 443:443
-      volumes:
-        - ./nginx-prod/config:/config
-        - ./nginx-prod/config/nginx.conf:/config/nginx/site-confs/default
-        - ./nginx-prod/config/ssl.conf:/config/nginx/ssl.conf
-      container_name: nginx
-      restart: unless-stopped
+    image: linuxserver/letsencrypt
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./nginx-prod/config:/config
+      - ./nginx-prod/config/nginx.conf:/config/nginx/site-confs/default
+      - ./nginx-prod/config/ssl.conf:/config/nginx/ssl.conf
+    container_name: nginx
+    restart: unless-stopped
     links:
       - web:web
     environment: 
