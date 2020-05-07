@@ -8,7 +8,7 @@ services:
     env_file:
       - db.env.dev
     volumes:
-      - pgdata-prod:/var/lib/postgresql/data
+      - ./prod_storage/pgdb:/var/lib/postgresql/data
   web:
     restart: always
     build: ./web
@@ -17,8 +17,8 @@ services:
     expose:
       - "8000"
     volumes:
-      - static-prod:/static
-      - media-prod:/media
+      - static:/static
+      - ./prod_storage/media:/media
     stdin_open: true
     tty: true
     depends_on: 
@@ -32,6 +32,8 @@ services:
       - 80:80
       - 443:443
     volumes:
+      - static:/static
+      - ./prod_storage/media:/media
       - ./nginx-prod/config:/config
       - ./nginx-prod/config/nginx.conf:/config/nginx/site-confs/default
       - ./nginx-prod/config/ssl.conf:/config/nginx/ssl.conf
@@ -49,6 +51,4 @@ services:
       - STAGING=true #optional
 
 volumes:
-  static-prod:
-  media-prod:
-  pgdata-prod:
+  static:
