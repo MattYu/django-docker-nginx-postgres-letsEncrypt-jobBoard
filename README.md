@@ -1,5 +1,6 @@
 # ConcordiaAce
 
+Job board made for Concordia University, Montreal, Canada, Co-op ACE program. 
 # Features
 
 | Security        | Job Ranking           | Media servicing  | User Notification  | Other Job Board Services  | Data  | CI/CD  |
