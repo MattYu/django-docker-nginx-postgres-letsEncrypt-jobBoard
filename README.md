@@ -20,4 +20,12 @@ Job board made for Concordia University, Montreal, Canada, Co-op ACE program.
 - All python/django code are created by us and available under MIT licence
 - html template license was purchased for single app use for Concordia ACE website on http://preview.themeforest.net/item/oficiona-job-board-html-template/full_screen_preview/23042674 License must be re-purchased for other project. Permission to reuse template not under MIT license. 
 
+# Launch website
+For production
+1) Make sure Docker is installed on the machine. No other installation is needed. 
+2) Navigate to the root path of the files
+3) Change env.dev keys to match production keys, including your host ip/domain name. 
+4) Enter the following command `docker-compose -f production.yml up --build` 
+5) The website is now running. You may access it using your host ip/domain name with any web browser
+6) To create the first superuser (admin), run the command `docker exec -it yourWebDockerID python manage.py createsuperuser` . Choose user type 4 when asked. Subsequent admin can be created in the admin menu options.
 
