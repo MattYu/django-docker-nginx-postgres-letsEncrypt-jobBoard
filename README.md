@@ -30,6 +30,9 @@ For production
 6) To create the first superuser (admin), run the command `docker exec -it yourWebDockerID python manage.py createsuperuser` . Choose user type 4 when asked. Subsequent admin can be created in the admin menu options.
 
 For test
-Skip step 3) above. 
-4) Enter the following command `docker-compose up --build` 
-All other step are identical.
+
+  Skip step 3) above. 
+
+  4) Enter the following command `docker-compose up --build` 
+
+  All other step are identical.
