@@ -158,7 +158,7 @@ def activate(request, uidb64, token):
     else:
         return HttpResponse('Activation link is invalid!')
 
-def manage_employers(request):
+def manage_employers(request, searchString=""):
     if request.user.is_authenticated and request.user.user_type == USER_TYPE_SUPER:
         
         if (request.method == 'POST'):

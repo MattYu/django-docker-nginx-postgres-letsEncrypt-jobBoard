@@ -17,7 +17,7 @@ import json as simplejson
 from datetime import datetime, timedelta
 
 # Create your views here.
-def job_search(request, *args, **kwargs):
+def job_search(request, searchString="", *args, **kwargs):
     context = {}
     jobApps = None
     form = FilterApplicationForm()
@@ -189,7 +189,7 @@ def post_job(request,  *args, **kwargs):
 
     return render(request, "employer-dashboard-post-job.html", context)
 
-def manage_jobs(request):
+def manage_jobs(request, searchString=""):
     if not request.user.is_authenticated:
 
         request.session['redirect'] = request.path
