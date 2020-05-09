@@ -38,7 +38,7 @@ def view_company_details(request, pk):
     return render(request, "employer-details.html", context)
 
 
-def manage_companies(request):
+def manage_companies(request, searchString=""):
     if request.user.is_authenticated and request.user.user_type == USER_TYPE_SUPER:
         filterquery = Q()
         companies = Company.objects.filter(filterquery).order_by('-created_at').all()

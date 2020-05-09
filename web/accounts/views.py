@@ -36,10 +36,8 @@ def register_user(request, employer=None):
             employerCompany=request.POST.get('employerCompany'),
             extra_language_count=request.POST.get('extra_language_count'),
             )
-        print(form.errors)
         #if form.is_valid() and request.recaptcha_is_valid:
         if form.is_valid():
-            print("test7")
             form.save()
             email = form.cleaned_data.get('email')
             raw_password = form.cleaned_data.get('password')
@@ -158,7 +156,7 @@ def activate(request, uidb64, token):
     else:
         return HttpResponse('Activation link is invalid!')
 
-def manage_employers(request):
+def manage_employers(request, searchString=""):
     if request.user.is_authenticated and request.user.user_type == USER_TYPE_SUPER:
         
         if (request.method == 'POST'):

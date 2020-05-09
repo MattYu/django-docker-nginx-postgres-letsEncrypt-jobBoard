@@ -134,11 +134,16 @@
             <div class="dashboard-container">
               <div class="dashboard-content-wrapper">
                 <div class="manage-job-container">
+                  <input type="submit" value="Sort Chronologically">
+                  <input type="submit" value="Sort Alphabetically">
+                  {% if user.user_type == 4 %}
+                  <input type="submit" value="Sort by Company">
+                  {% endif %}
                   <table class="table">
                     <thead>
                       <tr>
                         <th>Job Title</th>
-                        <th>Applications</th>
+                        <th>Get Applications List (Click Below)</th>
                         <th>Deadline</th>
                         <th>Status</th>
                         <th class="action">Action</th>
@@ -154,12 +159,12 @@
                             <span class="job-type full-time"><a href="#"><i data-feather="clock"></i>{{job.job.created_at}}</a></span>
                           </div>
                         </td>
-                        <td class="application"><a href="/jobApplications/{{job.job.id}}">{{job.count}} {% if user.user_type != 4 %} Approved {% endif %}Application(s)</a></td>
+                        <td class="application"><a href="/jobApplications/{{job.job.id}}">View {{job.count}} {% if user.user_type != 4 %} Approved {% endif %}Application(s)</a></td>
                         <td class="deadline">{{job.job.expirationDate}}</td>
                         <td class="status active">{{job.job.status}}</td>
                         <td class="action">
-                          <a href="#" class="preview" title="Preview"><i data-feather="eye"></i></a>
-                          <a href="#" class="edit" title="Edit"><i data-feather="edit"></i></a>
+                          <a href="/jobApplications/{{job.job.id}}" class="preview" title="View all applications"><i data-feather="eye"></i></a>
+                          <a href="/admin/joblistings/job/{{job.job.id}}/change" class="edit" title="Edit (Admin only)"><i data-feather="edit"></i></a>
                         </td>
                       </tr>
                       {% endfor %}

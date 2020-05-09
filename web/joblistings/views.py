@@ -17,7 +17,7 @@ import json as simplejson
 from datetime import datetime, timedelta
 
 # Create your views here.
-def job_search(request, *args, **kwargs):
+def job_search(request, searchString="", *args, **kwargs):
     context = {}
     jobApps = None
     form = FilterApplicationForm()
@@ -32,9 +32,7 @@ def job_search(request, *args, **kwargs):
 
     if request.method == 'POST':
         form = FilterApplicationForm(request.POST)
-        print(request.POST)
         if 'filter' in request.POST:
-            print(request.POST)
             context['filterClasses'] = simplejson.dumps(form.getSelectedFilterClassAsList())
             context['filterHTML'] = simplejson.dumps(form.getSelectedFilterHTMLAsList())
 
@@ -87,7 +85,6 @@ def job_search(request, *args, **kwargs):
 
         qs = Job.objects.filter(query).order_by(sortOrder).distinct()
         queryset = qs
-        print(queryset)
  
         context['joblist'] = queryset
         context['job_num'] = str(len(queryset))
@@ -105,7 +102,6 @@ def job_search(request, *args, **kwargs):
         'joblist': queryset,
         'job_num': str(len(queryset))
     }
-    print(context['joblist'])
     context["form"] = form
 
     return render(request, 'job-listing.html', context)
@@ -122,7 +118,6 @@ def job_details(request, pk=None, *args, **kwargs):
 
     context["similarJobs"] = Job.objects.filter(company=instance.company).order_by("-created_at").distinct()[:]
     if instance.company.videoLink != DEFAULT_VIDEO:
-        print("NOT EQUAL")
         context["video"] = True
 
     jobPDF = JobPDFDescription.objects.filter(job=pk)
@@ -189,7 +184,7 @@ def post_job(request,  *args, **kwargs):
 
     return render(request, "employer-dashboard-post-job.html", context)
 
-def manage_jobs(request):
+def manage_jobs(request, searchString=""):
     if not request.user.is_authenticated:
 
         request.session['redirect'] = request.path

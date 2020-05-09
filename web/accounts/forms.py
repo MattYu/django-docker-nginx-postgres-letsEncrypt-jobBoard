@@ -112,7 +112,6 @@ class RegistrationForm(forms.Form):
     def add_language(self, i:int = None):
         if i == None:
             i = len(self.languageFields)
-        print(i)
         field_name = '_language_%s' % (i,)
         languageDict = {}
         lanNameDict = {}
@@ -210,8 +209,6 @@ class RegistrationForm(forms.Form):
         else:
             user_type = USER_TYPE_CANDIDATE
         password = cleaned_data.get('password')
-        print(user_type)
-
         
         user = User()
         user.email = email

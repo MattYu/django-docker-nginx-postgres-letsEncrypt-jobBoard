@@ -143,9 +143,8 @@
               <div class="dashboard-content-wrapper">
                 <div class="manage-candidate-container">
                   <br>
-                  {% if job %}
-                      <h6>Applications for {{job.title}} [{{job.id}}] at {{job.company.name}}</h6>
-                  {% endif %}
+                  <input type="submit" value="Approved Only">
+                  <input type="submit" value="Not Approved Only">
                   <table class="table">
                     <thead>
                       <tr>
@@ -170,7 +169,7 @@
                                 <span class="location"><a href="/company-details/{{employer.company.pk}}"><i data-feather="map-pin"></i>{{employer.company.name}}</a></span>
                                 <span class="designation"><a ><i data-feather="check-square"></i>Phone number:  {{employer.user.phoneNumber}}</a></span>
                                 <span class="designation"><a ><i data-feather="check-square"></i>Email:  {{employer.user.email}}</a></span>
-                                <span class="designation"><a ><i data-feather="check-square"></i>Is Email CONFIRMED:  {{employer.user.is_email_confirmed}}</a></span>
+                                <span class="designation"><a ><i data-feather="check-square"></i><b>Is Email CONFIRMED: </b> {{employer.user.is_email_confirmed}}</a></span>
                               </div>
                             </div>
                           </td>

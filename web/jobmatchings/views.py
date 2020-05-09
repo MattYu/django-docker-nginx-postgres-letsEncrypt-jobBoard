@@ -130,11 +130,8 @@ def candidate_view_rankings(request):
     if request.user.user_type == USER_TYPE_CANDIDATE:
 
         if (request.method == "POST"):
-            print(request.POST)
             for rank in Ranking.objects.filter(candidate__id=Candidate.objects.get(user=request.user).id, is_closed=False).all():
-                print(request.POST)
                 if request.POST.get(str(rank.id)):
-                    print(request.POST)
                     rank.candidateRank = int(request.POST.get(str(rank.id)))
                     rank.save()
 
@@ -158,7 +155,6 @@ def admin_matchmaking(request):
     if request.user.user_type == USER_TYPE_SUPER:
 
         if (request.method == "POST"):
-            print(request.POST)
 
             if request.POST.get("closeEmp"):
 
@@ -197,19 +193,12 @@ def admin_matchmaking(request):
                     jobId = rank.jobApplication.job.id
                     job = rank.jobApplication.job
 
-                    print("Rank***********")
-                    print(rank.employerRank)
-                    print(rank.candidateRank)
-
                     if jobId not in employer_prefs:
                         employer_prefs[jobId] = [rank.candidate.id]
                         capacities[jobId] = job.vacancy
                         print(capacities[jobId])
                     else:
                         employer_prefs[jobId].append(rank.candidate.id)
-
-                print("Hospital***********")
-                print(employer_prefs)
                 
                 candidate_prefs = {}
                 for rank in Ranking.objects.filter(~Q(status="Matched") | ~Q(status="Not Matched")).order_by('candidateRank'):
@@ -219,11 +208,8 @@ def admin_matchmaking(request):
                         candidate_prefs[candidate] = [rank.jobApplication.job.id]
                     else:
                         candidate_prefs[candidate].append(rank.jobApplication.job.id)
-                print("Candidate***********")
-                print(candidate_prefs)
 
                 match = ranking.HospitalResident.create_from_dictionaries( candidate_prefs, employer_prefs, capacities)
-                print("MATCH*****************")               
 
                 matchResult = match.solve(optimal="resident")
                 print(matchResult)

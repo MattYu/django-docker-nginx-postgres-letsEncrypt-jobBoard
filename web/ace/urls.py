@@ -43,8 +43,21 @@ class OptionalIntConverter:
  
     def to_url(self, value):
         return str(value) if value is not None else ''
+
+class OptionalStringConverter:
+    regex = '[^@]*'
+ 
+    def to_python(self, value):
+        if value:
+            return str(value)
+        else:
+            return None
+ 
+    def to_url(self, value):
+        return str(value) if value is not None else ''
  
 register_converter(OptionalIntConverter, 'optional_int')
+register_converter(OptionalStringConverter, 'optional_string')
 
 urlpatterns = [
     path('', home_page),
@@ -62,13 +75,13 @@ urlpatterns = [
     path('activate/<uidb64>/<token>', activate, name="activate"),
     path('search/', job_search),
     path('jobApplications/<optional_int:jobId>', browse_job_applications),
-    path('jobApplications/<optional_int:jobId>/<slug:searchString>', browse_job_applications),
-    path('jobApplications/<slug:searchString>', browse_job_applications),
+    path('jobApplications/<optional_int:jobId>/<optional_string:searchString>', browse_job_applications),
+    path('jobApplications/<optional_string:searchString>', browse_job_applications),
     path('jobApplicationDetails/<int:pk>/', view_application_details),
     path('getFile/<str:uid>/<str:candidateId>/<str:filetype>/<str:fileid>/<token>/', get_protected_file),
-    path('manageJobs/', manage_jobs),
-    path('manageCompanies/', manage_companies),
-    path('manageEmployers/', manage_employers),
+    path('manageJobs/<optional_string:searchString>', manage_jobs),
+    path('manageCompanies/<optional_string:searchString>', manage_companies),
+    path('manageEmployers/<optional_string:searchString>', manage_employers),
     path('employerRanking/<optional_int:jobId>', employer_view_rankings),
     path('candidateRanking/', candidate_view_rankings),
     path('matchDay/', admin_matchmaking),
