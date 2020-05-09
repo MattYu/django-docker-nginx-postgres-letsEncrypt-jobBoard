@@ -123,12 +123,18 @@
                     </div>
                     {% if user.is_authenticated and user.user_type == 4 %}
                     <div class="buttons">
-                    <a class="save" href="/admin/joblistings/job/{{pk}}/change/"><i data-feather="heart"></i>Edit</a>
+                    <a class="save" href="/admin/joblistings/job/{{pk}}/change/"><i data-feather="edit"></i>Edit</a>
+                    </div>
+                    <div class="buttons">
+                    <a class="save" href="/jobApplications/{{pk}}"><i data-feather="briefcase"></i>View applications</a>
                     </div>
                     {% endif %}
                     {% if user.is_authenticated and user.user_type == 2 %}
                     <div class="buttons">
-                    <a class="save" href="#"><i data-feather="heart"></i>Edit (Admin Only)</a>
+                    <a class="save" href="#"><i data-feather="edit"></i>Edit (Admin Only)</a>
+                    </div>
+                    <div class="buttons">
+                    <a class="save" href="/jobApplications/{{pk}}"><i data-feather="briefcase"></i>View applications</a>
                     </div>
                     {% endif %}
                   </div>
