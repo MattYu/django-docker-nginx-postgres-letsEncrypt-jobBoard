@@ -36,34 +36,14 @@
                 <div class="notification-body">
                   {% for notification in notifications %}
                   <a href={% static  "home-2.html"  %} class="notification-list">
-                    <i class="fas fa-bolt"></i>
+                    <i class="fas fa-arrow-circle-down"></i>
                     <p>{{notification.verb}}</p>
                     <span class="time">{{notification.timestamp}}</span>
                   </a>
                   {% endfor %}
-                  <a href= "#" class="notification-list">
-                    <i class="fas fa-arrow-circle-down"></i>
-                    <p>Someone downloaded resume</p>
-                    <span class="time">11 hours ago</span>
-                  </a>
-                  <a href= "#" class="notification-list">
-                    <i class="fas fa-check-square"></i>
-                    <p>You applied for Project Manager <span>@homeland</span></p>
-                    <span class="time">11 hours ago</span>
-                  </a>
-                  <a href= "#" class="notification-list">
-                    <i class="fas fa-user"></i>
-                    <p>You changed password</p>
-                    <span class="time">5 hours ago</span>
-                  </a>
-                  <a href= "#" class="notification-list">
-                    <i class="fas fa-arrow-circle-down"></i>
-                    <p>Someone downloaded resume</p>
-                    <span class="time">11 hours ago</span>
-                  </a>
-                </div>
+
                 <div class="notification-footer">
-                  <a href= "#">See all notification</a>
+                  <a href= "/notification">See all notification</a>
                 </div>
               </div>
             </li>

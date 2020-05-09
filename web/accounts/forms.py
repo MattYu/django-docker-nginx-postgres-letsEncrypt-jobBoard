@@ -63,7 +63,7 @@ class RegistrationForm(forms.Form):
                 self.fields['company'] = forms.ChoiceField(
                                                             widget=forms.Select(attrs={'class': 'form-control', 'placeholder': 'Select Category'})
                                                         )
-                company = Company.objects.all()
+                company = Company.objects.filter(is_approved=True).order_by('-name').all()
                 company_choices = []
                 for obj in company:
                     company_choices.append((obj.pk, obj))

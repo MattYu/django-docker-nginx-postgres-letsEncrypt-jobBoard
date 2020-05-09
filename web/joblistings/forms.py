@@ -25,7 +25,7 @@ class JobForm(forms.Form):
     )
 
     vacancy = forms.IntegerField( 
-        required=False,
+        required=True,
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Vacancy'})
     )
 

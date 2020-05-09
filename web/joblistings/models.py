@@ -12,7 +12,7 @@ class Job(models.Model):
     #Job Summary
 
     category = models.CharField(max_length = MAX_LENGTH_STANDARDFIELDS, default= "Any", choices= CATEGORY_CHOICES)
-    salaryRange = models.CharField(max_length = MAX_LENGTH_STANDARDFIELDS, default= "N/A")
+    salaryRange = models.CharField(max_length = MAX_LENGTH_STANDARDFIELDS, default= "N/A", blank=True)
     vacancy = models.IntegerField(null= True, default= 0)
     filled = models.IntegerField(null= True, default= 0)
     startDate = models.CharField(max_length = MAX_LENGTH_STANDARDFIELDS, default= "")
@@ -34,7 +34,7 @@ class Job(models.Model):
 
     company = models.ForeignKey(Company, on_delete=models.CASCADE, default= "")
 
-    jobAccessPermission = models.ManyToManyField(Employer)
+    jobAccessPermission = models.ManyToManyField(Employer, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

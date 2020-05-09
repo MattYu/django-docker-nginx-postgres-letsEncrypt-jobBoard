@@ -172,8 +172,11 @@ def post_job(request,  *args, **kwargs):
             if request.user.user_type == USER_TYPE_EMPLOYER:
                 job.jobAccessPermission.add(Employer.objects.get(user=request.user)) 
                 job.save()
-                
 
+            if request.user.user_type == USER_TYPE_SUPER:
+                job.status = "Approved"
+                job.save()
+                
             job_pk = job.pk
             
             

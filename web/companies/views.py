@@ -24,6 +24,7 @@ def view_company_details(request, pk):
                 instance.save()
             if request.POST.get('Approved'):
                 instance.status = "Approved"
+                instance.is_approved = True
                 instance.save()
             if request.POST.get('Migrate'):
                 if request.POST.get("validCompany") != "Approved Companies" and request.POST.get("employer") != "Company's employees":
