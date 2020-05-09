@@ -6,6 +6,8 @@ from jobapplications.models import JobApplication
 from joblistings.models import Job
 from accounts.models import Candidate
 
+import sys
+
 def home_page(request):
     context = {}
     
@@ -16,6 +18,8 @@ def home_page(request):
     context["applicationCount"] = JobApplication.objects.count()
 
     context["candidateCount"] = Candidate.objects.count()
+
+    #print("It's working", file=sys.stderr)
 
     if 'warning' in request.session:
         context['warning'] = request.session['warning']

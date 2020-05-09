@@ -121,7 +121,6 @@ def browse_job_applications(request, searchString = "", jobId= -1):
         form = FilterApplicationForm(request.POST)        
 
         if 'filter' in request.POST:
-            print(request.POST)
             context['filterClasses'] = simplejson.dumps(form.getSelectedFilterClassAsList())
             context['filterHTML'] = simplejson.dumps(form.getSelectedFilterHTMLAsList())
             #for ob in request.POST.get('selected_filter'):
@@ -357,7 +356,6 @@ def view_application_details(request, pk):
 
     experience = Experience.objects.filter(JobApplication=jobApplication).all()
 
-    print(experience)
 
 
     supportingDocuments = SupportingDocument.objects.filter(JobApplication=jobApplication)
