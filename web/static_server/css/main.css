@@ -10315,7 +10315,7 @@ input[type="submit"]:active {
 
 .notifier.new .badge {
   animation: pulse 2s ease-out;
-  animation-iteration-count: 2;
+  animation-iteration-count: 1;
 }
 
 @keyframes pulse {
