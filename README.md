@@ -9,12 +9,12 @@ Job board made for Concordia University, Montreal, Canada, Co-op ACE program.
 
 | Security        | Job Ranking & Matching          | Media servicing  | User Notification  | Other Job Board Services  | Data  | CI/CD  |
 | ------------- |:-------------:| :-----:|:-----:| :-----:|-----:|-----:|
-| Google Captcha      | Candidate-Employer preference ranking system| Nginx file servicing | [django-notifications-hq](https://pypi.org/project/django-notifications-hq/) | Login as Admin, Candidate or Employer | Postgres Db docker service| Prod Ready easy Docker-Compose setup and dedicated test docker-compose setup
+| Google Captcha      | Candidate-Employer preference ranking system| Nginx file servicing | [django-notifications-hq](https://pypi.org/project/django-notifications-hq/) | ATS and full admin control | Postgres Db docker service| Prod Ready easy Docker-Compose setup and dedicated test docker-compose setup
 | Email activation|  ["hospital-resident" matching algorithm](https://pypi.org/project/matching/)      |   [Dynamic Plyr video player](https://github.com/sampotts/plyr)  | Email notification| Post/review/edit jobs, interview invite, job matching, email notification | Persistent db mount | Persistent Volumes and storage mount, django migrations
 | Nginx-Sendfile Firewall |  |   Dynamic upload forms | Annoncements | Apply to jobs/Cache old applications and autofill forms | | Separated test media and test db volumes with 99% coding sharing between prod and test docker-compose setups
 | uuid protected dynamic file paths |  |    Secured resume caching and reuse| | E-commerce grade search and filter for jobs
 | Email password reset |  | Sendfile + auth protected media| | Search and filter candidates 
-| Let's Encrypt SSL with autorenewal | |  | | Full Admin Control (approval, permission assignment, etc.)
+| Let's Encrypt SSL with autorenewal | |  | | Login as Admin, Candidate or Employer
 | | |  | | Google Map,  PDF Concatination
 # Licensing
 - All python/django code are created by us and available under MIT licence
