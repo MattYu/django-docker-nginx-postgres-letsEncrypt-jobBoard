@@ -111,6 +111,7 @@ def get_transcript_path(instance, filename):
     return re.sub('[^\w\-_\./ ]', '_', os.path.join(
       "protected", str(now.year), str(instance.user.lastName) + "_" + str(instance.user.firstName) + "_" + str(instance.studentID), "transcript", str(uuid.uuid4().hex), filename))
 
+
 class Candidate(models.Model):
 
     studentID = models.CharField(max_length = MAX_LENGTH_STANDARDFIELDS,  default= "")
@@ -124,6 +125,9 @@ class Candidate(models.Model):
     timeCommitment = models.CharField(choices=YES_NO, max_length = 3, default="No")
     transcript = models.FileField(upload_to=get_transcript_path, default="")
     status = models.CharField(choices=EMPLOYER_STATUS, max_length = 20, default="Pending Review")
+    
+    concordia_email = models.CharField(max_length = MAX_LENGTH_STANDARDFIELDS,  default= "")
+    is_concordia_email_confirmed = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -157,3 +161,12 @@ class Language(models.Model):
 
     def __str__(self):
         return self.user.email
+
+class TokenGeneratorConcordiaEmail(PasswordResetTokenGenerator):
+    def _make_hash_value(self, user, timestamp):
+        return (
+            six.text_type(user.pk) + six.text_type(timestamp) +
+            six.text_type(Candidate.objects.get(user=user).is_concordia_email_confirmed) 
+        )
+
+concordia_email_confirmation_token = TokenGeneratorConcordiaEmail()

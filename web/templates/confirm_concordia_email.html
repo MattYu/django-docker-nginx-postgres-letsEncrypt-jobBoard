@@ -1,0 +1,17 @@
+{% autoescape off %}
+Hi {{ user.firstName }},
+
+Your Concordia ACE account, {{user.email}}, made this request. 
+
+Please confirm your Concordia email address by clicking on the following link,
+http://{{ domain }}{% url 'validate' uidb64=uid token=token %} 
+
+Note that if this email was sent to a non-Concordia email address, you can request a new confirmation link to another email address by going into 'Dashboard->Profile.'
+Some features may be unavailable to you until we confirm that you are indeed a Concordia student.  
+
+Regards,
+The Concordia ACE Team
+Please do not reply to this unmonitored email address.
+Don't recognize {{user.email}}? Let us know. 
+
+{% endautoescape %}

@@ -152,3 +152,5 @@ FILE_TYPE_OTHER = 4
 # Default video link
 
 DEFAULT_VIDEO = "https://www.youtube.com/watch?v=NwAxNFwEEbM"
+
+PASSWORD_MIN_LENGTH = 9

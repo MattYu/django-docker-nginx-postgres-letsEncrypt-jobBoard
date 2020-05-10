@@ -24,7 +24,7 @@ from ace.views import home_page
 from joblistings.views import job_details, post_job, download_jobPDF, manage_jobs, job_search
 from jobapplications.views import add_resume, download_test, browse_job_applications, get_protected_file, get_protected_file_withAuth, view_application_details
 from companies.views import view_company_details, manage_companies
-from accounts.views import register_user, logout_user, login_user, activate, manage_employers
+from accounts.views import register_user, logout_user, login_user, activate, manage_employers, validate, resend_activation
 from django.urls import include
 from django.urls import register_converter
 
@@ -73,7 +73,9 @@ urlpatterns = [
     path('login/', login_user),
     path('accounts/login/', login_user),
     path('activate/<uidb64>/<token>', activate, name="activate"),
-    path('search/', job_search),
+    path('resend_activation/', resend_activation, name="resend activation link"),
+    path('validate/<uidb64>/<token>', validate, name="validate"),
+    path('search/<optional_string:searchString>', job_search),
     path('jobApplications/<optional_int:jobId>', browse_job_applications),
     path('jobApplications/<optional_int:jobId>/<optional_string:searchString>', browse_job_applications),
     path('jobApplications/<optional_string:searchString>', browse_job_applications),
@@ -95,9 +97,6 @@ urlpatterns = [
     path('inbox/notifications/', include(notifications.urls, namespace='notifications')),
 ]
 
-
-urlpatterns = urlpatterns + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-urlpatterns = urlpatterns + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:
     urlpatterns = urlpatterns + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

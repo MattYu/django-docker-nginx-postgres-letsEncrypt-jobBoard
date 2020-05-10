@@ -1,5 +1,9 @@
 {% autoescape off %}
 Hi {{ user.firstName }},
-Please click on the link to confirm your registration,
-<!-- http://{{ domain }}{% url 'activate' uidb64=uid token=token %} -->
+Please click on the link to confirm your registration with Concordia ACE,
+http://{{ domain }}{% url 'activate' uidb64=uid token=token %}
+
+The Concordia ACE Team
+Please do not reply this unmonitored email address.
+Don't have an account with {{user.email}}? Let us know. 
 {% endautoescape %}
