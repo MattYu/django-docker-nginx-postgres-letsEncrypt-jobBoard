@@ -196,13 +196,19 @@ class RegistrationForm(forms.Form):
                 #raise forms.ValidationError('You have to upload a logo for your company')
                 self.raise_errors.append('You have to upload a logo for your company')
         if self.is_candidate_selected():
-            if not cleaned_data.get('transcript'):
+            if not cleaned_data.get('transcript') and self.is_valid():
                 #raise forms.ValidationError('You have to upload a transcript')
                 self.raise_errors.append('You have to upload a transcript')
+            if cleaned_data.get('transcript') and not cleaned_data.get('transcript').name.endswith(".pdf"):
+                self.raise_errors.append('Transcript must be in pdf format')
+
             if cleaned_data.get('concordia_email') != "":
                 if not re.match(r"[^@]+@[^@]+\.[^@]+", str(cleaned_data.get('concordia_email'))): 
                     #raise forms.ValidationError("Invalid Concorda Email address")
                     self.raise_errors.append('Invalid Concorda Email address')
+
+            if (cleaned_data.get('program') == "Any Category" or cleaned_data.get('program') == "ANY") and self.is_valid():
+                    self.raise_errors.append('Please specify your program of study')
 
         password = self.cleaned_data.get('password')
 

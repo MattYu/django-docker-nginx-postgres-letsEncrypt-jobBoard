@@ -79,7 +79,7 @@ def register_user(request, employer=None):
                     'uid':urlsafe_base64_encode(force_bytes(user.pk)),
                     'token':concordia_email_confirmation_token.make_token(user),
                 })
-                to_email = form.cleaned_data.get('email')
+                to_email = form.cleaned_data.get('concordia_email')
                 email = EmailMessage(
                             mail_subject, message, to=[to_email]
                 )
