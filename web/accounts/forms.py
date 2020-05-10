@@ -1,10 +1,11 @@
 from django import forms
-from ace.constants import MAX_LENGTH_STANDARDFIELDS, MAX_LENGTH_LONGSTANDARDFIELDS, USER_TYPE_CANDIDATE, USER_TYPE_EMPLOYER, LANGUAGE_CHOICES, LANGUAGE_FLUENCY_CHOICES, YES_NO, CATEGORY_CHOICES
+from ace.constants import PASSWORD_MIN_LENGTH, MAX_LENGTH_STANDARDFIELDS, MAX_LENGTH_LONGSTANDARDFIELDS, USER_TYPE_CANDIDATE, USER_TYPE_EMPLOYER, LANGUAGE_CHOICES, LANGUAGE_FLUENCY_CHOICES, YES_NO, CATEGORY_CHOICES
 from accounts.models import Candidate, Employer, PreferredName, MyUserManager
 from accounts.models import User, Language
 from companies.models import Company
 from tinymce.widgets import TinyMCE
 from django.shortcuts import get_object_or_404
+import re
 
 class RegistrationForm(forms.Form):
     registrationType = forms.CharField(widget=forms.HiddenInput(), required=False)
@@ -35,6 +36,7 @@ class RegistrationForm(forms.Form):
                             widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Phone number'})
                             )
 
+
     class Meta:
         model = User
 
@@ -48,16 +50,13 @@ class RegistrationForm(forms.Form):
         self.fields['employerCompany'].initial =companyType
         self.languageFields = []
         self.languageFieldsNames = []
+        self.raise_errors = []
 
         if (registrationType == "employer"):
             if (companyType == 'createNew'):
                 self.fields['companyName'] = forms.CharField(max_length = 100,  widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Company name'}))
                 self.fields['address'] = forms.CharField(max_length = 100,  widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Company address'}))
                 self.fields['website'] = forms.CharField(max_length = 100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Company website'}))
-                self.fields['profile'] = forms.CharField(
-                                                            max_length=1000,
-                                                            widget=TinyMCE(attrs={'class': 'tinymce-editor tinymce-editor-2'})
-                                                        )
                 self.fields['image'] =   forms.ImageField(required=False)
             if (companyType == 'selectFromExisting'):
                 self.fields['company'] = forms.ChoiceField(
@@ -83,6 +82,11 @@ class RegistrationForm(forms.Form):
                 self.fields['gpa'] = forms.FloatField(
                                         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Cumulative GPA'})
                                         )
+
+                self.fields['concordia_email'] = forms.EmailField(max_length=MAX_LENGTH_STANDARDFIELDS,
+                                                                    required=False,
+                                                                    widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Concordia Email (Optional)'})
+                                                                    )
                 for i in range(int(self.fields['extra_language_count'].initial)):
                     self.add_language(i)
 
@@ -177,22 +181,46 @@ class RegistrationForm(forms.Form):
         return True
 
     def clean(self):
+        self.raise_errors = []
         cleaned_data = super().clean()
         User.objects.all()
 
         if cleaned_data.get('password') != cleaned_data.get('passwordConfirm'):
-            raise forms.ValidationError('Passwords do not match')
+            #raise forms.ValidationError('Passwords do not match')
+            self.raise_errors.append('Passwords do not match')
         if User.objects.filter(email=cleaned_data.get('email')).count() != 0:
-            raise forms.ValidationError('Email is already in use')
-
-        if self.is_createCompany_selected() and self.is_createCompany_selected() and self.is_valid():
+            #raise forms.ValidationError('Email is already in use')
+            self.raise_errors.append('Email is already in use')
+        if self.is_createCompany_selected() and self.is_createCompany_selected():
             if not cleaned_data.get('image'):
-                raise forms.ValidationError('You have to upload a logo for your company')
-
-        if self.is_candidate_selected() and self.is_valid():
+                #raise forms.ValidationError('You have to upload a logo for your company')
+                self.raise_errors.append('You have to upload a logo for your company')
+        if self.is_candidate_selected():
             if not cleaned_data.get('transcript'):
-                raise forms.ValidationError('You have to upload a transcript')
+                #raise forms.ValidationError('You have to upload a transcript')
+                self.raise_errors.append('You have to upload a transcript')
+            if cleaned_data.get('concordia_email') != "":
+                if not re.match(r"[^@]+@[^@]+\.[^@]+", str(cleaned_data.get('concordia_email'))): 
+                    #raise forms.ValidationError("Invalid Concorda Email address")
+                    self.raise_errors.append('Invalid Concorda Email address')
 
+        password = self.cleaned_data.get('password')
+
+        if password != None:
+            if len(password) < PASSWORD_MIN_LENGTH:
+                #raise forms.ValidationError("The new password must be at least %d characters long." % PASSWORD_MIN_LENGTH)
+
+                self.raise_errors.append("The password must be at least %d characters long." % PASSWORD_MIN_LENGTH)
+            # At least one letter and one non-letter
+            first_isalpha = password[0].isalpha()
+            if all(c.isalpha() == first_isalpha for c in password):
+                #raise forms.ValidationError("The new password must contain at least one letter and at least one digit or" " punctuation character.")
+
+                self.raise_errors.append("The password must contain at least one letter and at least one digit or punctuation character.")
+
+        if self.raise_errors:
+            raise forms.ValidationError(self.raise_errors)
+        
         self.cleaned_data = cleaned_data
 
     def save(self):
@@ -234,7 +262,6 @@ class RegistrationForm(forms.Form):
                 company.name = cleaned_data.get('companyName')
                 company.address = cleaned_data.get('address')
                 company.website = cleaned_data.get('website')
-                company.profile = cleaned_data.get('profile')
                 company.image = cleaned_data.get('image')
                 company.save()
                 employer.company = company
@@ -255,6 +282,8 @@ class RegistrationForm(forms.Form):
             candidate.travel = cleaned_data.get('travel')
             candidate.timeCommitment = cleaned_data.get('timeCommitment')
             candidate.transcript = cleaned_data.get('transcript')
+            if cleaned_data.get('concordia_email') != "":
+                candidate.concordia_email = cleaned_data.get('concordia_email')
             candidate.save()
 
             for lan in self.languageFieldsNames:

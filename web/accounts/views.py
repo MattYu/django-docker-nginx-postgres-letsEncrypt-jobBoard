@@ -7,6 +7,7 @@ from accounts.models import Employer
 from joblistings.models import Job
 
 from ace.constants import USER_TYPE_SUPER
+from accounts.models import Candidate
 
 from django.contrib import messages
 from django.contrib.auth import login, authenticate
@@ -14,17 +15,20 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
-from accounts.models import account_activation_token, User
+from accounts.models import account_activation_token, User, concordia_email_confirmation_token
 from django.core.mail import EmailMessage
 from django.db import transaction 
 from django.http import HttpResponse
 
 from .decorators import check_recaptcha
+from notifications.signals import notify
+
 
 DEBUG =True
 
 # Create your views here.
 @check_recaptcha
+@transaction.atomic
 def register_user(request, employer=None):
     context = {}
     
@@ -59,9 +63,34 @@ def register_user(request, employer=None):
 
             try:
                 email.send()
+                description = "We have sent you a confirmation link to " + form.cleaned_data.get('email') + ". If you have not received the link, please click here " + str(current_site.domain) + "/resend_activation"
+                notify.send(user, recipient=user, verb='Welcome to ACE - Please confirm your email address', description = description)
                 messages.success(request, 'Candidate account created!')
-            except:
-                pass
+            except Exception as e:
+                import sys
+                print(e, file=sys.stderr)
+            
+            if form.is_candidate_selected and form.cleaned_data.get('concordia_email') != "":
+
+                mail_subject = 'Confirm your Concordia email address for ACE'
+                message = render_to_string('confirm_concordia_email.html', {
+                    'user': user,
+                    'domain': current_site.domain,
+                    'uid':urlsafe_base64_encode(force_bytes(user.pk)),
+                    'token':concordia_email_confirmation_token.make_token(user),
+                })
+                to_email = form.cleaned_data.get('email')
+                email = EmailMessage(
+                            mail_subject, message, to=[to_email]
+                )
+
+                try:
+                    email.send()
+                    notify.send(user, recipient=user, verb='Confirmation link sent to ' + to_email, description = "Link not received? You may request a new one by going into your Dashboard->Edit Profile")
+                except Exception as e:
+                    import sys
+                    print(e, file=sys.stderr)
+
             return HttpResponseRedirect('/')
 
 
@@ -150,11 +179,58 @@ def activate(request, uidb64, token):
     if user is not None and account_activation_token.check_token(user, token):
         user.is_email_confirmed = True
         user.save()
-        login(request, user)
         # return redirect('home')
         return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
     else:
         return HttpResponse('Activation link is invalid!')
+
+@transaction.atomic
+def validate(request, uidb64, token):
+    try:
+        uid = force_text(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+    if user is not None and concordia_email_confirmation_token.check_token(user, token):
+        try:
+            candidate = Candidate.objects.get(user=user)
+            candidate.is_concordia_email_confirmed = True
+            candidate.save()
+            # return redirect('home')
+            return HttpResponse('Thank you for your secondary email confirmation.')
+        except Exception as e:
+            return HttpResponse("Confirmation link is invalid!")
+    else:
+        return HttpResponse('Confirmation link is invalid!')
+
+def resend_activation(request):
+    if request.user.is_authenticated:
+        user =request.user
+        email = user.email
+        current_site = get_current_site(request)
+        mail_subject = 'Activate your Concordia ACE account.'
+        message = render_to_string('acc_active_email.html', {
+            'user': user,
+            'domain': current_site.domain,
+            'uid':urlsafe_base64_encode(force_bytes(user.pk)),
+            'token':account_activation_token.make_token(user),
+        })
+        to_email = email
+        email = EmailMessage(
+                    mail_subject, message, to=[to_email]
+        )
+
+        try:
+            email.send()
+            description = "We have sent you another confirmation link to " + email + ". If you have not received the link, please click here "
+        except Exception as e:
+            import sys
+            print(e, file=sys.stderr)
+
+        return HttpResponseRedirect('/')
+
+    else:
+        return HttpResponse('You must be logged in to resend your email activation link')
 
 def manage_employers(request, searchString=""):
     if request.user.is_authenticated and request.user.user_type == USER_TYPE_SUPER:

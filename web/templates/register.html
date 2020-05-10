@@ -139,7 +139,7 @@
                       <div class="form-header">
                         <h5><i data-feather="edit"></i>Please tell us more about your company</h5>
                       </div>
-                      <h5>Our staff will review your information within 1-3 business days</h5>
+                      <p>Note: Our staff will review your information within 1-3 business days<p>
                       <div class="form-group">
                         {{form.companyName}}
                       </div>
@@ -148,9 +148,6 @@
                       </div>
                       <div class="form-group">
                         {{form.website}}
-                      </div>
-                      <div class="form-group">
-                        {{form.profile}}
                       </div>
                       <div class="form-group">
                         <br>
@@ -170,6 +167,7 @@
                       <div class="form-header">
                         <h5><i data-feather="edit"></i>Select your company from the list</h5>
                       </div>
+                      <p>Note: Our staff will review your information within 1-3 business days<p>
                       <div class="form-group">
                         {{form.company}}
                       </div>                           
@@ -267,6 +265,10 @@
                       <br>
                       <label>Please upload PDF of your unofficial transcript</label>
                       {{form.transcript}}
+                      <br>
+                      <br>
+                      <label>Confirm that you are a Concordia student: Enter a valid Concordia Email and we will send you a confirmation link. (This is optional and you may do this at a later time through the 'Edit Profile' menu) </label>
+                      {{form.concordia_email}}
                       <br>
                       <br>
                       <br>                        
