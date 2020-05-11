@@ -7,7 +7,7 @@ from joblistings.models import Job
 from accounts.models import Candidate
 from ace.models import Candidate_termsAndConditions, Employer_termsAndConditions
 
-import sys
+#import sys
 
 def home_page(request):
     context = {}

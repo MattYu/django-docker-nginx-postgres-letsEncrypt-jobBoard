@@ -104,7 +104,10 @@ def browse_job_applications(request, searchString = "", jobId= -1):
         kwargs = {}
         if jobId != None:
             query = Q(job__pk=jobId)
-            context["job"] = Job.objects.get(pk=jobId)
+            try:
+                context["job"] = Job.objects.get(pk=jobId)
+            except:
+                context["job"] = []
 
 
     if request.user.user_type == USER_TYPE_EMPLOYER:
@@ -114,7 +117,10 @@ def browse_job_applications(request, searchString = "", jobId= -1):
         
         if jobId != None:
             query &= Q(job__pk=jobId)
-            context["job"] = Job.objects.get(pk=jobId)
+            try:
+                context["job"] = Job.objects.get(pk=jobId)
+            except:
+                context["job"] = []
 
 
     if request.user.user_type == USER_TYPE_CANDIDATE:

@@ -21,3 +21,14 @@ def get_navbar(*args, **kwargs):
         'notifications': notifications,
         'notificationsCount': len(notifications),
     }
+
+
+@register.inclusion_tag('dashbar.html')
+def get_dashbar(*args, **kwargs):
+
+
+    active = kwargs['active']
+
+    return {
+        'active': active
+    }
