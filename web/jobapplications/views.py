@@ -43,6 +43,9 @@ def add_resume(request, pk= None, *args, **kwargs):
             request.session['info'] = "Only candidates can access this page"
             return  HttpResponseRedirect('/')
 
+        if not request.user.is_email_confirmed:
+            return HttpResponseRedirect('/activate')
+
         jobApplication = JobApplication.objects.filter(job__pk=pk, candidate=Candidate.objects.get(user=request.user)).count()
 
         if jobApplication !=0:

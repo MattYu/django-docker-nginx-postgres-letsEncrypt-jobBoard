@@ -140,8 +140,6 @@ class RegistrationForm(forms.Form):
                     candidate_termsAndConditions = []
                     import sys
                     print(e, file=sys.stderr)
-                import sys
-                print(candidate_termsAndConditions, file=sys.stderr)
                 self.candidate_termsAndConditions = Candidate_termsAndConditions
 
                 for i in range(len(candidate_termsAndConditions)):
@@ -272,6 +270,8 @@ class RegistrationForm(forms.Form):
 
             if (cleaned_data.get('program') == "Any Category" or cleaned_data.get('program') == "ANY") and self.is_valid():
                     self.raise_errors.append('Please specify your program of study')
+            if cleaned_data.get('citizenship') == "Choose" and self.is_valid():
+                    self.raise_errors.append('Please specify your citizenship status')
 
         password = self.cleaned_data.get('password')
 
@@ -339,6 +339,15 @@ class RegistrationForm(forms.Form):
                 employer.company = get_object_or_404(Company, pk=cleaned_data.get('company'))
 
             employer.save()
+
+            try:
+                employer_termsAndConditions = Employer_termsAndConditions.objects.all()
+            except:
+                employer_termsAndConditions = []
+
+            for condition in employer_termsAndConditions:
+                condition.agreedList.add(employer)
+                condition.save()
         else:
             candidate = Candidate()
             candidate.user =user
@@ -352,6 +361,15 @@ class RegistrationForm(forms.Form):
             if cleaned_data.get('concordia_email') != "":
                 candidate.concordia_email = cleaned_data.get('concordia_email')
             candidate.save()
+
+            try:
+                candidate_termsAndConditions = Candidate_termsAndConditions.objects.all()
+            except Exception as e:
+                candidate_termsAndConditions = []
+
+            for condition in candidate_termsAndConditions:
+                condition.agreedList.add(candidate)
+                condition.save()
 
             for lan in self.languageFieldsNames:
                 language = Language()

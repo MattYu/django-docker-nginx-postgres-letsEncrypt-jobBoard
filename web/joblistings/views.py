@@ -154,9 +154,13 @@ def post_job(request,  *args, **kwargs):
         request.session['warning'] = "Warning: Please register with ACE first"
         return HttpResponseRedirect('/login')
     else:
+        
         if request.user.user_type == USER_TYPE_CANDIDATE:
             request.session['info'] = "You are logged in as a candidate. Only employers can access this page"
             return  HttpResponseRedirect('/')
+
+        if not request.user.is_email_confirmed:
+            return HttpResponseRedirect('/activate')
 
     if (request.method == "POST"):
         form = JobForm(user=request.user, data=request.POST, files=request.FILES)

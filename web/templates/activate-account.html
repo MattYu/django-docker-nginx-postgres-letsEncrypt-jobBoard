@@ -29,15 +29,11 @@
     <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,600%7CRoboto:300i,400,500" rel="stylesheet">
 
     <!-- Favicon -->
-    <link rel="icon" href="images/favicon.png">
-    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="images/icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="images/icon-114x114.png">
 
 
     <!--[if lt IE 9]>
-    <script src="assets/js/html5shiv.min.js"></script>
-    <script src="assets/js/respond.min.js"></script>
+    <script src={% static "assets/js/html5shiv.min.js" %}></script>
+    <script src={% static "assets/js/respond.min.js" %}></script>
     <![endif]-->
 
   </head>
@@ -77,9 +73,11 @@
                       </div>
                       {% endif %}
                     </div>
+                    {% if user.is_authenticated %}
                     <ul class="account-item-list">
                       <li><a href="/logout"><span class="ti-power-off"></span>Log Out</a></li>
                     </ul>
+                    {% endif %}
                   </div>
                 </div>
               </div>
@@ -103,12 +101,8 @@
       <div class="container">
         <div class="row">
           <div class="col">
-            <div class="section-padding-150 error-page-wrap text-center white-bg">
-              <div class="icon">
-                <img src="images/error.png" class="img-fluid" alt="">
-              </div>
-              <h1>404</h1>
-              <p>You can't access this page.</p>
+              <h5>Please confirm your email address</h5>
+              <p>We have sent a confirmation link to {{request.user.email}}. If you have not receive the link, you can request a new one by clicking <a href="/resend_activation"><strong>here</h5> </strong>. Please also look into your spam folder.</p>
               <a href="/" class="button">Go Back</a>
             </div>
           </div>
