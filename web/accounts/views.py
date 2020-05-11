@@ -140,8 +140,9 @@ def activate(request, uidb64, token):
     if user is not None and account_activation_token.check_token(user, token):
         user.is_email_confirmed = True
         user.save()
+        return HttpResponseRedirect('/validated')
         # return redirect('home')
-        return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
+        #return HttpResponse('Thank you for your email confirmation. Now you can log into your account.')
     else:
         return HttpResponse('Activation link is invalid!')
 
@@ -228,5 +229,11 @@ def manage_employers(request, searchString=""):
 def activate_account(request):
     context = {}
 
-    if request.user.is_authenticated:
+    if request.user.is_authenticated and not request.user.is_email_confirmed:
         return render(request, "activate-account.html", context)
+    if request.user.is_email_confirmed:
+        return HttpResponse('Your email address has already been validated')
+
+def validated(request):
+
+    return render(request, "validated.html")

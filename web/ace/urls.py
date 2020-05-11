@@ -24,7 +24,7 @@ from ace.views import home_page
 from joblistings.views import job_details, post_job, download_jobPDF, manage_jobs, job_search
 from jobapplications.views import add_resume, download_test, browse_job_applications, get_protected_file, get_protected_file_withAuth, view_application_details
 from companies.views import view_company_details, manage_companies
-from accounts.views import register_user, logout_user, login_user, activate, manage_employers, validate, resend_activation, activate_account
+from accounts.views import register_user, logout_user, login_user, activate, manage_employers, validate, resend_activation, activate_account, validated
 from ace.views import terms_and_conditions
 from django.urls import include
 from django.urls import register_converter
@@ -98,6 +98,7 @@ urlpatterns = [
     path('company-details/<int:pk>/', view_company_details),
     path('inbox/notifications/', include(notifications.urls, namespace='notifications')),
     path('terms-and-conditions/<int:userType>/<int:pk>', terms_and_conditions),
+    path('validated/', validated),
 ]
 
 

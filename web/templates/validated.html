@@ -1,0 +1,141 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Oficiona</title>
+ 
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href={% static "assets/css/bootstrap.min.css" %}>
+
+    <!-- External Css -->
+    <link rel="stylesheet" href={% static "assets/css/fontawesome-all.min.css" %}> 
+    <link rel="stylesheet" href={% static "assets/css/themify-icons.css" %}/>
+    <link rel="stylesheet" href={% static "assets/css/et-line.css" %}/>
+    <link rel="stylesheet" href={% static "assets/css/bootstrap-select.min.css" %}/>
+    <link rel="stylesheet" href={% static "assets/css/plyr.css" %}/>
+    <link rel="stylesheet" href={% static "assets/css/flag.css" %}/>
+    <link rel="stylesheet" href={% static "assets/css/slick.css" %}/> 
+    <link rel="stylesheet" href={% static "assets/css/owl.carousel.min.css" %}/>
+    <link rel="stylesheet" href={% static "assets/css/jquery.nstSlider.min.css" %}/>
+
+    <!-- Custom Css -->
+    <link rel="stylesheet" type="text/css" href={% static "css/main.css" %}>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,600%7CRoboto:300i,400,500" rel="stylesheet">
+
+    <!-- Favicon -->
+    <link rel="icon" href="images/favicon.png">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="images/icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/icon-114x114.png">
+
+
+    <!--[if lt IE 9]>
+    <script src={% static "assets/js/html5shiv.min.js" %}></script>
+    <script src={% static "assets/js/respond.min.js" %}></script>
+    <![endif]-->
+
+  </head>
+  <body>
+
+    <header class="header-2">
+      <div class="container">
+        <div class="row">
+          <div class="col">
+            <div class="header-top">
+              <div class="logo-area">
+                <a href="/"><img src={% static "images/concordia-logo.png" %} alt=""></a>
+              </div>
+              <div class="header-top-toggler">
+                <div class="header-top-toggler-button"></div>
+              </div>
+              <div class="top-nav">
+                    {% if user.user_type == 2%}
+                      <a href="/jobApplications/"><span class="ti-user"></span> Dashboard </a>
+                    {% endif %}
+
+                    {% if user.user_type == 4 %}
+                      <a href="/jobApplications/"><span class="ti-user"></span> Dashboard </a>
+                      <a href="/admin"><span class="ti-user"></span> Admin DB </a>
+                    {% endif %}
+                <div class="dropdown header-top-account">
+                  <a href="#" class="account-button">My Account</a>
+                  <div class="account-card">
+                    <div class="header-top-account-info">
+                      <a href="#" class="account-thumb">
+                        <img src="images/account/thumb-1.jpg" class="img-fluid" alt="">
+                      </a>
+                      {% if user.is_authenticated %}
+                      <div class="account-body">
+                        <h5><a href="#">{{user.firstName}} {{user.lastName}}</a></h5>
+                        <span class="mail">{{user.email}}</span>
+                      </div>
+                      {% endif %}
+                    </div>
+                    <ul class="account-item-list">
+                      <li><a href="/logout"><span class="ti-power-off"></span>Log Out</a></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <nav class="navbar navbar-expand-lg cp-nav-2">
+              <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav">
+                  <li class="menu-item active"><a title="Home" href="/">Home</a></li>
+                </ul>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="padding-top-80 section-padding-bottom alice-bg">
+      <div class="container">
+        <div class="row">
+          <div class="col">
+            <div class="section-padding-150 error-page-wrap text-center white-bg">
+              <h5>Thank you for validating your email. Welcome to Concordia ACE. </h5>
+              <a href="/login" class="button">Login</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src={% static "assets/js/jquery.min.js" %}></script>
+    <script src={% static "assets/js/popper.min.js" %}></script>
+    <script src={% static "assets/js/bootstrap.min.js" %}></script>
+    <script src={% static "assets/js/feather.min.js" %}></script>
+    <script src={% static "assets/js/bootstrap-select.min.js" %}></script>
+    <script src={% static "assets/js/jquery.nstSlider.min.js" %}></script>
+    <script src={% static "assets/js/owl.carousel.min.js" %}></script>
+    <script src={% static "assets/js/visible.js" %}></script>
+    <script src={% static "assets/js/jquery.countTo.js" %}></script>
+    <script src={% static "assets/js/chart.js" %}></script>
+    <script src={% static "assets/js/plyr.js" %}></script>
+    <script src={% static "assets/js/tinymce.min.js" %}></script>
+    <script src={% static "assets/js/slick.min.js" %}></script>
+    <script src={% static "assets/js/jquery.ajaxchimp.min.js" %}></script>
+
+    <script src={% static "js/custom.js" %}></script>
+    <script src={% static "dashboard/js/dashboard.js" %}></script>
+    <script src={% static "dashboard/js/datePicker.js" %}></script>
+    <script src={% static "dashboard/js/upload-input.js" %}></script>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC87gjXWLqrHuLKR0CTV5jNLdP4pEHMhmg"></script>
+    <script src={% static "js/map.js" %}></script>
+  </body>
+</html>
