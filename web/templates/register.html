@@ -142,17 +142,45 @@
                       <p>Note: Our staff will review your information within 1-3 business days<p>
                       <div class="form-group">
                         {{form.companyName}}
+                        {% if showError %}
+                        {% for error in form.companyName.errors %}
+                        <div class="alert alert-danger">
+                            <strong>{{ error|escape }}</strong>
+                        </div>
+                        {% endfor %}
+                        {% endif %}
                       </div>
                       <div class="form-group">
                         {{form.address}}
+                        {% if showError %}
+                        {% for error in form.address.errors %}
+                        <div class="alert alert-danger">
+                            <strong>{{ error|escape }}</strong>
+                        </div>
+                        {% endfor %}
+                        {% endif %}
                       </div>
                       <div class="form-group">
                         {{form.website}}
+                        {% if showError %}
+                        {% for error in form.website.errors %}
+                        <div class="alert alert-danger">
+                            <strong>{{ error|escape }}</strong>
+                        </div>
+                        {% endfor %}
+                        {% endif %}
                       </div>
                       <div class="form-group">
                         <br>
                         <label>Please upload your company logo</label>
                         {{form.image}}
+                        {% if showError %}
+                        {% for error in form.image.errors %}
+                            <div class="alert alert-danger">
+                                <strong>{{ error|escape }}</strong>
+                            </div>
+                        {% endfor %}
+                        {% endif %}
                       </div>
                     {% else %}
                       <div class="row"> 
@@ -170,6 +198,13 @@
                       <p>Note: Our staff will review your information within 1-3 business days<p>
                       <div class="form-group">
                         {{form.company}}
+                        {% if showError %}
+                        {% for error in form.company.errors %}
+                        <div class="alert alert-danger">
+                            <strong>{{ error|escape }}</strong>
+                        </div>
+                        {% endfor %}
+                        {% endif %}
                       </div>                           
                     {% endif %}
                   <br>
@@ -183,31 +218,94 @@
                 </div>
                 <div class="form-group" id="test">
                   {{form.email}}
+                  {% if showError %}
+                  {% for error in form.email.errors %}
+                      <div class="alert alert-danger">
+                          <strong>{{ error|escape }}</strong>
+                      </div>
+                  {% endfor %}
+                  {% endif %}
                 </div>
                 <div class="form-group">
                   {{form.firstName}}
+                  {% if showError %}
+                  {% for error in form.firstName.errors %}
+                      <div class="alert alert-danger">
+                          <strong>{{ error|escape }}</strong>
+                      </div>
+                  {% endfor %}
+                  {% endif %}
                 </div>
                 <div class="form-group">
                   {{form.lastName}}
+                  {% if showError %}
+                  {% for error in form.lastName.errors %}
+                      <div class="alert alert-danger">
+                          <strong>{{ error|escape }}</strong>
+                      </div>
+                  {% endfor %}
+                  {% endif %}
                 </div>
                 <div class="form-group">
                   {{form.preferredName}}
+                  {% if showError %}
+                  {% for error in form.preferredName.errors %}
+                      <div class="alert alert-danger">
+                          <strong>{{ error|escape }}</strong>
+                      </div>
+                  {% endfor %}
+                  {% endif %}
                 </div>
                 <div class="form-group">
                   {{form.phoneNumber}}
+                  {% if showError %}
+                  {% for error in form.phoneNumber.errors %}
+                      <div class="alert alert-danger">
+                          <strong>{{ error|escape }}</strong>
+                      </div>
+                  {% endfor %}
+                  {% endif %}
                 </div>
                   {% if form.is_candidate_selected %}
                     <div class="form-group">
                       {{form.studentID}}
+                      {% if showError %}
+                      {% for error in form.studentID.errors %}
+                          <div class="alert alert-danger">
+                              <strong>{{ error|escape }}</strong>
+                          </div>
+                      {% endfor %}
+                      {% endif %}
                     </div>
                     <div class="form-group">
                       {{form.gpa}}
+                      {% if showError %}
+                      {% for error in form.gpa.errors %}
+                          <div class="alert alert-danger">
+                              <strong>{{ error|escape }}</strong>
+                          </div>
+                      {% endfor %}
+                      {% endif %}
                     </div>
                     <div class="form-group">
                       {{form.creditCompleted}}
+                      {% if showError %}
+                      {% for error in form.creditCompleted.errors %}
+                          <div class="alert alert-danger">
+                              <strong>{{ error|escape }}</strong>
+                          </div>
+                      {% endfor %}
+                      {% endif %}
                     </div>
                     <div class="form-group">
                       {{form.creditLeft}}
+                      {% if showError %}
+                      {% for error in form.creditLeft.errors %}
+                          <div class="alert alert-danger">
+                              <strong>{{ error|escape }}</strong>
+                          </div>
+                      {% endfor %}
+                      {% endif %}
                     </div>
                     <div class="row" id = "LanguageFields">
                     {% for language in form.get_language_fields %}
@@ -215,12 +313,33 @@
                       <div class="col-md-9" id>
                         <div class="form-group">
                           {{language.language}}
+                          {% if showError %}
+                          {% for error in language.language.errors %}
+                        <div class="alert alert-danger">
+                            <strong>{{ error|escape }}</strong>
+                        </div>
+                        {% endfor %}
+                        {% endif %}
                         </div>
                         <div class="form-group">
                           {{language.proficiency}}
+                          {% if showError %}
+                          {% for error in language.proficiency.errors %}
+                        <div class="alert alert-danger">
+                            <strong>{{ error|escape }}</strong>
+                        </div>
+                        {% endfor %}
+                        {% endif %}
                         </div>
                         <div class="form-group">
                           {{language.details}}
+                          {% if showError %}
+                          {% for error in language.details.errors %}
+                        <div class="alert alert-danger">
+                            <strong>{{ error|escape }}</strong>
+                        </div>
+                        {% endfor %}
+                        {% endif %}
                         </div>
                         {% if forloop.last %}
                         <div class="row">
@@ -248,27 +367,47 @@
                       <br>
                       <label>Are you an international student? (if so, you will be required to have a working VISA before the start of the internship, and for the total length of the internship)
 </label>
-                      {{form.internationalStudent}}
+                      {{form.citizenship}}
+                      {% if showError %}
+                      {% for error in form.citizenship.errors %}
+                          <div class="alert alert-danger">
+                              <strong>{{ error|escape }}</strong>
+                          </div>
+                      {% endfor %}
+                      {% endif %}
                       <br>
-                      <br>
-                      <label>Are you willing to do an internship outside of the greater Montreal area (ex.  Mirabel, Quebec city, Ottawa or out of province)?</label>
-                      {{form.travel}}
-                      <br> 
-                      <br>
-                      <label>Are you willing to commit to a 12 or 16 month internship that will extend your graduation date by up to 1 year?</label>
-                      {{form.timeCommitment}}
-                      <br> 
                       <br>
                       <label>What is your program of study?</label>
                       {{form.program}}
+                      {% if showError %}
+                      {% for error in form.program.errors %}
+                          <div class="alert alert-danger">
+                              <strong>{{ error|escape }}</strong>
+                          </div>
+                      {% endfor %}
+                      {% endif %}
+                      <br>
+                      <br>
+                      <label>Confirm that you are a Concordia student: Enter a valid Concordia Email and we will send you a confirmation link. (This is optional and you may do this at a later time through the 'Edit Profile' menu.) </label>
+                      {{form.concordia_email}}
+                      {% if showError %}
+                      {% for error in form.concordia_email.errors %}
+                          <div class="alert alert-danger">
+                              <strong>{{ error|escape }}</strong>
+                          </div>
+                      {% endfor %}
+                      {% endif %}
                       <br>
                       <br>
                       <label>Please upload PDF of your unofficial transcript</label>
                       {{form.transcript}}
-                      <br>
-                      <br>
-                      <label>Confirm that you are a Concordia student: Enter a valid Concordia Email and we will send you a confirmation link. (This is optional and you may do this at a later time through the 'Edit Profile' menu) </label>
-                      {{form.concordia_email}}
+                      {% if showError %}
+                        {% for error in form.transcript.errors %}
+                            <div class="alert alert-danger">
+                                <strong>{{ error|escape }}</strong>
+                            </div>
+                        {% endfor %}
+                        {% endif %}
                       <br>
                       <br>
                       <br>                        
@@ -279,35 +418,69 @@
 
                 <div class="form-group">
                   {{form.password}}
+                  {% if showError %}
+                  {% for error in form.password.errors %}
+                      <div class="alert alert-danger">
+                          <strong>{{ error|escape }}</strong>
+                      </div>
+                  {% endfor %}
+                  {% endif %}
                 </div>
                 <div class="form-group">
                   {{form.passwordConfirm}}
+                  {% if showError %}
+                  {% for error in form.passwordConfirm.errors %}
+                      <div class="alert alert-danger">
+                          <strong>{{ error|escape }}</strong>
+                      </div>
+                  {% endfor %}
+                  {% endif %}
                 </div>
                 {% endif %}
                 {% endif %}
-                {% if form.non_field_errors %}
-                  <div class="non-field-errors">
-                    {% for err in form.non_field_errors %}
-                      <p class="text-danger">{{ err }}</p>
-                    {% endfor %}
-                  </div>
+                {% if form.get_terms_and_conditions %}
+                <label>Terms & conditions</label>
                 {% endif %}
-                {% if form.isAllFieldSelected %}
+                {% for tAndC in form.get_terms_and_conditions %}
                 <div class="more-option terms">
+                <br>
+                <br>
                   <div class="mt-0 terms">
-                    <input class="custom-radio" type="checkbox" id="radio-4" name="termsandcondition" checked>
+                    {{tAndC.radio}}
+                    {% if showError %}
+                    {% for error in tAndC.radio.errors %}
+                        <div class="alert alert-danger">
+                            <strong>{{ error|escape }}</strong>
+                        </div>
+                    {% endfor %}
+                    {% endif %}
                     <label for="radio-4">
-                      <span class="dot"></span> I accept the <a href="#">terms & conditions</a>
+                      {% if form.is_candidate_selected %}
+                      <span class="dot"></span> <a target="_blank" rel="noopener noreferrer" href="/terms-and-conditions/1/{{tAndC.obj.pk}}">{{tAndC.obj.title}}</a>
+                      {% else %}
+                      <span class="dot"></span> <a target="_blank" rel="noopener noreferrer" href="/terms-and-conditions/2/{{tAndC.obj.pk}}">{{tAndC.obj.title}}</a>
+                      {% endif %}
                     </label>
                   </div>
+                  
                 </div>
+                {% endfor %}
+
+                {% if form.non_field_errors %}
+                    {% for error in form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            <strong>{{ error|escape }}</strong>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                {% if form.isAllFieldSelected %}
                 {% block content %}
                   {% csrf_token %}
                   <script src='https://www.google.com/recaptcha/api.js'></script>
                   <div class="g-recaptcha" data-sitekey="6Lf0je8UAAAAAN4gmK-Oko9dhhvj1sF4UKkqWip3"></div>
                   <br>
                 {% endblock %}
-                <button class="button primary-bg btn-block">Register</button>
+                <input type="submit" class="button primary-bg btn-block" formnovalidate value="Register" name="Register" id="Register">
                 {% else %}
                 <div class="more-option terms">
                   <div class="mt-0 terms">
@@ -437,6 +610,7 @@
           localStorage.setItem('my-scroll-pos', $(window).scrollTop());
 
           $("[name=employerCompany]").val("selectFromExisting");
+          $("[name=registrationType]").val("employer");
           $("#existingpartner").animateHighlight("##6495ED", 1000)
       })
 
@@ -444,6 +618,7 @@
           localStorage.setItem('my-scroll-pos', $(window).scrollTop());
 
           $("[name=employerCompany]").val("createNew");
+          $("[name=registrationType]").val("employer");
           $("#newpartner").animateHighlight("##6495ED", 1000)
       })
     </script>

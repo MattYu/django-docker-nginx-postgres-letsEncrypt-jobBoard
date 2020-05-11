@@ -5,5 +5,5 @@ http://{{ domain }}{% url 'activate' uidb64=uid token=token %}
 
 The Concordia ACE Team
 Please do not reply this unmonitored email address.
-Don't have an account with {{user.email}}? Let us know. 
+Never made a {{user.email}} ACE account? Prevent identity theft and let us know. You may suspend this account here: http://{{ domain }}{% url 'password_reset'  %}
 {% endautoescape %}

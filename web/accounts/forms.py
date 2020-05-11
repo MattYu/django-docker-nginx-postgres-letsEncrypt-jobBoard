@@ -1,11 +1,20 @@
 from django import forms
-from ace.constants import PASSWORD_MIN_LENGTH, MAX_LENGTH_STANDARDFIELDS, MAX_LENGTH_LONGSTANDARDFIELDS, USER_TYPE_CANDIDATE, USER_TYPE_EMPLOYER, LANGUAGE_CHOICES, LANGUAGE_FLUENCY_CHOICES, YES_NO, CATEGORY_CHOICES
+from ace.constants import AGREE_DISAGREE, PASSWORD_MIN_LENGTH, MAX_LENGTH_STANDARDFIELDS, MAX_LENGTH_LONGSTANDARDFIELDS, USER_TYPE_CANDIDATE, USER_TYPE_EMPLOYER, LANGUAGE_CHOICES, LANGUAGE_FLUENCY_CHOICES, YES_NO, CITIZENSHIP, CATEGORY_CHOICES
 from accounts.models import Candidate, Employer, PreferredName, MyUserManager
 from accounts.models import User, Language
 from companies.models import Company
 from tinymce.widgets import TinyMCE
 from django.shortcuts import get_object_or_404
 import re
+
+from notifications.signals import notify
+from accounts.models import account_activation_token, User, concordia_email_confirmation_token
+from django.contrib.sites.shortcuts import get_current_site
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_text
+from django.core.mail import EmailMessage
+from ace.models import Employer_termsAndConditions, Candidate_termsAndConditions
 
 class RegistrationForm(forms.Form):
     registrationType = forms.CharField(widget=forms.HiddenInput(), required=False)
@@ -51,6 +60,8 @@ class RegistrationForm(forms.Form):
         self.languageFields = []
         self.languageFieldsNames = []
         self.raise_errors = []
+        self.termsAndConditionsFields = []
+        self.termsAndConditionsFieldsNames = []
 
         if (registrationType == "employer"):
             if (companyType == 'createNew'):
@@ -58,6 +69,17 @@ class RegistrationForm(forms.Form):
                 self.fields['address'] = forms.CharField(max_length = 100,  widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Company address'}))
                 self.fields['website'] = forms.CharField(max_length = 100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Company website'}))
                 self.fields['image'] =   forms.ImageField(required=False)
+
+                try:
+                    employer_termsAndConditions = Employer_termsAndConditions.objects.all()
+                except:
+                    employer_termsAndConditions = []
+
+                self.employer_termsAndConditions = employer_termsAndConditions
+
+                for i in range(len(employer_termsAndConditions)):
+                    self.add_termsAndConditions(employer_termsAndConditions[i], i)
+
             if (companyType == 'selectFromExisting'):
                 self.fields['company'] = forms.ChoiceField(
                                                             widget=forms.Select(attrs={'class': 'form-control', 'placeholder': 'Select Category'})
@@ -67,6 +89,15 @@ class RegistrationForm(forms.Form):
                 for obj in company:
                     company_choices.append((obj.pk, obj))
                 self.fields['company'].choices = company_choices
+                try:
+                    employer_termsAndConditions = Employer_termsAndConditions.objects.all()
+                except:
+                    employer_termsAndConditions = []
+
+                self.employer_termsAndConditions = employer_termsAndConditions
+
+                for i in range(len(employer_termsAndConditions)):
+                    self.add_termsAndConditions(employer_termsAndConditions[i], i)
 
         if (registrationType == "candidate"):
                 self.fields['studentID'] = forms.CharField(max_length=MAX_LENGTH_STANDARDFIELDS,
@@ -95,22 +126,26 @@ class RegistrationForm(forms.Form):
                                                                     widget=forms.Select(attrs={'class': 'form-control'})
                                                                 )
 
-                self.fields['internationalStudent'] = forms.ChoiceField(
-                                                                    choices=YES_NO,
+                self.fields['citizenship'] = forms.ChoiceField(
+                                                                    choices=CITIZENSHIP,
                                                                     widget=forms.Select(attrs={'class': 'form-control'})
                                                                 )
                 
-                self.fields['travel'] = forms.ChoiceField(
-                                                                    choices=YES_NO,
-                                                                    widget=forms.Select(attrs={'class': 'form-control'})
-                                                                )
-
-                self.fields['timeCommitment'] = forms.ChoiceField(
-                                                                    choices=YES_NO,
-                                                                    widget=forms.Select(attrs={'class': 'form-control'})
-                                                                )
 
                 self.fields['transcript'] =   forms.FileField(required=False)
+
+                try:
+                    candidate_termsAndConditions = Candidate_termsAndConditions.objects.all()
+                except Exception as e:
+                    candidate_termsAndConditions = []
+                    import sys
+                    print(e, file=sys.stderr)
+                import sys
+                print(candidate_termsAndConditions, file=sys.stderr)
+                self.candidate_termsAndConditions = Candidate_termsAndConditions
+
+                for i in range(len(candidate_termsAndConditions)):
+                    self.add_termsAndConditions(candidate_termsAndConditions[i], i)
 
 
     def add_language(self, i:int = None):
@@ -144,9 +179,30 @@ class RegistrationForm(forms.Form):
         self.languageFieldsNames.append(lanNameDict)
 
         return languageDict
+
+    def add_termsAndConditions(self, termsAndConditions, i:int = None):
+        field_name = '_tAndC_%s' % (i,)
+        tAndDDict = {}
+        tAndDNameDict = {}
+
+        self.fields['radio' + field_name] = forms.ChoiceField(choices=AGREE_DISAGREE, widget=forms.RadioSelect)
+        tAndDDict['radio'] = self['radio' + field_name]
+        tAndDNameDict['radio'] = 'radio' + field_name
+
+        tAndDDict['obj'] = termsAndConditions
+        tAndDNameDict['obj'] = 'obj' + field_name
+        
+        self.termsAndConditionsFields.append(tAndDDict)
+        self.termsAndConditionsFieldsNames.append(tAndDNameDict)
+
+        return tAndDDict
+
                 
     def get_language_fields(self):
         return self.languageFields
+
+    def get_terms_and_conditions(self):
+        return self.termsAndConditionsFields
 
     def check_max_language_count(self):
         return len(self.languageFields) >= 10
@@ -171,6 +227,7 @@ class RegistrationForm(forms.Form):
         if self.fields['employerCompany'].initial == 'createNew':
             return True
         return False
+        
 
     def isAllFieldSelected(self)-> bool:
         if self.fields['registrationType'].initial != 'employer' and self.fields['registrationType'].initial != 'candidate':
@@ -185,6 +242,9 @@ class RegistrationForm(forms.Form):
         cleaned_data = super().clean()
         User.objects.all()
 
+        if cleaned_data.get('email') != "" and self.is_valid():
+                if not re.match(r"[^@]+@[^@]+\.[^@]+", str(cleaned_data.get('email'))): 
+                    self.raise_errors.append('Invalid Email address')
         if cleaned_data.get('password') != cleaned_data.get('passwordConfirm'):
             #raise forms.ValidationError('Passwords do not match')
             self.raise_errors.append('Passwords do not match')
@@ -192,17 +252,26 @@ class RegistrationForm(forms.Form):
             #raise forms.ValidationError('Email is already in use')
             self.raise_errors.append('Email is already in use')
         if self.is_createCompany_selected() and self.is_createCompany_selected():
-            if not cleaned_data.get('image'):
+            if not cleaned_data.get('image') and self.is_valid():
                 #raise forms.ValidationError('You have to upload a logo for your company')
                 self.raise_errors.append('You have to upload a logo for your company')
+            if cleaned_data.get('image') and not str(cleaned_data.get('image').name).lower().endswith(".png"):
+                if not str(cleaned_data.get('image').name).lower().endswith(".jpg"):
+                    self.raise_errors.append('Your company logo must be a .png or .jpg file')
         if self.is_candidate_selected():
-            if not cleaned_data.get('transcript'):
+            if not cleaned_data.get('transcript') and self.is_valid():
                 #raise forms.ValidationError('You have to upload a transcript')
                 self.raise_errors.append('You have to upload a transcript')
+            if cleaned_data.get('transcript') and not cleaned_data.get('transcript').name.lower().endswith(".pdf"):
+                self.raise_errors.append('Transcript must be in pdf format')
+
             if cleaned_data.get('concordia_email') != "":
                 if not re.match(r"[^@]+@[^@]+\.[^@]+", str(cleaned_data.get('concordia_email'))): 
                     #raise forms.ValidationError("Invalid Concorda Email address")
                     self.raise_errors.append('Invalid Concorda Email address')
+
+            if (cleaned_data.get('program') == "Any Category" or cleaned_data.get('program') == "ANY") and self.is_valid():
+                    self.raise_errors.append('Please specify your program of study')
 
         password = self.cleaned_data.get('password')
 
@@ -223,7 +292,7 @@ class RegistrationForm(forms.Form):
         
         self.cleaned_data = cleaned_data
 
-    def save(self):
+    def save(self, request):
         self.clean()
         cleaned_data = self.cleaned_data
         userManager = MyUserManager()
@@ -278,9 +347,7 @@ class RegistrationForm(forms.Form):
             candidate.program = cleaned_data.get('program')
             candidate.creditLeft = cleaned_data.get('creditLeft')
             candidate.gpa = cleaned_data.get('gpa')
-            candidate.internationalStudent = cleaned_data.get('internationalStudent')
-            candidate.travel = cleaned_data.get('travel')
-            candidate.timeCommitment = cleaned_data.get('timeCommitment')
+            candidate.citizenship = cleaned_data.get('citizenship')
             candidate.transcript = cleaned_data.get('transcript')
             if cleaned_data.get('concordia_email') != "":
                 candidate.concordia_email = cleaned_data.get('concordia_email')
@@ -293,6 +360,51 @@ class RegistrationForm(forms.Form):
                 language.details = cleaned_data.get(lan['details'])
                 language.user = user
                 language.save()
+
+        email = cleaned_data.get('email')
+        raw_password = cleaned_data.get('password')
+
+        current_site = get_current_site(request)
+        mail_subject = 'Activate your Concordia ACE account.'
+        message = render_to_string('acc_active_email.html', {
+            'user': user,
+            'domain': current_site.domain,
+            'uid':urlsafe_base64_encode(force_bytes(user.pk)),
+            'token':account_activation_token.make_token(user),
+        })
+        to_email = self.cleaned_data.get('email')
+        email = EmailMessage(
+                    mail_subject, message, to=[to_email]
+        )
+
+        try:
+            email.send()
+            description = "We have sent you a confirmation link to " + self.cleaned_data.get('email') + ". If you have not received the link, please click here " + str(current_site.domain) + "/resend_activation"
+            notify.send(user, recipient=user, verb='Welcome to ACE - Please confirm your email address', description = description)
+        except Exception as e:
+            import sys
+            print(e, file=sys.stderr)
+        
+        if self.is_candidate_selected() and self.cleaned_data.get('concordia_email') != "":
+            
+            mail_subject = 'Confirm your Concordia email address for ACE'
+            message = render_to_string('confirm_concordia_email.html', {
+                'user': user,
+                'domain': current_site.domain,
+                'uid':urlsafe_base64_encode(force_bytes(user.pk)),
+                'token':concordia_email_confirmation_token.make_token(user),
+            })
+            to_email = self.cleaned_data.get('concordia_email')
+            email = EmailMessage(
+                        mail_subject, message, to=[to_email]
+            )
+
+            try:
+                email.send()
+                notify.send(user, recipient=user, verb='Confirmation link sent to ' + to_email, description = "Link not received? You may request a new one by going into your Dashboard->Edit Profile")
+            except Exception as e:
+                import sys
+                print(e, file=sys.stderr)
 
         return user
 

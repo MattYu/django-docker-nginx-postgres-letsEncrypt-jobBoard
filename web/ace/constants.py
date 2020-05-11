@@ -5,6 +5,7 @@ MAX_LENGTH_REQUIREMENTS = 10000
 MAX_LENGTH_STANDARDFIELDS= 100
 MAX_LENGTH_STANDARDTEXTAREA = 2000
 MAX_LENGTH_LONGSTANDARDFIELDS = 120
+MAX_LENGTH_TERMSANDCONDITIONS = 200000
 
 # Category Constants
 ANY = "ANY"
@@ -67,8 +68,11 @@ LOCATION_CHOICES = [
     ("Other", "Other"),
 ]
 
-UPLOADTO = '/prote'
+UPLOADTO = '/protected'
 
+AGREE_DISAGREE = [
+    ("Agree", "Agree")
+]
 
 # Login/Registration
 USER_TYPE_CHOICES = (
@@ -99,6 +103,13 @@ LANGUAGE_FLUENCY_CHOICES = (
 YES_NO = (
     ("No", "No"),
     ("Yes", "Yes"),
+)
+
+CITIZENSHIP = (
+    ("Choose", "Choose"),
+    ("Canadian", "Canadian"),
+    ("Permanent Resident", "Permanent Resident"),
+    ("International Student", "International Student"),
 )
 
 # Job applications

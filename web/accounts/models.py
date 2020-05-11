@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser , BaseUserManager, PermissionsMixin
-from ace.constants import MAX_LENGTH_STANDARDFIELDS, LANGUAGE_CHOICES, LANGUAGE_FLUENCY_CHOICES, YES_NO, CATEGORY_CHOICES, EMPLOYER_STATUS
+from ace.constants import MAX_LENGTH_STANDARDFIELDS, LANGUAGE_CHOICES, LANGUAGE_FLUENCY_CHOICES, YES_NO, CITIZENSHIP, CATEGORY_CHOICES, EMPLOYER_STATUS
 from companies.models import Company
 from django.contrib.auth.models import UserManager
 
@@ -120,11 +120,11 @@ class Candidate(models.Model):
     gpa = models.FloatField(max_length = MAX_LENGTH_STANDARDFIELDS,  default= 0)
     user = models.ForeignKey(User, on_delete=models.CASCADE, default= "")
     program = models.CharField(choices=CATEGORY_CHOICES, max_length = 20, default="ANY")
-    internationalStudent = models.CharField(choices=YES_NO, max_length = 3, default="No")
-    travel = models.CharField(choices=YES_NO, max_length = 3, default="No")
-    timeCommitment = models.CharField(choices=YES_NO, max_length = 3, default="No")
+    citizenship = models.CharField(choices=CITIZENSHIP, max_length = 50, default="Choose")
     transcript = models.FileField(upload_to=get_transcript_path, default="")
     status = models.CharField(choices=EMPLOYER_STATUS, max_length = 20, default="Pending Review")
+
+    notify_by_email = models.BooleanField(default=True)
     
     concordia_email = models.CharField(max_length = MAX_LENGTH_STANDARDFIELDS,  default= "")
     is_concordia_email_confirmed = models.BooleanField(default=False)
@@ -140,6 +140,8 @@ class Employer(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE, default= "")
     status = models.CharField(choices=EMPLOYER_STATUS, max_length = 20, default="Pending Review")
 
+    notify_by_email = models.BooleanField(default=True)
+    
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'accounts',
     'jobmatchings',
     'announcements',
+    'ace',
 ]
 
 MIDDLEWARE = [

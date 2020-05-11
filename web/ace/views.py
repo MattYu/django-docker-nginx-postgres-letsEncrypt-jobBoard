@@ -5,6 +5,7 @@ from companies.models import Company
 from jobapplications.models import JobApplication
 from joblistings.models import Job
 from accounts.models import Candidate
+from ace.models import Candidate_termsAndConditions, Employer_termsAndConditions
 
 import sys
 
@@ -35,3 +36,16 @@ def home_page(request):
         del request.session['danger']
 
     return render(request, "home-4.html", context)
+
+
+def terms_and_conditions(request, userType, pk):
+    context = {}
+
+    if str(userType) == '1':
+        context['conditions'] = Candidate_termsAndConditions.objects.get(pk=pk)
+
+    else:
+        context['conditions'] = Employer_termsAndConditions.objects.get(pk=pk)
+    
+
+    return render(request, "terms_and_conditions.html", context)
