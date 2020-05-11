@@ -24,7 +24,8 @@ from ace.views import home_page
 from joblistings.views import job_details, post_job, download_jobPDF, manage_jobs, job_search
 from jobapplications.views import add_resume, download_test, browse_job_applications, get_protected_file, get_protected_file_withAuth, view_application_details
 from companies.views import view_company_details, manage_companies
-from accounts.views import register_user, logout_user, login_user, activate, manage_employers, validate, resend_activation
+from accounts.views import register_user, logout_user, login_user, activate, manage_employers, validate, resend_activation, activate_account
+from ace.views import terms_and_conditions
 from django.urls import include
 from django.urls import register_converter
 
@@ -73,6 +74,7 @@ urlpatterns = [
     path('login/', login_user),
     path('accounts/login/', login_user),
     path('activate/<uidb64>/<token>', activate, name="activate"),
+    path('activate/', activate_account, name="activate your account"),
     path('resend_activation/', resend_activation, name="resend activation link"),
     path('validate/<uidb64>/<token>', validate, name="validate"),
     path('search/<optional_string:searchString>', job_search),
@@ -95,6 +97,7 @@ urlpatterns = [
     path('reset/done/', views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
     path('company-details/<int:pk>/', view_company_details),
     path('inbox/notifications/', include(notifications.urls, namespace='notifications')),
+    path('terms-and-conditions/<int:userType>/<int:pk>', terms_and_conditions),
 ]
 
 

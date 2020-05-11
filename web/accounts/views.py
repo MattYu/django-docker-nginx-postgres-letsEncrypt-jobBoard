@@ -40,59 +40,19 @@ def register_user(request, employer=None):
             employerCompany=request.POST.get('employerCompany'),
             extra_language_count=request.POST.get('extra_language_count'),
             )
-        #if form.is_valid() and request.recaptcha_is_valid:
-        if form.is_valid():
-            form.save()
-            email = form.cleaned_data.get('email')
-            raw_password = form.cleaned_data.get('password')
-            user = authenticate(email=email, password=raw_password)
-            login(request, user)
-
-            current_site = get_current_site(request)
-            mail_subject = 'Activate your Concordia ACE account.'
-            message = render_to_string('acc_active_email.html', {
-                'user': user,
-                'domain': current_site.domain,
-                'uid':urlsafe_base64_encode(force_bytes(user.pk)),
-                'token':account_activation_token.make_token(user),
-            })
-            to_email = form.cleaned_data.get('email')
-            email = EmailMessage(
-                        mail_subject, message, to=[to_email]
-            )
-
-            try:
-                email.send()
-                description = "We have sent you a confirmation link to " + form.cleaned_data.get('email') + ". If you have not received the link, please click here " + str(current_site.domain) + "/resend_activation"
-                notify.send(user, recipient=user, verb='Welcome to ACE - Please confirm your email address', description = description)
+        
+        if 'Register' in request.POST:
+            context["showError"] = True
+            #if form.is_valid() and request.recaptcha_is_valid:
+            if form.is_valid():
+                form.save(request)
+                email = form.cleaned_data.get('email')
+                raw_password = form.cleaned_data.get('password')
+                user = authenticate(email=email, password=raw_password)
+                login(request, user)
                 messages.success(request, 'Candidate account created!')
-            except Exception as e:
-                import sys
-                print(e, file=sys.stderr)
-            
-            if form.is_candidate_selected and form.cleaned_data.get('concordia_email') != "":
 
-                mail_subject = 'Confirm your Concordia email address for ACE'
-                message = render_to_string('confirm_concordia_email.html', {
-                    'user': user,
-                    'domain': current_site.domain,
-                    'uid':urlsafe_base64_encode(force_bytes(user.pk)),
-                    'token':concordia_email_confirmation_token.make_token(user),
-                })
-                to_email = form.cleaned_data.get('concordia_email')
-                email = EmailMessage(
-                            mail_subject, message, to=[to_email]
-                )
-
-                try:
-                    email.send()
-                    notify.send(user, recipient=user, verb='Confirmation link sent to ' + to_email, description = "Link not received? You may request a new one by going into your Dashboard->Edit Profile")
-                except Exception as e:
-                    import sys
-                    print(e, file=sys.stderr)
-
-            return HttpResponseRedirect('/')
-
+                return HttpResponseRedirect('/')
 
     else:
         if employer and employer==1:
@@ -104,6 +64,7 @@ def register_user(request, employer=None):
 
     if request.user.is_authenticated:
         return render(request, "404.html")
+
     context['form'] = form
 
     return render(request, "register.html", context)
@@ -263,3 +224,6 @@ def manage_employers(request, searchString=""):
 
     else:
         return HttpResponse('Invalid permission')
+
+def activate_account(request):
+    pass
