@@ -286,6 +286,8 @@ def browse_job_applications(request, searchString = "", jobId= -1):
             User.objects.filter(id=request.user.id).update(protect_file_temp_download_key="")
             return response
 
+    context["newMessageCount"] = len(request.user.notifications.unread())
+    
     return render(request, "dashboard-manage-applications.html", context)
 
 

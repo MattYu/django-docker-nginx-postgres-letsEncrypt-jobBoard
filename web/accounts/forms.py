@@ -14,6 +14,7 @@ from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_text
 from django.core.mail import EmailMessage
+from django.core import mail
 from ace.models import Employer_termsAndConditions, Candidate_termsAndConditions
 
 class RegistrationForm(forms.Form):
@@ -379,6 +380,7 @@ class RegistrationForm(forms.Form):
                 language.user = user
                 language.save()
 
+        messages = []
         email = cleaned_data.get('email')
         raw_password = cleaned_data.get('password')
 
@@ -397,8 +399,8 @@ class RegistrationForm(forms.Form):
 
         try:
             email.send()
-            description = "We have sent you a confirmation link to " + self.cleaned_data.get('email') + ". If you have not received the link, please click here " + str(current_site.domain) + "/resend_activation"
-            notify.send(user, recipient=user, verb='Welcome to ACE - Please confirm your email address', description = description)
+            description = "We have sent you a confirmation link to " + self.cleaned_data.get('email') + ". If you have not received the link, please click here " + "https://"+str(current_site.domain) + "/resend_activation"
+            notify.send(user, recipient=user, verb='Welcome to ACE - Please confirm your email address', description = description, public=False)
         except Exception as e:
             import sys
             print(e, file=sys.stderr)
@@ -419,7 +421,7 @@ class RegistrationForm(forms.Form):
 
             try:
                 email.send()
-                notify.send(user, recipient=user, verb='Confirmation link sent to ' + to_email, description = "Link not received? You may request a new one by going into your Dashboard->Edit Profile")
+                notify.send(user, recipient=user, verb='Confirmation link sent to ' + to_email, description = "Link not received? You may request a new one by going into your Dashboard->Edit Profile", public=False)
             except Exception as e:
                 import sys
                 print(e, file=sys.stderr)

@@ -203,7 +203,12 @@
                 <div class="dashboard-menu">
                   <ul>
                     <li><i class="fas fa-home"></i><a href="employer-dashboard.html">Dashboard</a></li>
-                    <li><i class="fas fa-comment"></i><a href="/notifications">Message</a></li>
+                    <li><i class="fas fa-comment"></i><a href="/notifications">Message 
+                      <div class="notifier green">
+                        <i class="bell fa fa-envelope-o"></i>
+                        <span class="badge">{{newMessageCount}}</span>
+                      </div>
+                    </a></li>
                     <li><i class="fas fa-user"></i><a href="employer-dashboard-edit-profile.html">Edit Profile</a></li>
                     {% if user.user_type == 4 %}
                     <li><i class="fas fa-users"></i><a href="/manageEmployers/">Manage Employer</a></li>

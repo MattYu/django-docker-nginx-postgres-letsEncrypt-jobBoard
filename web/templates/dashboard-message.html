@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>Oficiona</title>
+    <title>Concordia ACE</title>
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href={% static "assets/css/bootstrap.min.css" %}>
@@ -30,10 +30,10 @@
     <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,600%7CRoboto:300i,400,500" rel="stylesheet">
 
     <!-- Favicon -->
-    <link rel="icon" href="images/favicon.png">
-    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="images/icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="images/icon-114x114.png">
+    <link rel="icon" href={% static "images/favicon.png"  %}>
+    <link rel="apple-touch-icon" href={% static "images/apple-touch-icon.png"  %}>
+    <link rel="apple-touch-icon" sizes="72x72" href={% static "images/icon-72x72.png"  %}>
+    <link rel="apple-touch-icon" sizes="114x114" href={% static "images/icon-114x114.png"  %}>
 
 
     <!--[if lt IE 9]>
@@ -128,13 +128,13 @@
               <div class="dashboard-content-wrapper no-padding">
                 <div class="dashboard-message-wrapper">
                   <div class="message-lists">
-                    <div class="buttons">
-                      <a href="/notifications/type=All" class="button primary-bg"> All </a>
-                      <a href="/notifications/type=New" class="button primary-bg"> New </a>
-                      <a href="/notifications/type=Seen" class="button primary-bg"> Seen </a>
-                      <a href="/notifications/type=Sent" class="button primary-bg"> Sent </a>
-                      <a href="/notifications/type=MarkRead" class="button primary-bg"> Mark all Seen </a>
-                      <a href="{{ request.path }}" class="button primary-bg"> Refresh </a>
+                    <div class="section-header section-header-2 section-header-with-right-content">
+                      <a href="/notifications/type=All" class="header-right"> All </a>
+                      <a href="/notifications/type=New" class="header-right"> New </a>
+                      <a href="/notifications/type=Seen" class="header-right"> Seen </a>
+                      <a href="/notifications/type=Sent" class="header-right"> Sent </a>
+                      <a href="/notifications/type=MarkRead" class="header-right"> Mark all Seen </a>
+                      <a href="{{ request.path }}" class="header-right"> Refresh </a>
                     </div>
                     <br>
                     <br>
@@ -196,7 +196,12 @@
                 <div class="dashboard-menu">
                   <ul>
                     <li><i class="fas fa-home"></i><a href="employer-dashboard.html">Dashboard</a></li>
-                    <li class="active"><i class="fas fa-comment"></i><a href="/notifications">Message</a></li>
+                    <li class="active"><i class="fas fa-comment"></i><a href="/notifications">Message 
+                      <div class="notifier green">
+                        <i class="bell fa fa-envelope-o"></i>
+                        <span class="badge">{{newMessageCount}}</span>
+                      </div>
+                    </a></li>
                     <li><i class="fas fa-user"></i><a href="employer-dashboard-edit-profile.html">Edit Profile</a></li>
                     {% if user.user_type == 4 %}
                     <li><i class="fas fa-users"></i><a href="/manageEmployers/">Manage Employer</a></li>

@@ -46,7 +46,7 @@ def manage_companies(request, searchString=""):
         context = {
             "companies": companies,
         }
-
+        context["newMessageCount"] = len(request.user.notifications.unread())
         return render(request, "dashboard-manage-company.html", context)
 
     else:

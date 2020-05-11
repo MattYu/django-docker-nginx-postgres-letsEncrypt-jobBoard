@@ -220,7 +220,7 @@ def manage_employers(request, searchString=""):
         context = {
             "employers": employers,
         }
-
+        context["newMessageCount"] = len(request.user.notifications.unread())
         return render(request, "dashboard-manage-employer.html", context)
 
     else:

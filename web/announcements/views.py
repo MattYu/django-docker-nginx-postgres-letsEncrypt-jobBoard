@@ -15,6 +15,7 @@ def view_notifications(request, searchString= ""):
     context = {}
 
     if request.user.is_authenticated:
+        context["newMessageCount"] = len(request.user.notifications.unread())
         if searchString:
             searchWords = searchString.split("&")
         else:
@@ -43,6 +44,9 @@ def view_notifications(request, searchString= ""):
         else:
             notifications = user.notifications.all()
 
+        if "redirectHome" in search:
+            return HttpResponseRedirect("/") 
+
         currentId = -1
         if "view" in search:
             try:
@@ -61,6 +65,8 @@ def view_notifications(request, searchString= ""):
 
         context["notificationList"] = notifications
         context["currentId"] = currentId
+
+        
         return render(request, "dashboard-message.html", context)
     else:
         return HttpResponseRedirect("/login")
