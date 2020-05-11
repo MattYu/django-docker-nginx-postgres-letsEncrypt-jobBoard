@@ -52,7 +52,7 @@ def register_user(request, employer=None):
                 login(request, user)
                 messages.success(request, 'Candidate account created!')
 
-                return HttpResponseRedirect('/')
+                return HttpResponseRedirect('/activate')
 
     else:
         if employer and employer==1:
@@ -92,12 +92,12 @@ def login_user(request):
                 redirect = request.session['redirect']
                 del request.session['redirect']
                 return HttpResponseRedirect(redirect)
-
+            if not request.user.is_email_confirmed:
+                return HttpResponseRedirect('/activate')
             return HttpResponseRedirect('/')
 
     if request.user.is_authenticated:
         return render(request, "404.html")
-
 
     form = LoginForm()
     context = {'form': form}
@@ -140,8 +140,9 @@ def activate(request, uidb64, token):
     if user is not None and account_activation_token.check_token(user, token):
         user.is_email_confirmed = True
         user.save()
+        return HttpResponseRedirect('/validated')
         # return redirect('home')
-        return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
+        #return HttpResponse('Thank you for your email confirmation. Now you can log into your account.')
     else:
         return HttpResponse('Activation link is invalid!')
 
@@ -188,7 +189,7 @@ def resend_activation(request):
             import sys
             print(e, file=sys.stderr)
 
-        return HttpResponseRedirect('/')
+        return HttpResponse('A new activation link has been sent to your email account.')
 
     else:
         return HttpResponse('You must be logged in to resend your email activation link')
@@ -226,4 +227,13 @@ def manage_employers(request, searchString=""):
         return HttpResponse('Invalid permission')
 
 def activate_account(request):
-    pass
+    context = {}
+
+    if request.user.is_authenticated and not request.user.is_email_confirmed:
+        return render(request, "activate-account.html", context)
+    if request.user.is_email_confirmed:
+        return HttpResponse('Your email address has already been validated')
+
+def validated(request):
+
+    return render(request, "validated.html")
