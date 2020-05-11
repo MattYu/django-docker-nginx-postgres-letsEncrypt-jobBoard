@@ -104,7 +104,10 @@ def browse_job_applications(request, searchString = "", jobId= -1):
         kwargs = {}
         if jobId != None:
             query = Q(job__pk=jobId)
-            context["job"] = Job.objects.get(pk=jobId)
+            try:
+                context["job"] = Job.objects.get(pk=jobId)
+            except:
+                context["job"] = []
 
 
     if request.user.user_type == USER_TYPE_EMPLOYER:
@@ -114,7 +117,10 @@ def browse_job_applications(request, searchString = "", jobId= -1):
         
         if jobId != None:
             query &= Q(job__pk=jobId)
-            context["job"] = Job.objects.get(pk=jobId)
+            try:
+                context["job"] = Job.objects.get(pk=jobId)
+            except:
+                context["job"] = []
 
 
     if request.user.user_type == USER_TYPE_CANDIDATE:
@@ -280,6 +286,8 @@ def browse_job_applications(request, searchString = "", jobId= -1):
             User.objects.filter(id=request.user.id).update(protect_file_temp_download_key="")
             return response
 
+    context["newMessageCount"] = len(request.user.notifications.unread())
+    
     return render(request, "dashboard-manage-applications.html", context)
 
 

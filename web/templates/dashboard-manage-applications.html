@@ -107,30 +107,15 @@
         <div class="row">
           <div class="col-md-6">
             <div class="breadcrumb-area">
-              {% if user.user_type == 1%}
-              <h1>Candidate Dashboard</h1>
+              
+              <h1>{% if user.user_type == 1%} Candidate {% elif user.user_type  == 2 %} Employer {% else %} Admin {% endif %}Dashboard</h1>
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                  <li class="breadcrumb-item"><a href="#">Home</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Candidate Dashboard</li>
+                  <li class="breadcrumb-item"><a href="/">Home</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">{% if user.user_type == 1%} Candidate {% elif user.user_type  == 2 %} Employer {% else %} Admin {% endif %} Dashboard</li>
                 </ol>
-                {% else %}
-                <h1>Employer Dashboard</h1>
-                <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                  <li class="breadcrumb-item"><a href="#">Home</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Employer Dashboard</li>
-                </ol>
-                {% endif %}
+
               </nav>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="breadcrumb-form">
-              <form action="#">
-                <input type="text" placeholder="Enter Keywords">
-                <button><i data-feather="search"></i></button>
-              </form>
             </div>
           </div>
         </div>
@@ -296,6 +281,12 @@
                 <div class="dashboard-menu">
                   <ul>
                     <li><i class="fas fa-home"></i><a href="employer-dashboard.html">Dashboard</a></li>
+                    <li><i class="fas fa-comment"></i><a href="/notifications">Message 
+                      <div class="notifier green">
+                        <i class="bell fa fa-envelope-o"></i>
+                        <span class="badge">{{newMessageCount}}</span>
+                      </div>
+                    </a></li>
                     <li><i class="fas fa-user"></i><a href="employer-dashboard-edit-profile.html">Edit Profile</a></li>
                     {% if user.user_type == 4 %}
                     <li><i class="fas fa-users"></i><a href="/manageEmployers/">Manage Employer</a></li>

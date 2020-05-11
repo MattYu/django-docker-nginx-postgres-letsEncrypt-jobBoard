@@ -27,15 +27,15 @@
                 <div class="badge"> {{notificationsCount}} </a></div>
               </div>
             <li class="dropdown menu-item header-top-notification">
-              <a href= "#" class="notification-button">
+              <a href= "/notifications" class="notification-button">
               <div class="notification-card">
                 <div class="notification-head">
                   <span>Notifications</span>
-                  <a href= "#">Mark all as read</a>
+                  <a href= "/notifications/type=MarkRead&redirectHome=True">Mark all as read</a>
                 </div>
                 <div class="notification-body">
                   {% for notification in notifications %}
-                  <a href={% static  "home-2.html"  %} class="notification-list">
+                  <a href="/notifications/view={{notification.pk}}" class="notification-list">
                     <i class="fas fa-arrow-circle-down"></i>
                     <p>{{notification.verb}}</p>
                     <span class="time">{{notification.timestamp}}</span>
@@ -43,7 +43,7 @@
                   {% endfor %}
 
                 <div class="notification-footer">
-                  <a href= "/notification">See all notification</a>
+                  <a href= "/notifications">See all notifications</a>
                 </div>
               </div>
             </li>

@@ -244,7 +244,7 @@ def manage_jobs(request, searchString=""):
         request.session['redirect'] = request.path
         request.session['warning'] = "Warning: This page is only accessible to employers"
         return HttpResponseRedirect('/')
-
+    context["newMessageCount"] = len(request.user.notifications.unread())
     return render(request, "dashboard-manage-job.html", context)
 
 def download_jobPDF(request, pk):

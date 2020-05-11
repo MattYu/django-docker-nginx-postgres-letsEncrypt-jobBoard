@@ -105,21 +105,15 @@
         <div class="row">
           <div class="col-md-6">
             <div class="breadcrumb-area">
-              <h1>Employer Dashboard</h1>
+              
+              <h1>{% if user.user_type == 1%} Candidate {% elif user.user_type  == 2 %} Employer {% else %} Admin {% endif %}Dashboard</h1>
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                   <li class="breadcrumb-item"><a href="/">Home</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Employer Dashboard</li>
+                  <li class="breadcrumb-item active" aria-current="page">{% if user.user_type == 1%} Candidate {% elif user.user_type  == 2 %} Employer {% else %} Admin {% endif %} Dashboard</li>
                 </ol>
+
               </nav>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="breadcrumb-form">
-              <form action="#">
-                <input type="text" placeholder="Enter Keywords">
-                <button><i data-feather="search"></i></button>
-              </form>
             </div>
           </div>
         </div>

@@ -115,7 +115,7 @@ def employer_view_rankings(request, jobId= None):
         request.session['redirect'] = request.path
         request.session['warning'] = "Warning: This page is only accessible to employers"
         return HttpResponseRedirect('/')
-
+    context["newMessageCount"] = len(request.user.notifications.unread())
     return render(request, "dashboard-ranking.html", context)
 
 @transaction.atomic
@@ -140,7 +140,7 @@ def candidate_view_rankings(request):
         context = {
             "form" : form,
             }
-
+    context["newMessageCount"] = len(request.user.notifications.unread())
     return render(request, "dashboard-ranking-candidate.html", context)
 
 @transaction.atomic
@@ -196,7 +196,6 @@ def admin_matchmaking(request):
                     if jobId not in employer_prefs:
                         employer_prefs[jobId] = [rank.candidate.id]
                         capacities[jobId] = job.vacancy
-                        print(capacities[jobId])
                     else:
                         employer_prefs[jobId].append(rank.candidate.id)
                 
@@ -212,17 +211,10 @@ def admin_matchmaking(request):
                 match = ranking.HospitalResident.create_from_dictionaries( candidate_prefs, employer_prefs, capacities)
 
                 matchResult = match.solve(optimal="resident")
-                print(matchResult)
 
-                for j in matchResult:
-                    print(j)
 
                 for jobObj in matchResult:
-                    print("test job")
-                    print(jobObj)
                     for candidate in matchResult[jobObj]:
-                        print("test candidate")
-                        print(candidate)
                         match = Match()
                         # Before creating a match, perform a safety check to see if candidate already have been matched by the same employer for the same job before
                         if Match.objects.filter(candidate=Candidate.objects.get(id=int(candidate.name)), job= Job.objects.get(id=int(jobObj.name))).count() == 0:
@@ -261,14 +253,11 @@ def admin_matchmaking(request):
             if request.POST.get("open"):
                 for rank in Ranking.objects.filter(is_closed=False):
                     if Match.objects.filter(jobApplication=rank.jobApplication).count() == 0:
-                        print(rank.jobApplication.status)
                         rank.jobApplication.status = "Not Matched"
-                        print(rank.jobApplication)
                         rank.is_closed = True
                         rank.save()
                         rank.jobApplication.save()
                     else:
-                        print(rank.jobApplication.status)
                         rank.jobApplication.status = "Matched"
                         rank.is_closed = True
                         rank.save()
@@ -278,27 +267,17 @@ def admin_matchmaking(request):
                         match.save()
 
             if request.POST.get("Undo last 7 days"):
-                print("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT1111111111111111111111")
-                for rank in Ranking.objects.filter():
-                    print(rank.updated_at)
                 for rank in Ranking.objects.filter(updated_at__gte=timezone.now()-timedelta(days=7)).all():
-                    print("isThisWorking")
                     rank.is_ranking_open_for_employer = True
                     rank.is_ranking_open_for_candidate = False
                     rank.is_closed = False
                     matchCount = Match.objects.filter(jobApplication=rank.jobApplication).count()
-                    print(matchCount)
-                    print(rank.jobApplication.job.vacancy)
-                    print(rank.jobApplication.job.filled)
                     rank.jobApplication.job.vacancy += matchCount
                     rank.jobApplication.job.filled -= matchCount
                     rank.jobApplication.status = "Interviewing"
                     rank.status = "Interviewing"
                     rank.jobApplication.save()
                     rank.jobApplication.job.save()
-                    print("test")
-                    print(rank.jobApplication.job.vacancy)
-                    print(rank.jobApplication.job.filled)
                     rank.save()
                     for match in Match.objects.filter(jobApplication=rank.jobApplication):
                         match.delete()
@@ -306,6 +285,8 @@ def admin_matchmaking(request):
         context = {
             "user": request.user
             }
+        
+    context["newMessageCount"] = len(request.user.notifications.unread())
 
     return render(request, "dashboard-ranking-matchday.html", context)
 
@@ -390,5 +371,5 @@ def view_matching(request, jobId= None):
                     "job": True,
                     "matches" : matches,
                     }       
-
+    context["newMessageCount"] = len(request.user.notifications.unread())
     return render(request, "dashboard-match.html", context)

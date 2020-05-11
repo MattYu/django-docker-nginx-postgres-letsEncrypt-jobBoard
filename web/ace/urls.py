@@ -30,6 +30,8 @@ from django.urls import include
 from django.urls import register_converter
 
 from jobmatchings.views import employer_view_rankings, candidate_view_rankings, admin_matchmaking, view_matching
+from announcements.views import view_notifications
+
 import notifications.urls
 
 
@@ -99,6 +101,7 @@ urlpatterns = [
     path('inbox/notifications/', include(notifications.urls, namespace='notifications')),
     path('terms-and-conditions/<int:userType>/<int:pk>', terms_and_conditions),
     path('validated/', validated),
+    path('notifications/<optional_string:searchString>', view_notifications)
 ]
 
 
