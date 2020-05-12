@@ -175,16 +175,8 @@
                     </tbody>
                   </table>
                   <div class="pagination-list text-center">
-                    <nav class="navigation pagination">
-                      <div class="nav-links">
-                        <a class="prev page-numbers" href="#"><i class="fas fa-angle-left"></i></a>
-                        <a class="page-numbers" href="#">1</a>
-                        <span aria-current="page" class="page-numbers current">2</span>
-                        <a class="page-numbers" href="#">3</a>
-                        <a class="page-numbers" href="#">4</a>
-                        <a class="next page-numbers" href="#"><i class="fas fa-angle-right"></i></a>
-                      </div>
-                    </nav>                
+                      <input type="submit" class="page-numbers" formnovalidate value="prevPage" name="prevPage" id="prevPage">
+                      <input type="submit" class="page-numbers" formnovalidate value="nextPage" name="nextPage" id="nextPage">
                   </div>
                 </div>
               </div>
@@ -525,7 +517,7 @@
 
         {% endif %}
 
-        $("#filter").click(function() {
+        var fnc = function() {
           var res = [];
           var htmls = [];
           var cls = [];
@@ -540,7 +532,17 @@
           $("[name=selected_filter_class]").val(cls);
           $("[name=gpa_min]").val(document.getElementById('minSlider').textContent);
           $("[name=gpa_max]").val(document.getElementById('maxSlider').textContent);
-        });
+        }
+
+        $("#nextPage").click(fnc);
+
+        $("#filter").click(fnc);
+
+        $("#prevPage").click(fnc);
+
+        $("#firstPage").click(fnc);
+
+        $("#lastPage").click(fnc);
 
         $('html').bind('keypress', function(e)
         {

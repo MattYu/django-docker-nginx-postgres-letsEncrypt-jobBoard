@@ -141,7 +141,7 @@ def browse_job_applications(request, searchString = "", jobId= -1):
     if (request.method == 'POST'):
         form = FilterApplicationForm(request.POST)        
 
-        if 'filter' in request.POST:
+        if 'filter' in request.POST or 'nextPage' in request.POST:
             context['filterClasses'] = simplejson.dumps(form.getSelectedFilterClassAsList())
             context['filterHTML'] = simplejson.dumps(form.getSelectedFilterHTMLAsList())
             #for ob in request.POST.get('selected_filter'):
