@@ -201,10 +201,12 @@ def manage_employers(request, searchString=""):
             if "Approved" in  request.POST:
                 employer = get_object_or_404(Employer, pk = int(request.POST.get("Approved")))
                 employer.status = "Approved"
+                employer.approved = True
                 employer.save()
             if "Not Approved" in  request.POST:
                 employer = get_object_or_404(Employer, pk = int(request.POST.get("Not Approved")))
                 employer.status = "Not Approved"
+                employer.approved = False
                 employer.save()
 
                 allJobs = Job.objects.all()

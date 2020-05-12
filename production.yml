@@ -5,8 +5,6 @@ services:
     image: postgres
     restart: always
     container_name: db
-    ports:
-      - 5432:5432
     env_file:
       - db.env.dev
     volumes:
@@ -19,6 +17,7 @@ services:
     expose:
       - "8000"
     volumes:
+      - ./web:/web
       - static:/static
       - ./prod_storage/media:/media
     stdin_open: true

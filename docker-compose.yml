@@ -17,6 +17,7 @@ services:
     expose:
       - "8000"
     volumes:
+      - ./web:/web
       - static:/static
       - media:/media
     stdin_open: true

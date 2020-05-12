@@ -126,6 +126,7 @@ class Candidate(models.Model):
     citizenship = models.CharField(choices=CITIZENSHIP, max_length = 50, default="Choose")
     transcript = models.FileField(upload_to=get_transcript_path, default="")
     status = models.CharField(choices=EMPLOYER_STATUS, max_length = 20, default="Pending Review")
+     
 
     notify_by_email = models.BooleanField(default=True)
     
@@ -144,12 +145,13 @@ class Employer(models.Model):
     status = models.CharField(choices=EMPLOYER_STATUS, max_length = 20, default="Pending Review")
 
     notify_by_email = models.BooleanField(default=True)
+    approved = models.BooleanField(default=False)
     
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.user.email
+        return self.user.email + " Approved:" + str(self.approved)
 
 class PreferredName(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, default= "")
