@@ -134,8 +134,8 @@
                   {% if request.user.user_type == 2 or request.user.user_type == 4%}
                     <button class="button" class="add-new-field" name="pdf" id="pdf">Download Selection as one PDF</button>
                   {% endif %}
-                  {% if request.user.user_type == 2 or request.user.user_type == 4%}
-                    <button class="button" class="add-new-field" name="contact" id="contact">Get Contact Info</button>
+                  {% if request.user.user_type == 1 or request.user.user_type == 2 or request.user.user_type == 4%}
+                    <button class="button" class="add-new-field" name="contact" id="contact">Get Contact Info and Summary Views</button>
                   {% endif %}
                   <br>
                   {% if job %}
@@ -150,7 +150,6 @@
                       </tr>
                     </thead>
                     <tbody>
-                      
                         {% if jobApplications %}
                           {% for application in jobApplications %}
                         <tr class="candidates-list">

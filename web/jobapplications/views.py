@@ -316,6 +316,20 @@ def browse_job_applications(request, searchString = "", jobId= -1):
 
             #User.objects.filter(id=request.user.id).update(protect_file_temp_download_key="")
             return response
+        if 'contact' in request.POST:
+            emails = set()
+            candidates = {}
+
+            for application in jobApplications:
+                emails.add(application.candidate.user.email)
+                if application.candidate in candidates:
+                    candidates[application.candidate].append(application)
+                else:
+                    candidates[application.candidate] = [application]
+
+            context["emails"] = emails
+            context["candidates"] = candidates
+            return render(request, "contact_info.html", context)
 
     context["newMessageCount"] = len(request.user.notifications.unread())
     
