@@ -1,0 +1,14 @@
+{% autoescape off %}
+Hi {{ user.firstName }},
+
+You have been selected for an interview with {{job.company.name}}. Job: {{ job.title }}. 
+
+We have shared your contact information with your new employer and they will be in touch with you soon.
+Visit http://{{ domain }}/job-details/{{job.pk}} for more details.
+
+If you have not heard from your prospect employer within 3 business days, please reach out to Concordia Co-op office. 
+
+The Concordia ACE Team
+Please do not reply this unmonitored email address.
+Never made a {{user.email}} ACE account? Prevent identity theft and let us know. You may suspend this account here: http://{{ domain }}{% url 'password_reset'  %}
+{% endautoescape %}

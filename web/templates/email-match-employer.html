@@ -1,0 +1,16 @@
+{% autoescape off %}
+Hello,
+
+We are pleased to inform you that one of your selected applicants, {{candidate.preferredName }} {{ candidate.firstName }} {{ candidate.lastName }}, has been matched with you for the following position:
+
+{{job.title}} at {{job.company.name}}
+
+You can find {{candidate.preferredName }} {{ candidate.firstName }}'s contact information here:  http://{{ domain }}/jobApplicationDetails/{{jobApplication.pk}}
+
+If you have any question, please feel free to reach out to the Concordia Co-op team. 
+
+Best regards,
+The Concordia ACE Team
+Please do not reply this unmonitored email address.
+Never made a {{job.company.name}} ACE account? Prevent identity theft and let us know. You may suspend this account here: http://{{ domain }}{% url 'password_reset'  %}
+{% endautoescape %}

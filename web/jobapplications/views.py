@@ -18,7 +18,7 @@ from ace.constants import FILE_TYPE_RESUME, FILE_TYPE_COVER_LETTER, FILE_TYPE_TR
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_text
 from django_sendfile import sendfile
-from accounts.models import downloadProtectedFile_token, User, Candidate, Employer, Language, PreferredName
+from accounts.models import User, Candidate, Employer, Language, PreferredName
 import uuid
 from django.db import transaction
 from django.db.models import Q
@@ -409,7 +409,8 @@ def get_protected_file(request, uid, candidateId, filetype, fileid, token):
     
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
-    if user is not None and downloadProtectedFile_token.check_token(user, token):
+    if user is not None:
+        #and downloadProtectedFile_token.check_token(user, token):
 
         # Future proof section intentionally left blank. Web currently has not need for this functionality.
         # Could enable valid users to access protected file with a tokenized link. 

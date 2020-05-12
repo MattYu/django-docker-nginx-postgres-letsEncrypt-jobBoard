@@ -3,6 +3,7 @@ from companies.models import Company
 from tinymce import models as tinymce_models
 from ace.constants import MAX_LENGTH_TITLE, MAX_LENGTH_DESCRIPTION, MAX_LENGTH_RESPONSABILITIES, MAX_LENGTH_REQUIREMENTS, MAX_LENGTH_STANDARDFIELDS, CATEGORY_CHOICES, LOCATION_CHOICES, JOB_STATUS
 from accounts.models import Employer
+from django.contrib.postgres.fields import ArrayField
 
 # Create your models here.
 
@@ -11,7 +12,7 @@ class Job(models.Model):
     
     #Job Summary
 
-    category = models.CharField(max_length = MAX_LENGTH_STANDARDFIELDS, default= "Any", choices= CATEGORY_CHOICES)
+    category = ArrayField(models.CharField(max_length = MAX_LENGTH_STANDARDFIELDS, default= "Any", choices= CATEGORY_CHOICES))
     salaryRange = models.CharField(max_length = MAX_LENGTH_STANDARDFIELDS, default= "N/A", blank=True)
     vacancy = models.IntegerField(null= True, default= 0)
     filled = models.IntegerField(null= True, default= 0)

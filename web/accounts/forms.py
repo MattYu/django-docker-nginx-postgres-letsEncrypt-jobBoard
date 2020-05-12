@@ -380,6 +380,8 @@ class RegistrationForm(forms.Form):
                 language.user = user
                 language.save()
 
+        connection = mail.get_connection()
+        connection.open()
         messages = []
         email = cleaned_data.get('email')
         raw_password = cleaned_data.get('password')
@@ -397,8 +399,10 @@ class RegistrationForm(forms.Form):
                     mail_subject, message, to=[to_email]
         )
 
+        messages.append(email)
+
         try:
-            email.send()
+            #email.send()
             description = "We have sent you a confirmation link to " + self.cleaned_data.get('email') + ". If you have not received the link, please click here " + "https://"+str(current_site.domain) + "/resend_activation"
             notify.send(user, recipient=user, verb='Welcome to ACE - Please confirm your email address', description = description, public=False)
         except Exception as e:
@@ -419,13 +423,21 @@ class RegistrationForm(forms.Form):
                         mail_subject, message, to=[to_email]
             )
 
+            messages.append(email)
+
             try:
-                email.send()
+                #email.send()
                 notify.send(user, recipient=user, verb='Confirmation link sent to ' + to_email, description = "Link not received? You may request a new one by going into your Dashboard->Edit Profile", public=False)
             except Exception as e:
                 import sys
                 print(e, file=sys.stderr)
-
+        try:
+            connection.send_messages(messages)
+        except Exception as e:
+            import sys
+            print(e, file=sys.stderr)
+            
+        connection.close()
         return user
 
 
