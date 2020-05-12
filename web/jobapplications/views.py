@@ -52,6 +52,10 @@ def add_resume(request, pk= None, *args, **kwargs):
             request.session['info'] = "You already applied to this job"
             jobApplication = JobApplication.objects.get(job__pk=pk, candidate=Candidate.objects.get(user=request.user))
             return HttpResponseRedirect('/jobApplicationDetails/' + str(jobApplication.pk) + "/")
+
+        if jobApplication.status == "Close" or jobApplication.status == "Filled" or jobApplication.status == "Partially Filled":
+            request.session['info'] = "Job closed"
+            return HttpResponseRedirect('/')
     
     instance = get_object_or_404(Job, pk=pk)
     context = {'job': instance}

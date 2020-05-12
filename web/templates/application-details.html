@@ -280,7 +280,7 @@
                     <div class="information-and-contact">
                       <div class="information">
                         <h4>Contact</h4>
-                        <h4>Visible to others only if selected for interview except Co-op review staff</h4>
+                        <h4>Can be seen by job owner only when you are selected for an interview. Exception: Co-op review staff</h4>
                         <ul>
                           <li><span>Phone number:</span> {{jobApplication.candidate.user.phoneNumber}}</li>
                           <li><span>Main Email address:</span> {{jobApplication.candidate.user.email}}</li>
@@ -295,7 +295,7 @@
                     <div class="information-and-contact">
                       <div class="information">
                         <h4>Contact</h4>
-                        <h4>Visible only if selected for interview</h4>
+                        <h4>Visible only if selected for an interview</h4>
                         {% if user.user_type == 2 and jobApplication.status != "Submitted" and  jobApplication.status != "Not Selected"%}
                         <ul>
                           <li><span>Phone number:</span> {{jobApplication.candidate.user.phoneNumber}}</li>

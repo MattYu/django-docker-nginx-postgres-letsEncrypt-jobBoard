@@ -151,13 +151,6 @@
                     <div class="controller grid">
                       <i data-feather="grid"></i>
                     </div>
-                    <div class="job-view-filter">
-                      <select class="selectpicker">
-                        <option value="" selected>Most Recent</option>
-                        <option value="california">Top Rated</option>
-                        <option value="las-vegas">Most Popular</option>
-                      </select>
-                    </div>
                   </div>
                   <div class="showing-number">
                     <span>Showing {{ job_num }} jobs</span>
@@ -177,15 +170,18 @@
                         <div class="info">
                           <span class="company"><a href="/company-details/{{job.company.pk}}"><i data-feather="briefcase"></i>{{job.company.name}}</a></span>
                           <span class="office-location"><a href="#"><i data-feather="map-pin"></i>{{job.location}}</a></span>
-                          <span class="job-type full-time"><a href="#"><i data-feather="clock"></i>{{job.jobtype}}</a></span>
+                          <span class="job-type full-time"><a href="#"><i data-feather="clock"></i>Deadline: {{job.expirationDate}}</a></span>
                         </div>
                       </div>
                       <div class="more">
                         <div class="buttons">
+                          {% if job.status != "Closed" and job.status != "Filled" and job.status != "Partially Filled"%}
                           <a href="/add-resume/{{job.pk}}/" class="button">Apply Now</a>
-                          <a href="#" class="favourite"><i data-feather="heart"></i></a>
+                          {% else %}
+                          <a href="/" class="button">Closed</a>
+                          {% endif %}
                         </div>
-                        <p class="deadline">Deadline: {{job.expirationDate}}</p>
+                        <p class="deadline">Status: {{job.status}}</p>
                       </div>
                     </div>
                   </div>
