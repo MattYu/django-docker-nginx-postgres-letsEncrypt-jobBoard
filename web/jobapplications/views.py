@@ -70,11 +70,13 @@ def add_resume(request, pk= None, *args, **kwargs):
 
         if 'Apply' in request.POST:
             context["showError"] = True
+
             if form.is_valid():
                 form.clean()
                 jobApplication = form.save(instance, request.user)
 
-                return HttpResponseRedirect('/')
+
+                return HttpResponseRedirect('/jobApplications/')
     else:
         form = ApplicationForm(extra_edu_count=1, extra_exp_count=1, extra_doc_count=0, user=request.user, initWithHistory=True)
     context['form'] = form
@@ -286,7 +288,7 @@ def browse_job_applications(request, searchString = "", jobId= -1):
             merger.write(outputStream)
             response.write(outputStream.getvalue())
 
-            User.objects.filter(id=request.user.id).update(protect_file_temp_download_key="")
+            #User.objects.filter(id=request.user.id).update(protect_file_temp_download_key="")
             return response
 
     context["newMessageCount"] = len(request.user.notifications.unread())

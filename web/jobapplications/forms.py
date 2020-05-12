@@ -81,10 +81,11 @@ class ApplicationForm(forms.Form):
 
 
     firstName = forms.CharField(max_length=MAX_LENGTH_STANDARDFIELDS,
+                                required=False,
                                 widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'First name'})
                                 )
 
-    lastName = forms.CharField(max_length=MAX_LENGTH_STANDARDFIELDS,
+    lastName = forms.CharField(max_length=MAX_LENGTH_STANDARDFIELDS, required=False,
                                 widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last name'})
                                 )
     
@@ -279,34 +280,42 @@ class ApplicationForm(forms.Form):
         return docDict
 
     def clean(self):
+        self.raise_errors = []
         cleaned_data = super().clean()
+        for error in self._errors:
+            import sys
+            print(error, file=sys.stderr)
+            print(self._errors[error], file=sys.stderr)
 
         if not cleaned_data.get('resume') and self.is_valid() and cleaned_data.get("oldResumes") == "OR Select an Existing CV from the List":
-            raise forms.ValidationError('You have to upload a resume')
+            self.raise_errors.append('You have to upload a resume')
         
         if not cleaned_data.get('coverLetter') and self.is_valid():
-            raise forms.ValidationError('You have to upload a cover letter')
+             self.raise_errors.append('You have to upload a cover letter')
         
         if cleaned_data.get('resume') and self.is_valid() and cleaned_data.get("oldResumes") != "OR Select an Existing CV from the List":
             if not cleaned_data.get('resume').name.endswith(".pdf"):
-                raise forms.ValidationError('Files must be in pdf format')
+                 self.raise_errors.append('Files must be in pdf format')
         if self.is_valid() and cleaned_data.get('coverLetter') and not cleaned_data.get('coverLetter').name.endswith(".pdf"):
-            raise forms.ValidationError('Files must be in pdf format')
+             self.raise_errors.append('Files must be in pdf format')
         
         '''
         for doc in self.documentsFieldsNames:
             if doc and cleaned_data.get(doc['name']) and not cleaned_data.get(doc['name']).endswith(".pdf"):
                 raise forms.ValidationError('Files must be in pdf format')
         '''
-
+        if self.raise_errors:
+            raise forms.ValidationError(self.raise_errors)
+        
         self.cleaned_data = cleaned_data
 
     def save(self, pk, user):
 
         jobApplication = JobApplication()
         cleaned_data = self.cleaned_data
-        jobApplication.firstName = cleaned_data.get('firstName')
-        jobApplication.lastName = cleaned_data.get('lastName')
+        jobApplication.firstName = user.firstName
+        jobApplication.lastName = user.lastName
+        jobApplication.preferredName = user.preferredName
         jobApplication.job = get_object_or_404(Job, pk=pk.pk)
         jobApplication.candidate = Candidate.objects.get(user=user)
         jobApplication.save()
