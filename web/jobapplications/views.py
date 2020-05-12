@@ -18,7 +18,7 @@ from ace.constants import FILE_TYPE_RESUME, FILE_TYPE_COVER_LETTER, FILE_TYPE_TR
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_text
 from django_sendfile import sendfile
-from accounts.models import downloadProtectedFile_token, User, Candidate, Employer, Language, PreferredName
+from accounts.models import User, Candidate, Employer, Language, PreferredName
 import uuid
 from django.db import transaction
 from django.db.models import Q
@@ -52,8 +52,13 @@ def add_resume(request, pk= None, *args, **kwargs):
             request.session['info'] = "You already applied to this job"
             jobApplication = JobApplication.objects.get(job__pk=pk, candidate=Candidate.objects.get(user=request.user))
             return HttpResponseRedirect('/jobApplicationDetails/' + str(jobApplication.pk) + "/")
+
     
     instance = get_object_or_404(Job, pk=pk)
+
+    if instance.status == "Close" or instance.status == "Filled" or instance.status == "Partially Filled":
+        request.session['info'] = "Job closed"
+        return HttpResponseRedirect('/')
     context = {'job': instance}
     
     if (request.method == 'POST'):
@@ -67,11 +72,16 @@ def add_resume(request, pk= None, *args, **kwargs):
             user=request.user
             )
         #request.session['form'] = form.as_p()
-        if form.is_valid():
-            form.clean()
-            jobApplication = form.save(instance, request.user)
 
-            return HttpResponseRedirect('/')
+        if 'Apply' in request.POST:
+            context["showError"] = True
+
+            if form.is_valid():
+                form.clean()
+                jobApplication = form.save(instance, request.user)
+
+
+                return HttpResponseRedirect('/jobApplications/')
     else:
         form = ApplicationForm(extra_edu_count=1, extra_exp_count=1, extra_doc_count=0, user=request.user, initWithHistory=True)
     context['form'] = form
@@ -271,7 +281,7 @@ def browse_job_applications(request, searchString = "", jobId= -1):
                 supportingDocuments = SupportingDocument.objects.filter(JobApplication=application.pk)
 
                 for supportingDoc in supportingDocuments:
-                    filePath = supportingDoc.path
+                    filePath = supportingDoc.document.path
                     try:
                         if fs.exists(filePath):
                             with fs.open(filePath, 'rb') as doc:
@@ -283,7 +293,7 @@ def browse_job_applications(request, searchString = "", jobId= -1):
             merger.write(outputStream)
             response.write(outputStream.getvalue())
 
-            User.objects.filter(id=request.user.id).update(protect_file_temp_download_key="")
+            #User.objects.filter(id=request.user.id).update(protect_file_temp_download_key="")
             return response
 
     context["newMessageCount"] = len(request.user.notifications.unread())
@@ -409,7 +419,8 @@ def get_protected_file(request, uid, candidateId, filetype, fileid, token):
     
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
-    if user is not None and downloadProtectedFile_token.check_token(user, token):
+    if user is not None:
+        #and downloadProtectedFile_token.check_token(user, token):
 
         # Future proof section intentionally left blank. Web currently has not need for this functionality.
         # Could enable valid users to access protected file with a tokenized link. 
@@ -482,7 +493,7 @@ def get_protected_file_withAuth(request, fileType, applicationId, supportID=""):
             supportingDocument = SupportingDocument.objects.filter(JobApplication=applicationId, pk=supportID)[0]
             if not supportingDocument:
                 return HttpResponse('File ID does not exist')
-            document = supportingDocument
+            document = supportingDocument.document
             filePath = document.path
 
         return sendfile(request, "/" + filePath)
@@ -516,7 +527,7 @@ def get_protected_file_withAuth(request, fileType, applicationId, supportID=""):
             supportingDocument = SupportingDocument.objects.filter(JobApplication=applicationId, pk=supportID)[0]
             if not supportingDocument:
                 return HttpResponse('File ID does not exist')
-            document = supportingDocument
+            document = supportingDocument.document
             filePath = document.path
         return sendfile(request, "/" + filePath)     
     else:

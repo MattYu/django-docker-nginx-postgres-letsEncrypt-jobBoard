@@ -14,6 +14,12 @@ from django.db import transaction
 from datetime import datetime, timedelta
 from django.utils import timezone
 
+from django.core.mail import EmailMessage
+from django.core import mail
+from django.contrib.sites.shortcuts import get_current_site
+from notifications.signals import notify
+from django.template.loader import render_to_string
+
 # Create your views here.
 @transaction.atomic
 def employer_view_rankings(request, jobId= None):
@@ -212,33 +218,32 @@ def admin_matchmaking(request):
 
                 matchResult = match.solve(optimal="resident")
 
+                matchingHistory = MatchingHistory()
 
                 for jobObj in matchResult:
                     for candidate in matchResult[jobObj]:
                         match = Match()
-                        # Before creating a match, perform a safety check to see if candidate already have been matched by the same employer for the same job before
-                        if Match.objects.filter(candidate=Candidate.objects.get(id=int(candidate.name)), job= Job.objects.get(id=int(jobObj.name))).count() == 0:
-                            match.candidate = Candidate.objects.get(id=int(candidate.name))
-                            job = Job.objects.get(id=int(jobObj.name))
-                            match.job = job
-                            match.jobApplication = JobApplication.objects.filter(candidate=Candidate.objects.get(id=int(candidate.name)), job= job).first()
-                            match.save()
-                            #match.jobApplication.status = "Matched"
-                            match.jobApplication.save()
+                        match.candidate = Candidate.objects.get(id=int(candidate.name))
+                        job = Job.objects.get(id=int(jobObj.name))
+                        match.job = job
+                        match.jobApplication = JobApplication.objects.filter(candidate=Candidate.objects.get(id=int(candidate.name)), job= job).first()
+                        match.save()
+                        #match.jobApplication.status = "Matched"
+                        #match.jobApplication.save()
 
-                            matchingHistory.matches.add(match)
-                            matchingHistory.save()
+                        matchingHistory.matches.add(match)
+                        matchingHistory.save()
 
-                            job.vacancy -= 1
-                            job.filled += 1
+                        job.vacancy -= 1
+                        job.filled += 1
+                        job.save()
+
+                        if job.vacancy == 0:
+                            job.status = "Filled"
                             job.save()
-
-                            if job.vacancy == 0:
-                                job.status = "Filled"
-                                job.save()
-                            if job.vacancy !=0 and job.filled != 0:
-                                job.status = "Partially Filled"
-                                job.save()                           
+                        if job.vacancy !=0 and job.filled != 0:
+                            job.status = "Partially Filled"
+                            job.save()                           
 
                 for rank in Ranking.objects.filter(is_closed=False):
                     if Match.objects.filter(jobApplication=rank.jobApplication).count() == 0:
@@ -251,6 +256,12 @@ def admin_matchmaking(request):
                         rank.save()
 
             if request.POST.get("open"):
+                connection = mail.get_connection()
+                connection.open()
+
+
+                messages = []
+
                 for rank in Ranking.objects.filter(is_closed=False):
                     if Match.objects.filter(jobApplication=rank.jobApplication).count() == 0:
                         rank.jobApplication.status = "Not Matched"
@@ -262,9 +273,70 @@ def admin_matchmaking(request):
                         rank.is_closed = True
                         rank.save()
                         rank.jobApplication.save()
+
+                        #Create message for employer
+
+                        current_site = get_current_site(request)
+
+                        
+                        # Step 1: find the email(s) of the job owner(s) in the system
+                        email_to = []
+                        job = rank.jobApplication.job
+                        for employer in job.jobAccessPermission.all():
+                            # Step 2 Send individual notification
+                            description = "Hello, We are pleased to inform you that you matched with one of your selected candidates: http://" + str(current_site.domain) + "/jobApplicationDetails/" + str(rank.jobApplication.pk)
+                            notify.send(request.user, recipient=employer.user, verb='Job Match: ' + rank.candidate.preferredName + " " + rank.candidate.firstName + " " + rank.candidate.lastName, description = description, public=False)
+                            if employer.notify_by_email:
+                                email_to.append(employer.user.email)
+                        # Step 3: Create email for employer(s)
+                        mail_subject = 'Concordia ACE Job Match: ' + rank.candidate.preferredName + " " + rank.candidate.firstName + " " + rank.candidate.lastName
+                        message = render_to_string('email-match-employer.html', {
+                            'candidate': rank.candidate,
+                            'domain': current_site.domain,
+                            'job': rank.jobApplication.job,
+                        })
+                        email = EmailMessage(
+                                    mail_subject, message, to=email_to
+                        )
+                        if len(email_to) != 0:
+                            messages.append(email)
+
+                        # Step 4: Notify candiddate
+
+                        candidate = rank.candidate
+
+                        description = "Congratulation! We have shared your contact information with your future employer."
+
+                        notify.send(request.user, recipient=candidate.user, verb='Job Match: ' + rank.jobApplication.job.title + " at " + rank.jobApplication.job.company.name, description = description, public=False)
+                        
+                        # Step 5: Create email for the candidate
+                        if candidate.notify_by_email:
+                            mail_subject = 'Concordia ACE Job Match: ' + rank.jobApplication.job.title + " at " + rank.jobApplication.job.company.name
+                            message = render_to_string('email-match-candidate.html', {
+                                'user': rank.candidate,
+                                'domain': current_site.domain,
+                                'job': rank.jobApplication.job,
+                            })
+                            email = EmailMessage(
+                                        mail_subject, message, to=[candidate.user.email]
+                            )
+
+                            messages.append(email)
+                
+
                 for match in Match.objects.filter(isOpenToPublic=False):
                         match.isOpenToPublic = True
                         match.save()
+
+                # Final Step: Send messages
+                try:
+                    connection.send_messages(messages)
+                except Exception as e:
+                    import sys
+                    print(e, file=sys.stderr)
+
+                connection.close()
+
 
             if request.POST.get("Undo last 7 days"):
                 for rank in Ranking.objects.filter(updated_at__gte=timezone.now()-timedelta(days=7)).all():

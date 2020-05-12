@@ -1,0 +1,12 @@
+{% autoescape off %}
+Hi {{ user.firstName }},
+
+Congratulations! You have been matched with {{job.company.name}} for {{ job.title }}. 
+
+We've shared your contact information with your new employer and they will be in touch with you soon.
+Visit http://{{ domain }}{% url 'activate' uidb64=uid token=token %} for more details. 
+
+The Concordia ACE Team
+Please do not reply this unmonitored email address.
+Never made a {{user.email}} ACE account? Prevent identity theft and let us know. You may suspend this account here: http://{{ domain }}{% url 'password_reset'  %}
+{% endautoescape %}

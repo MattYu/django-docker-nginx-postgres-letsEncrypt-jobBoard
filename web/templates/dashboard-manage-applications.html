@@ -131,7 +131,9 @@
             <div class="dashboard-container">
               <div class="dashboard-content-wrapper">
                 <div class="manage-candidate-container">
+                  {% if request.user.user_type == 2 or request.user.user_type == 4%}
                     <button class="button" class="add-new-field" name="pdf" id="pdf">Download Selection as one PDF</button>
+                  {% endif %}
                   <br>
                   {% if job %}
                       <h6>Applications for {{job.title}} [{{job.id}}] at {{job.company.name}}</h6>
@@ -206,6 +208,7 @@
                     {{form.program}}
                 </div>
                 <div class="job-filter same-pad">
+                {% if request.user.user_type == 2 or request.user.user_type == 4%}
                 <h4 class="option-title">Optional Keywords</h4>
                 <ul id="formInput">
                     {{form.firstName}}
@@ -213,8 +216,9 @@
                     {{form.email}}
                     {{form.studentId}}
                 </ul>
-
+                {% endif %}
                 </div>
+                {% if request.user.user_type == 2 or request.user.user_type == 4%}
                 <div class="job-filter same-pad">
                   <h4 class="option-title">GPA</h4>
                   <div class="price-range-slider">
@@ -230,6 +234,7 @@
                     </div>
                   </div>
                 </div>
+                {% endif %}
                 <div data-id="job-type" class="job-filter job-type same-pad">
                   <h4 class="option-title">Date Posted</h4>
                   <ul>

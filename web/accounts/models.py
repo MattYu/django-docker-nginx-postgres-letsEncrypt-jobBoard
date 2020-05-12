@@ -20,12 +20,14 @@ class TokenGenerator(PasswordResetTokenGenerator):
         )
 account_activation_token = TokenGenerator()
 
+'''
 class ApplicationsTokenGenerator(PasswordResetTokenGenerator):
     def _make_hash_value(self, user, timestamp):
         return (
             six.text_type(user.pk) + six.text_type(timestamp) + six.text_type(user.protect_file_temp_download_key)
         )
-downloadProtectedFile_token = ApplicationsTokenGenerator()
+# downloadProtectedFile_token = ApplicationsTokenGenerator()
+'''
 
 class MyUserManager(BaseUserManager):
     def create_user(self, email, firstName, lastName, user_type, password=None):
@@ -66,8 +68,9 @@ class User(AbstractBaseUser , PermissionsMixin):
     USER_TYPE_CHOICES = (
       (1, 'candidate'),
       (2, 'employer'),
-      (3, 'admin'),
+      (3, 'reserved'),
       (4, 'super'),
+      (666, 'blocked')
   )
     username = None
     email = models.EmailField(verbose_name='email', max_length = 60, unique=True)
@@ -83,9 +86,9 @@ class User(AbstractBaseUser , PermissionsMixin):
     user_type = models.PositiveSmallIntegerField(choices=USER_TYPE_CHOICES)
     
     phoneNumber = models.CharField(max_length = MAX_LENGTH_STANDARDFIELDS,  default= "")
-    preferredName = models.CharField(max_length = MAX_LENGTH_STANDARDFIELDS,  default= "")
+    preferredName = models.CharField(max_length = MAX_LENGTH_STANDARDFIELDS,  default= "", blank=True)
 
-    protect_file_temp_download_key = models.CharField(max_length = MAX_LENGTH_STANDARDFIELDS,  default= "")
+    #protect_file_temp_download_key = models.CharField(max_length = MAX_LENGTH_STANDARDFIELDS,  default= "")
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['firstName', 'lastName', 'user_type']
@@ -119,7 +122,7 @@ class Candidate(models.Model):
     creditLeft = models.FloatField(max_length = MAX_LENGTH_STANDARDFIELDS,  default= 0)
     gpa = models.FloatField(max_length = MAX_LENGTH_STANDARDFIELDS,  default= 0)
     user = models.ForeignKey(User, on_delete=models.CASCADE, default= "")
-    program = models.CharField(choices=CATEGORY_CHOICES, max_length = 20, default="ANY")
+    program = models.CharField(choices=CATEGORY_CHOICES, max_length = 200, default="ANY")
     citizenship = models.CharField(choices=CITIZENSHIP, max_length = 50, default="Choose")
     transcript = models.FileField(upload_to=get_transcript_path, default="")
     status = models.CharField(choices=EMPLOYER_STATUS, max_length = 20, default="Pending Review")

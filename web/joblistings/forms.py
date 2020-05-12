@@ -14,9 +14,9 @@ class JobForm(forms.Form):
                             widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Your job title here'})
                             )
 
-    category = forms.ChoiceField(
+    category = forms.MultipleChoiceField(
         choices = CATEGORY_CHOICES,
-        widget=forms.Select(attrs={'class': 'form-control', 'placeholder': 'Select Category'})
+        widget=forms.SelectMultiple(attrs={'class': 'form-control', 'placeholder': 'Select Category'})
     )
 
     salaryRange = forms.CharField( 

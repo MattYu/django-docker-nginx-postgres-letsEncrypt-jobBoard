@@ -158,15 +158,14 @@
                         <div class="row">
                           <div class="col-md-6">
                             <div class="form-group">
-                                {{form.category}}
-                                {% if form.category.errors %}
-                                  <ol>
-                                  {% for error in form.category.errors %}
-                                      <li><strong>{{ error|escape }}</strong></li>
-                                  {% endfor %}
-                                  </ol>
-                                {% endif %}
-                              <i class="fa fa-caret-down"></i>
+                              {{form.vacancy}}
+                              {% if form.vacancy.errors %}
+                                <ol>
+                                {% for error in form.vacancy.errors %}
+                                    <li><strong>{{ error|escape }}</strong></li>
+                                {% endfor %}
+                                </ol>
+                              {% endif %}
                             </div>
                           </div>
                           <div class="col-md-6">
@@ -194,16 +193,6 @@
                             </div>
                           </div>
                           <div class="col-md-6">
-                            <div class="form-group">
-                              {{form.vacancy}}
-                              {% if form.vacancy.errors %}
-                                <ol>
-                                {% for error in form.vacancy.errors %}
-                                    <li><strong>{{ error|escape }}</strong></li>
-                                {% endfor %}
-                                </ol>
-                              {% endif %}
-                            </div>
                           </div>
                         </div>
                       </div>
@@ -294,9 +283,16 @@
                       </div>
                     </div>
                     <div class="row">
-                      <label class="col-md-3 col-form-label">Other Benefits</label>
+                      <label class="col-md-3 col-form-label">Target Categories</label>
                       <div class="col-md-9">
-                        <textarea id="mytextarea4" class="tinymce-editor tinymce-editor-2" placeholder="Description text here"></textarea>
+                      {{form.category}}
+                        {% if form.category.errors %}
+                          <ol>
+                          {% for error in form.category.errors %}
+                              <li><strong>{{ error|escape }}</strong></li>
+                          {% endfor %}
+                          </ol>
+                        {% endif %}
                       </div>
                     </div>
                     <div class="form-group row">
@@ -375,14 +371,8 @@
                             </div>
                           </div>
                           <div class="col-md-6">
-                            <div class="form-group">
-                              <input type="text" class="form-control" placeholder="Web Address">
-                            </div>
                           </div>
                           <div class="col-md-12">
-                            <div class="form-group">
-                              <textarea class="form-control" placeholder="Company Profile"></textarea>
-                            </div>
                           </div>
                         </div>
                       </div>

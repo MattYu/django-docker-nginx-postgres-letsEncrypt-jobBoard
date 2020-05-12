@@ -198,7 +198,7 @@
               <div class="title-and-info">
                 <div class="title">
                   <div class="title-body">
-                    <h4> {% if preferredName %} {{preferredName}} ({{jobApplication.candidate.user.firstName}}){% else %}{{jobApplication.candidate.user.firstName}} {% endif %} {{jobApplication.candidate.user.lastName}} </h4>
+                    <h4> {% if preferredName != "" %} {{preferredName}} ({{jobApplication.candidate.user.firstName}}){% else %}{{jobApplication.candidate.user.firstName}} {% endif %} {{jobApplication.candidate.user.lastName}} </h4>
                     <div class="info">
                       <span class="candidate-designation"><i data-feather="check-square"></i>Application Status: {{jobApplication.status}}</span>
                     </div>
@@ -228,9 +228,7 @@
                         <p>Credit Completed: {{jobApplication.candidate.creditCompleted}}</p>
                         <p>Credit Left: {{jobApplication.candidate.creditLeft}}</p>
                         <p>GPA: {{jobApplication.candidate.gpa}}</p>
-                        <p>International Student: {{jobApplication.candidate.internationalStudent}}</p>
-                        <p>Willingness to travel: {{jobApplication.candidate.travel}}</p>
-                        <p>Can commit to 16 months internships: {{jobApplication.candidate.timeCommitment}}</p>
+                        <p>Citizenship status: {{jobApplication.candidate.citizenship}}</p>
                       </div>
                     </div>
                     <div class="edication-background details-section">
@@ -281,28 +279,35 @@
                     {% if user.user_type == 4 or user.user_type == 1 %}
                     <div class="information-and-contact">
                       <div class="information">
-                        <h4>Information</h4>
+                        <h4>Contact</h4>
+                        <h4>Can be seen by job owner only when you are selected for an interview. Exception: Co-op review staff</h4>
                         <ul>
                           <li><span>Phone number:</span> {{jobApplication.candidate.user.phoneNumber}}</li>
-                          <li><span>Email address:</span> {{jobApplication.candidate.user.email}}</li>
+                          <li><span>Main Email address:</span> {{jobApplication.candidate.user.email}}</li>
                           <li><span>Is email confirmed:</span> {{jobApplication.candidate.user.is_email_confirmed}}</li>
+                          <li><span>Concordia Email on file:</span> {{jobApplication.candidate.concordia_email}}</li>
+                          <li><span>Is Concordia Email confirmed:</span> <h5><b>{{jobApplication.candidate.is_concordia_email_confirmed}} </b></h5></li>
                         </ul>
                       </div>
                       {% endif %}
 
-                      {% if user.user_type == 2 and jobApplication.status != "Submitted" and  jobApplication.status != "Not Selected"%}
+                    {% if user.user_type == 2 %}
                     <div class="information-and-contact">
                       <div class="information">
-                        <h4>Information</h4>
+                        <h4>Contact</h4>
+                        <h4>Visible only if selected for an interview</h4>
+                        {% if user.user_type == 2 and jobApplication.status != "Submitted" and  jobApplication.status != "Not Selected"%}
                         <ul>
                           <li><span>Phone number:</span> {{jobApplication.candidate.user.phoneNumber}}</li>
-                          <li><span>Email address:</span> {{jobApplication.candidate.user.email}}</li>
+                          <li><span>Main Email address:</span> {{jobApplication.candidate.user.email}}</li>
                           <li><span>Is email confirmed:</span> {{jobApplication.candidate.user.is_email_confirmed}}</li>
+                          <li><span>Concordia Email on file:</span> {{jobApplication.candidate.concordia_email}}</li>
+                          <li><span>Is Concordia Email confirmed:</span> <h5><b>{{jobApplication.candidate.is_condia_email_confirmed}} </b></h5></li>
                         </ul>
+                        {% endif %}
                       </div>
                       {% endif %}
                       <div class="buttons">
-                        <a href="#" class="button contact-button" data-toggle="modal" data-target="#exampleModal">Contact Me</a>
                         <a href="/getFileWithAuth/2/{{jobApplication.pk}}/" class="button cover-download"><i data-feather="download"></i>Cover Letter</a>
                         <a href="/getFileWithAuth/3/{{jobApplication.pk}}/" class="button contact-download"><i data-feather="download"></i>Transcript</a>
                       </div>

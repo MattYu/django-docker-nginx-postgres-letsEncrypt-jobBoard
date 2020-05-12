@@ -80,7 +80,7 @@ def job_search(request, searchString="", *args, **kwargs):
         if "Not Matched/Closed" in filterSet:
             query &= (Q(status= "Not Matched") | Q(status="Closed"))
         if form["program"].value() != None and form["program"].value() != "ANY":
-            query &= (Q(category= form["program"].value()))
+            query &= (Q(category__icontains= form["program"].value()))
 
 
         qs = Job.objects.filter(query).order_by(sortOrder).distinct()

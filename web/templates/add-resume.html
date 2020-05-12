@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>Oficiona</title>
+    <title>Concordia ACE</title>
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href= {% static "assets/css/bootstrap.min.css" %}>
@@ -115,9 +115,9 @@
                   <div class="title-body">
                     <h4>{{job.title}}</h4>
                     <div class="info">
-                      <span class="company"><a href="#"><i data-feather="briefcase"></i>{{job.company.name}}</a></span>
+                      <span class="company"><a href="/company-details/{{job.pk}}"><i data-feather="briefcase"></i>{{job.company.name}}</a></span>
                       <span class="office-location"><a href="#"><i data-feather="map-pin"></i>{{job.location}}</a></span>
-                      <span class="job-type full-time"><a href="#"><i data-feather="clock"></i>{{job.jobtype}}</a></span>
+                      <span class="job-type full-time"><a href="#"><i data-feather="clock"></i>Deadline: {{job.deadline}}</a></span>
                     </div>
                   </div>
                 </div>
@@ -157,13 +157,18 @@
                       <div class="col-md-9">
                         <div class="row">
                           <div class="col-md-6">
-                            {{form.firstName}}
+                            <div class="form-group">
+                            <h8> <b> {{request.user.preferredName}} {{request.user.firstName}} {{request.user.lastName}} </b> </h8>
+                            </div>
                           </div>
                           <div class="col-md-6">
-                            {{form.lastName}}
+                            <div class="form-group">
+                            </div>
                           </div>
                           <div class="col-md-6">
-                            {{form.preferredName}}
+                          <div class="form-group">
+                            
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -179,15 +184,43 @@
                       <div class="col-md-9" id>
                         <div class="form-group">
                           {{education.institute}}
+                          {% if showError %}
+                          {% for error in education.institute.errors %}
+                              <div class="alert alert-danger">
+                                  <strong>{{ error|escape }}</strong>
+                              </div>
+                          {% endfor %}
+                          {% endif %}
                         </div>
                         <div class="form-group">
                           {{education.title}}
+                          {% if showError %}
+                          {% for error in education.title.errors %}
+                              <div class="alert alert-danger">
+                                  <strong>{{ error|escape }}</strong>
+                              </div>
+                          {% endfor %}
+                          {% endif %}
                         </div>
                         <div class="form-group">
                           {{education.period}}
+                          {% if showError %}
+                          {% for error in education.period.errors %}
+                              <div class="alert alert-danger">
+                                  <strong>{{ error|escape }}</strong>
+                              </div>
+                          {% endfor %}
+                          {% endif %}
                         </div>
                         <div class="form-group">
                           {{education.description}}
+                          {% if showError %}
+                          {% for error in education.description.errors %}
+                              <div class="alert alert-danger">
+                                  <strong>{{ error|escape }}</strong>
+                              </div>
+                          {% endfor %}
+                          {% endif %}
                         </div>
                         {% if forloop.last %}
                         <div class="row">
@@ -214,15 +247,43 @@
                       <div class="col-md-9">
                         <div class="form-group">
                           {{experience.companyName}}
+                          {% if showError %}
+                          {% for error in experience.companyName.errors %}
+                              <div class="alert alert-danger">
+                                  <strong>{{ error|escape }}</strong>
+                              </div>
+                          {% endfor %}
+                          {% endif %}
                         </div>
                         <div class="form-group">
                           {{experience.title}}
+                          {% if showError %}
+                          {% for error in experience.title.errors %}
+                              <div class="alert alert-danger">
+                                  <strong>{{ error|escape }}</strong>
+                              </div>
+                          {% endfor %}
+                          {% endif %}
                         </div>
                         <div class="form-group">
                           {{experience.period}}
+                          {% if showError %}
+                          {% for error in experience.period.errors %}
+                              <div class="alert alert-danger">
+                                  <strong>{{ error|escape }}</strong>
+                              </div>
+                          {% endfor %}
+                          {% endif %}
                         </div>
                         <div class="form-group">
                           {{experience.description}}
+                          {% if showError %}
+                          {% for error in experience.description.errors %}
+                              <div class="alert alert-danger">
+                                  <strong>{{ error|escape }}</strong>
+                              </div>
+                          {% endfor %}
+                          {% endif %}
                         </div>
                         {% if forloop.last %}
                         <div class="row">
@@ -248,8 +309,22 @@
                       <label class="col-md-3 col-form-label" name="exp_{{ forloop.counter }}">DOCUMENT {{ forloop.counter }}</label>
                       <div class="col-md-9">
                           {{doc.file}}
+                          {% if showError %}
+                          {% for error in doc.file.errors %}
+                              <div class="alert alert-danger">
+                                  <strong>{{ error|escape }}</strong>
+                              </div>
+                          {% endfor %}
+                          {% endif %}
                         <div class="form-group">
                           {{doc.name}}
+                          {% if showError %}
+                          {% for error in doc.name.errors %}
+                              <div class="alert alert-danger">
+                                  <strong>{{ error|escape }}</strong>
+                              </div>
+                          {% endfor %}
+                          {% endif %}
                         </div>
                         {% if forloop.last %}
                         <div class="row">
@@ -277,23 +352,38 @@
                       <label class="col-md-3 col-form-label">Upload CV <i data-feather="upload-cloud"></i></label>
                       <div class="col-md-9">
                           {{form.resume}}
+                          {% if showError %}
+                          {% for error in form.resume.errors %}
+                              <div class="alert alert-danger">
+                                  <strong>{{ error|escape }}</strong>
+                              </div>
+                          {% endfor %}
+                          {% endif %}
                           {{form.oldResumes}}
+                          {% if showError %}
+                          {% for error in form.oldResumes.errors %}
+                              <div class="alert alert-danger">
+                                  <strong>{{ error|escape }}</strong>
+                              </div>
+                          {% endfor %}
+                          {% endif %}
                       </div>
                     </div>
                     <div id="cv" class="row form-group">
                       <label class="col-md-3 col-form-label">Cover Letter </label>
                       <div class="col-md-9">
                            {{form.coverLetter}}
+                           {% if showError %}
+                          {% for error in form.coverLetter.errors %}
+                              <div class="alert alert-danger">
+                                  <strong>{{ error|escape }}</strong>
+                              </div>
+                          {% endfor %}
+                          {% endif %}
                       </div>
                     </div>
                     <div class="row">
                       <div class="col-md-9 offset-md-3">
-                        <div class="form-group mt-0 terms">
-                          <input class="custom-radio" type="checkbox" id="radio-4" name="termsandcondition">
-                          <label for="radio-4">
-                            <span class="dot"></span> You accepts our <a href="#">Terms and Conditions</a> and <a href="#">Privacy Policy</a>
-                          </label>
-                        </div>
                       </div>
                     </div>
                     <div class="form-group row">
@@ -306,7 +396,7 @@
                             {% endfor %}
                           </div>
                         {% endif %}
-                        <button class="button">Publish Resume</button>
+                        <input type="submit" class="button primary-bg btn-block" formnovalidate value="Apply" name="Apply" id="Apply">
                       </div>
                     </div>
                   </div>
@@ -316,25 +406,12 @@
                 <h5><i data-feather="arrow-down-circle"></i>Navigation</h5>
                 <ul class="sidebar-menu">
                   <li><a href="#full-name">Full Name</a></li>
-                  <li><a href="#information">Informations</a></li>
-                  <li><a href="#about">About You</a></li>
                   <li><a href="#education">Education</a></li>
                   <li><a href="#experience">Work Experiance</a></li>
-                  <li><a href="#skill">Professional Skill</a></li>
-                  <li><a href="#qualification">Special Qualification</a></li>
-                  <li><a href="#portfolio">Portfolio</a></li>
+                  <li><a href="#portfolio">Additional Documents (Optional)</a></li>
                   <li><a href="#cv">Upload CV</a></li>
                   <li><a href="#cover">Cover Letter</a></li>
-                  <li><a href="#profile">Social Profile</a></li>
-                  <li><a href="#details">Personal Details</a></li>
                 </ul>
-                <div class="signin-option">
-                  <p>Have an Account ? Before submit job you need to sign in !</p>
-                  <div class="buttons">
-                    <a href="#" class="signin">Sign in</a>
-                    <a href="/register" class="register">Register</a>
-                  </div>
-                </div>
               </div>
             </div>
           </div>

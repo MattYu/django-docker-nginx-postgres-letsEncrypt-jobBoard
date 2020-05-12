@@ -81,10 +81,11 @@ class ApplicationForm(forms.Form):
 
 
     firstName = forms.CharField(max_length=MAX_LENGTH_STANDARDFIELDS,
+                                required=False,
                                 widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'First name'})
                                 )
 
-    lastName = forms.CharField(max_length=MAX_LENGTH_STANDARDFIELDS,
+    lastName = forms.CharField(max_length=MAX_LENGTH_STANDARDFIELDS, required=False,
                                 widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last name'})
                                 )
     
@@ -112,20 +113,30 @@ class ApplicationForm(forms.Form):
         educations = None
         experience = None
         if initWithHistory:
+            
             jobApplication = JobApplication.objects.filter(candidate=Candidate.objects.get(user=user)).order_by("-created_at").first()
+            if jobApplication:
+                educations = Education.objects.filter(JobApplication=jobApplication).distinct()
+                experience = Experience.objects.filter(JobApplication=jobApplication).distinct()
+                supportingDocuments = SupportingDocument.objects.filter(JobApplication=jobApplication).distinct()
+                kwargs.pop('extra_edu_count', 1)
+                kwargs.pop('extra_exp_count', 1)
+                kwargs.pop('extra_doc_count', 0)
+                extra_edu_fields = max(len(educations), 1)
+                extra_exp_fields = max(len(experience), 1)
+                extra_doc_fields = max(len(supportingDocuments), 0)
+            else:
+                extra_edu_fields = kwargs.pop('extra_edu_count', 1)
+                extra_exp_fields = kwargs.pop('extra_exp_count', 1)
+                extra_doc_fields = kwargs.pop('extra_doc_count', 0)
+                educations = []
+                experience = []
+                supportingDocuments = []
 
-            educations = Education.objects.filter(JobApplication=jobApplication).distinct()
-            experience = Experience.objects.filter(JobApplication=jobApplication).distinct()
-            supportingDocuments = SupportingDocument.objects.filter(JobApplication=jobApplication).distinct()
-            kwargs.pop('extra_edu_count', 1)
-            kwargs.pop('extra_exp_count', 1)
-            kwargs.pop('extra_doc_count', 0)
-            extra_edu_fields = max(len(educations), 1)
-            extra_exp_fields = max(len(experience), 1)
-            extra_doc_fields = max(len(supportingDocuments), 0)
         else:
             extra_edu_fields = kwargs.pop('extra_edu_count', 1)
             extra_exp_fields = kwargs.pop('extra_exp_count', 1)
+        
             extra_doc_fields = kwargs.pop('extra_doc_count', 0)
 
         super().__init__(*args, **kwargs)
@@ -137,14 +148,14 @@ class ApplicationForm(forms.Form):
 
         self.fields['extra_edu_count'].initial = max(min(int(extra_edu_fields), 10),1)
         for i in range(int(self.fields['extra_edu_count'].initial)):
-            if initWithHistory:
+            if initWithHistory and len(educations) > i:
                 self.add_education(i,  education=educations[i])
             else:
                 self.add_education(i)
 
         self.fields['extra_exp_count'].initial = max(min(int(extra_exp_fields), 10),1)
         for i in range(int(self.fields['extra_exp_count'].initial)):
-            if initWithHistory:
+            if initWithHistory and len(experience) > i:
                 self.add_experience(i, experience=experience[i])
             else:
                 self.add_experience(i)
@@ -279,34 +290,42 @@ class ApplicationForm(forms.Form):
         return docDict
 
     def clean(self):
+        self.raise_errors = []
         cleaned_data = super().clean()
+        for error in self._errors:
+            import sys
+            print(error, file=sys.stderr)
+            print(self._errors[error], file=sys.stderr)
 
         if not cleaned_data.get('resume') and self.is_valid() and cleaned_data.get("oldResumes") == "OR Select an Existing CV from the List":
-            raise forms.ValidationError('You have to upload a resume')
+            self.raise_errors.append('You have to upload a resume')
         
         if not cleaned_data.get('coverLetter') and self.is_valid():
-            raise forms.ValidationError('You have to upload a cover letter')
+             self.raise_errors.append('You have to upload a cover letter')
         
         if cleaned_data.get('resume') and self.is_valid() and cleaned_data.get("oldResumes") != "OR Select an Existing CV from the List":
             if not cleaned_data.get('resume').name.endswith(".pdf"):
-                raise forms.ValidationError('Files must be in pdf format')
+                 self.raise_errors.append('Files must be in pdf format')
         if self.is_valid() and cleaned_data.get('coverLetter') and not cleaned_data.get('coverLetter').name.endswith(".pdf"):
-            raise forms.ValidationError('Files must be in pdf format')
+             self.raise_errors.append('Files must be in pdf format')
         
         '''
         for doc in self.documentsFieldsNames:
             if doc and cleaned_data.get(doc['name']) and not cleaned_data.get(doc['name']).endswith(".pdf"):
                 raise forms.ValidationError('Files must be in pdf format')
         '''
-
+        if self.raise_errors:
+            raise forms.ValidationError(self.raise_errors)
+        
         self.cleaned_data = cleaned_data
 
     def save(self, pk, user):
 
         jobApplication = JobApplication()
         cleaned_data = self.cleaned_data
-        jobApplication.firstName = cleaned_data.get('firstName')
-        jobApplication.lastName = cleaned_data.get('lastName')
+        jobApplication.firstName = user.firstName
+        jobApplication.lastName = user.lastName
+        jobApplication.preferredName = user.preferredName
         jobApplication.job = get_object_or_404(Job, pk=pk.pk)
         jobApplication.candidate = Candidate.objects.get(user=user)
         jobApplication.save()
@@ -356,15 +375,18 @@ class ApplicationForm(forms.Form):
             experience.save()
 
         for doc in self.documentsFieldsNames:
+            import sys
             try:
                 document = SupportingDocument()
                 document.candidate = candidate
                 document.fileName = cleaned_data.get(doc['name'])
                 document.document = cleaned_data.get(doc['file'])
+                document.save()
                 document.JobApplication.add(jobApplication)
                 document.save()
-            except:
-                pass
+            except Exception as e:
+                import sys
+                print(e, file=sys.stderr)
 
 
         return jobApplication

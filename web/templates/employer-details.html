@@ -126,7 +126,7 @@
                 <div class="download-resume">
                   <form action="/search/" class="search-form" method="POST">
                     {% csrf_token %}
-                    <button name="keyword" value="{{company.name}}" id="keyword" type="submit">View all, {{jobsLen}} Open Positions</button>
+                    <button name="keyword" value="{{company.name}}" id="keyword" type="submit">View all Open Positions for {{company.name}}</button>
                   </form>
                 </div>
                   {% if user.is_authenticated and user.user_type == 4 %}
@@ -155,25 +155,6 @@
                         <!-- <div data-type="vimeo" data-video-id="126777001"></div> -->
                         <div id="player" data-plyr-provider="{{company.videoType}}" data-plyr-embed-id="{{company.videoLink}}"></div>
                       </div>
-                    </div>
-                    <div class="open-job details-section">
-                      <h4><i data-feather="check-circle"></i>Open Job</h4>
-                      {% for job in jobs %}
-                      <div class="job-list">
-                        <div class="body">
-                          <div class="content">
-                            <h4><a href="/job-details/{{job.pk}}">{{job.title}}</a></h4>
-                            </div>
-                          </div>
-                          <div class="more">
-                            <div class="buttons">
-                              <a href="/add-resume/{{job.pk}}" class="button">Apply Now</a>
-                            </div>
-                            <p class="deadline">Deadline: {{job.expirationDate}}</p>
-                          </div>
-                        </div>
-                      </div>
-                      {% endfor %}
                     </div>
                   </div>
                   <div class="col-xl-4 offset-xl-1 col-lg-4">
