@@ -53,11 +53,12 @@ def add_resume(request, pk= None, *args, **kwargs):
             jobApplication = JobApplication.objects.get(job__pk=pk, candidate=Candidate.objects.get(user=request.user))
             return HttpResponseRedirect('/jobApplicationDetails/' + str(jobApplication.pk) + "/")
 
-        if jobApplication.status == "Close" or jobApplication.status == "Filled" or jobApplication.status == "Partially Filled":
-            request.session['info'] = "Job closed"
-            return HttpResponseRedirect('/')
     
     instance = get_object_or_404(Job, pk=pk)
+
+    if instance.status == "Close" or instance.status == "Filled" or instance.status == "Partially Filled":
+        request.session['info'] = "Job closed"
+        return HttpResponseRedirect('/')
     context = {'job': instance}
     
     if (request.method == 'POST'):
@@ -280,7 +281,7 @@ def browse_job_applications(request, searchString = "", jobId= -1):
                 supportingDocuments = SupportingDocument.objects.filter(JobApplication=application.pk)
 
                 for supportingDoc in supportingDocuments:
-                    filePath = supportingDoc.path
+                    filePath = supportingDoc.document.path
                     try:
                         if fs.exists(filePath):
                             with fs.open(filePath, 'rb') as doc:
@@ -492,7 +493,7 @@ def get_protected_file_withAuth(request, fileType, applicationId, supportID=""):
             supportingDocument = SupportingDocument.objects.filter(JobApplication=applicationId, pk=supportID)[0]
             if not supportingDocument:
                 return HttpResponse('File ID does not exist')
-            document = supportingDocument
+            document = supportingDocument.document
             filePath = document.path
 
         return sendfile(request, "/" + filePath)
@@ -526,7 +527,7 @@ def get_protected_file_withAuth(request, fileType, applicationId, supportID=""):
             supportingDocument = SupportingDocument.objects.filter(JobApplication=applicationId, pk=supportID)[0]
             if not supportingDocument:
                 return HttpResponse('File ID does not exist')
-            document = supportingDocument
+            document = supportingDocument.document
             filePath = document.path
         return sendfile(request, "/" + filePath)     
     else:

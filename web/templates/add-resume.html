@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>Oficiona</title>
+    <title>Concordia ACE</title>
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href= {% static "assets/css/bootstrap.min.css" %}>
@@ -115,9 +115,9 @@
                   <div class="title-body">
                     <h4>{{job.title}}</h4>
                     <div class="info">
-                      <span class="company"><a href="#"><i data-feather="briefcase"></i>{{job.company.name}}</a></span>
+                      <span class="company"><a href="/company-details/{{job.pk}}"><i data-feather="briefcase"></i>{{job.company.name}}</a></span>
                       <span class="office-location"><a href="#"><i data-feather="map-pin"></i>{{job.location}}</a></span>
-                      <span class="job-type full-time"><a href="#"><i data-feather="clock"></i>{{job.jobtype}}</a></span>
+                      <span class="job-type full-time"><a href="#"><i data-feather="clock"></i>Deadline: {{job.deadline}}</a></span>
                     </div>
                   </div>
                 </div>
@@ -158,17 +158,16 @@
                         <div class="row">
                           <div class="col-md-6">
                             <div class="form-group">
-                            {{request.user.firstName}}
+                            <h8> <b> {{request.user.preferredName}} {{request.user.firstName}} {{request.user.lastName}} </b> </h8>
                             </div>
                           </div>
                           <div class="col-md-6">
                             <div class="form-group">
-                            {{request.user.lastName}}
                             </div>
                           </div>
                           <div class="col-md-6">
                           <div class="form-group">
-                            {{request.user.preferredName}}
+                            
                             </div>
                           </div>
                         </div>
@@ -407,25 +406,12 @@
                 <h5><i data-feather="arrow-down-circle"></i>Navigation</h5>
                 <ul class="sidebar-menu">
                   <li><a href="#full-name">Full Name</a></li>
-                  <li><a href="#information">Informations</a></li>
-                  <li><a href="#about">About You</a></li>
                   <li><a href="#education">Education</a></li>
                   <li><a href="#experience">Work Experiance</a></li>
-                  <li><a href="#skill">Professional Skill</a></li>
-                  <li><a href="#qualification">Special Qualification</a></li>
-                  <li><a href="#portfolio">Portfolio</a></li>
+                  <li><a href="#portfolio">Additional Documents (Optional)</a></li>
                   <li><a href="#cv">Upload CV</a></li>
                   <li><a href="#cover">Cover Letter</a></li>
-                  <li><a href="#profile">Social Profile</a></li>
-                  <li><a href="#details">Personal Details</a></li>
                 </ul>
-                <div class="signin-option">
-                  <p>Have an Account ? Before submit job you need to sign in !</p>
-                  <div class="buttons">
-                    <a href="#" class="signin">Sign in</a>
-                    <a href="/register" class="register">Register</a>
-                  </div>
-                </div>
               </div>
             </div>
           </div>

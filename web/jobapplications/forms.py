@@ -113,20 +113,30 @@ class ApplicationForm(forms.Form):
         educations = None
         experience = None
         if initWithHistory:
+            
             jobApplication = JobApplication.objects.filter(candidate=Candidate.objects.get(user=user)).order_by("-created_at").first()
+            if jobApplication:
+                educations = Education.objects.filter(JobApplication=jobApplication).distinct()
+                experience = Experience.objects.filter(JobApplication=jobApplication).distinct()
+                supportingDocuments = SupportingDocument.objects.filter(JobApplication=jobApplication).distinct()
+                kwargs.pop('extra_edu_count', 1)
+                kwargs.pop('extra_exp_count', 1)
+                kwargs.pop('extra_doc_count', 0)
+                extra_edu_fields = max(len(educations), 1)
+                extra_exp_fields = max(len(experience), 1)
+                extra_doc_fields = max(len(supportingDocuments), 0)
+            else:
+                extra_edu_fields = kwargs.pop('extra_edu_count', 1)
+                extra_exp_fields = kwargs.pop('extra_exp_count', 1)
+                extra_doc_fields = kwargs.pop('extra_doc_count', 0)
+                educations = []
+                experience = []
+                supportingDocuments = []
 
-            educations = Education.objects.filter(JobApplication=jobApplication).distinct()
-            experience = Experience.objects.filter(JobApplication=jobApplication).distinct()
-            supportingDocuments = SupportingDocument.objects.filter(JobApplication=jobApplication).distinct()
-            kwargs.pop('extra_edu_count', 1)
-            kwargs.pop('extra_exp_count', 1)
-            kwargs.pop('extra_doc_count', 0)
-            extra_edu_fields = max(len(educations), 1)
-            extra_exp_fields = max(len(experience), 1)
-            extra_doc_fields = max(len(supportingDocuments), 0)
         else:
             extra_edu_fields = kwargs.pop('extra_edu_count', 1)
             extra_exp_fields = kwargs.pop('extra_exp_count', 1)
+        
             extra_doc_fields = kwargs.pop('extra_doc_count', 0)
 
         super().__init__(*args, **kwargs)
@@ -365,15 +375,18 @@ class ApplicationForm(forms.Form):
             experience.save()
 
         for doc in self.documentsFieldsNames:
+            import sys
             try:
                 document = SupportingDocument()
                 document.candidate = candidate
                 document.fileName = cleaned_data.get(doc['name'])
                 document.document = cleaned_data.get(doc['file'])
+                document.save()
                 document.JobApplication.add(jobApplication)
                 document.save()
-            except:
-                pass
+            except Exception as e:
+                import sys
+                print(e, file=sys.stderr)
 
 
         return jobApplication
