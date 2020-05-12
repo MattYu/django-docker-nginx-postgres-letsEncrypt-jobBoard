@@ -22,7 +22,8 @@ from accounts.models import User, Candidate, Employer, Language, PreferredName
 import uuid
 from django.db import transaction
 from django.db.models import Q
-
+import re
+from django.utils import timezone
 import json as simplejson
 from datetime import datetime, timedelta
 from django.core.files.storage import FileSystemStorage
@@ -92,6 +93,7 @@ def download_test(request, pk):
     download = get_object_or_404(Job, pk=pk)
     return sendfile(request, "/" + download.company.image.path)
 
+
 @transaction.atomic
 def browse_job_applications(request, searchString = "", jobId= -1):
     context = {}
@@ -112,7 +114,7 @@ def browse_job_applications(request, searchString = "", jobId= -1):
 
     if request.user.user_type == USER_TYPE_SUPER:
         kwargs = {}
-        if jobId != None:
+        if jobId != None and jobId !=-1:
             query = Q(job__pk=jobId)
             try:
                 context["job"] = Job.objects.get(pk=jobId)
@@ -125,7 +127,7 @@ def browse_job_applications(request, searchString = "", jobId= -1):
         query &= ~Q(status="Pending Review")
         query &= ~Q(status="Not Approved")
         
-        if jobId != None:
+        if jobId != None and jobId !=-1:
             query &= Q(job__pk=jobId)
             try:
                 context["job"] = Job.objects.get(pk=jobId)
@@ -148,31 +150,23 @@ def browse_job_applications(request, searchString = "", jobId= -1):
 
     # Applying filter value here
     filterSet = form.getSelectedFilterAsSet()
-
-    if searchString:
-        searchWords = searchString.split("&")
-    else:
-        searchWords = []
-
-    search = {}
-
-    for searchWord in searchWords:
-        pair = searchWord.split("=")
-        if len(pair) == 2:
-            search[pair[0]] = pair[1]
-
-
+    newSet = set()
+    for element in filterSet:
+        newSet.add(re.sub('[^A-Za-z0-9 ]', '', element))
+    filterSet = newSet
+    import sys
+    print(filterSet, file=sys.stderr)
     try:
-        if "Last 24 hours" in filterSet:
-            query &= Q(created_at__gte=datetime.now()-timedelta(days=1))
+        if "Last 24 hours".lower() in filterSet:
+            query &= Q(created_at__gte=timezone.now()-timedelta(days=1))
         if "Last 7 days" in filterSet:
-            query &= Q(created_at__gte=datetime.now()-timedelta(days=7))
+            query &= Q(created_at__gte=timezone.now()-timedelta(days=7))
         if "Last 14 days" in filterSet:
-            query &= Q(created_at__gte=datetime.now()-timedelta(days=14))
+            query &= Q(created_at__gte=timezone.now()-timedelta(days=14))
         if "Last month" in filterSet:
-            query &= Q(created_at__gte=datetime.now()-timedelta(days=30))
+            query &= Q(created_at__gte=timezone.now()-timedelta(days=30))
         if "Last 3 months" in filterSet:
-            query &= Q(created_at__gte=datetime.now()-timedelta(days=90))
+            query &= Q(created_at__gte=timezone.now()-timedelta(days=90))
         if form["companyName"].value() != None and form["companyName"].value() != "":
                 query &= Q(job__company__name__icontains=form["companyName"].value())
         if request.user.user_type != USER_TYPE_CANDIDATE:
@@ -184,11 +178,14 @@ def browse_job_applications(request, searchString = "", jobId= -1):
                 query &= Q(candidate__user__email__icontains=form["email"].value())
             if form["studentId"].value() != None and form["studentId"].value() != "":
                 query &= Q(candidate__studentID__icontains=form["studentId"].value())
-            
-            if form["gpa_min"].value() != None and form["gpa_min"].value() != "1.7" :
-                query &= Q(candidate__gpa__gte = float(form["gpa_min"].value()))
-            if form["gpa_max"].value() != None and form["gpa_max"].value() != "4.3" :
-                query &= Q(candidate__gpa__lte = float(form["gpa_max"].value()))
+            try:
+                if form["gpa_min"].value() != None and form["gpa_min"].value() != "1.7" :
+                    query &= Q(candidate__gpa__gte = float(form["gpa_min"].value()))
+                
+                if form["gpa_max"].value() != None and form["gpa_max"].value() != "4.3" :
+                    query &= Q(candidate__gpa__lte = float(form["gpa_max"].value()))
+            except:
+                pass
         if form["program"].value() != None and form["program"].value() != "ANY":
             query &= Q(candidate__program= form["program"].value())
         if 'Oldest First' in filterSet:
@@ -208,15 +205,16 @@ def browse_job_applications(request, searchString = "", jobId= -1):
     except Exception as e:
         import sys
         print(e, file=sys.stderr)
-        pass
     if 'oldest' in searchString:
-        import sys
         sortOrder = 'created_at'
+
 
     jobApplications = JobApplication.objects.filter(query).order_by(sortOrder)
     context["jobApplications"] = jobApplications
     context["form"] = form
-
+    import sys
+    print(query, file=sys.stderr)
+    
     if (request.method == 'POST'):
         if 'pdf' in request.POST:
             '''
