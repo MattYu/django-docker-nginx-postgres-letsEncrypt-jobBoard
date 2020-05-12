@@ -13,7 +13,7 @@ from io import BytesIO, StringIO
 from PyPDF2 import PdfFileWriter, PdfFileReader, PdfFileMerger
 import requests
 
-from ace.constants import FILE_TYPE_RESUME, FILE_TYPE_COVER_LETTER, FILE_TYPE_TRANSCRIPT, FILE_TYPE_OTHER, USER_TYPE_SUPER, USER_TYPE_CANDIDATE, USER_TYPE_EMPLOYER
+from ace.constants import MAX_PER_PAGE, FILE_TYPE_RESUME, FILE_TYPE_COVER_LETTER, FILE_TYPE_TRANSCRIPT, FILE_TYPE_OTHER, USER_TYPE_SUPER, USER_TYPE_CANDIDATE, USER_TYPE_EMPLOYER
 
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_text
@@ -100,6 +100,7 @@ def browse_job_applications(request, searchString = "", jobId= -1):
     jobApplications = None
     form = FilterApplicationForm()
     query = Q()
+    page = 1
 
     filterClasses = []
     filterHTML = []
@@ -139,9 +140,9 @@ def browse_job_applications(request, searchString = "", jobId= -1):
         query = Q(candidate= Candidate.objects.get(user=request.user))
 
     if (request.method == 'POST'):
-        form = FilterApplicationForm(request.POST)        
-
-        if 'filter' in request.POST or 'nextPage' in request.POST:
+        form = FilterApplicationForm(request.POST, page=request.POST.get('page'),)        
+        page = int(form.fields['page'].initial)
+        if 'filter' in request.POST or 'nextPage' in request.POST or 'prevPage' in request.POST:
             context['filterClasses'] = simplejson.dumps(form.getSelectedFilterClassAsList())
             context['filterHTML'] = simplejson.dumps(form.getSelectedFilterHTMLAsList())
             #for ob in request.POST.get('selected_filter'):
@@ -155,7 +156,7 @@ def browse_job_applications(request, searchString = "", jobId= -1):
         newSet.add(re.sub('[^A-Za-z0-9 ]', '', element))
     filterSet = newSet
     import sys
-    print(filterSet, file=sys.stderr)
+    #print(filterSet, file=sys.stderr)
     try:
         if "Last 24 hours".lower() in filterSet:
             query &= Q(created_at__gte=timezone.now()-timedelta(days=1))
@@ -212,8 +213,8 @@ def browse_job_applications(request, searchString = "", jobId= -1):
     jobApplications = JobApplication.objects.filter(query).order_by(sortOrder)
     context["jobApplications"] = jobApplications
     context["form"] = form
-    import sys
-    print(query, file=sys.stderr)
+    #import sys
+    #print(query, file=sys.stderr)
     
     if (request.method == 'POST'):
         if 'pdf' in request.POST:
@@ -330,7 +331,43 @@ def browse_job_applications(request, searchString = "", jobId= -1):
             return render(request, "contact_info.html", context)
 
     context["newMessageCount"] = len(request.user.notifications.unread())
+
+    import sys
+    print(page, file=sys.stderr)
+    #form.fields['page'].initial = 4
+    #print(form.fields['page'].initial)
+
+    maxCount = len(context['jobApplications'])
+
+    low = max((page-1)*MAX_PER_PAGE, 0)
+    high = min(page*MAX_PER_PAGE, maxCount)
+
+    maxPage = int(maxCount/MAX_PER_PAGE)
+    minPage = 1
+
+    if page > maxPage:
+        page = maxPage
+        form.fields['page'].initial = maxPage
     
+    if page < minPage:
+        page = minPage
+        form.fields['page'].initial = minPage
+    context['form'] = form
+    low = max((page-1)*MAX_PER_PAGE, 0)
+    high = min(page*MAX_PER_PAGE, maxCount)
+    print(page, file=sys.stderr)
+
+    context['pageLow'] = low+1
+    context['pageHigh'] = high
+    context['pageRange'] = maxCount
+   
+    context['jobApplications'] = context['jobApplications'][low:high]
+
+    if page == 1:
+        context['hideLow'] = True
+    if page == maxPage:
+        context['hideHigh'] = True
+
     return render(request, "dashboard-manage-applications.html", context)
 
 

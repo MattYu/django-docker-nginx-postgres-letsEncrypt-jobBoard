@@ -31,7 +31,8 @@ def job_search(request, searchString="", *args, **kwargs):
     query = Q()
 
     if request.method == 'POST':
-        form = FilterApplicationForm(request.POST)
+
+        form = FilterApplicationForm(request.POST )
         if 'filter' in request.POST:
             context['filterClasses'] = simplejson.dumps(form.getSelectedFilterClassAsList())
             context['filterHTML'] = simplejson.dumps(form.getSelectedFilterHTMLAsList())

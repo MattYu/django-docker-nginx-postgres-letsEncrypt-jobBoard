@@ -398,6 +398,7 @@ class ApplicationForm(forms.Form):
 
 class FilterApplicationForm(forms.Form):
     selected_filter = forms.CharField(widget=forms.HiddenInput(), required= False,)
+    page = forms.IntegerField(widget=forms.HiddenInput(), required= False,)
     selected_filter_outerHTML = forms.CharField(widget=forms.HiddenInput(), required= False,)
     selected_filter_class = forms.CharField(widget=forms.HiddenInput(), required= False,)
     gpa_min = forms.FloatField(widget=forms.HiddenInput(), required= False,)
@@ -456,3 +457,8 @@ class FilterApplicationForm(forms.Form):
         classes = self.getSelectedFilterClassAsList()
 
         return list(zip(classes, html))
+
+    def __init__(self, *args, **kwargs):
+        page = kwargs.pop('page', 1)
+        super().__init__(*args, **kwargs)
+        self.fields['page'].initial = int(page)

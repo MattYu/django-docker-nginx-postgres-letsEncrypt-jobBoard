@@ -139,8 +139,13 @@
                   {% endif %}
                   <br>
                   {% if job %}
+                  <p>
                       <h6>Applications for {{job.title}} [{{job.id}}] at {{job.company.name}}</h6>
+                  </p>
                   {% endif %}
+                  <p>
+                    <h7>Showing {{pageLow}} to {{pageHigh}} out of {{pageRange}} results</h7>
+                  </P>
                   <table class="table">
                     <thead>
                       <tr>
@@ -175,8 +180,12 @@
                     </tbody>
                   </table>
                   <div class="pagination-list text-center">
-                      <input type="submit" class="page-numbers" formnovalidate value="prevPage" name="prevPage" id="prevPage">
-                      <input type="submit" class="page-numbers" formnovalidate value="nextPage" name="nextPage" id="nextPage">
+                      {% if not hideLow %}
+                      <input type="submit" class="page-numbers" formnovalidate value="Prev" name="prevPage" id="prevPage">
+                      {% endif %}
+                      {% if not hideHigh %}
+                      <input type="submit" class="page-numbers" formnovalidate value="Next" name="nextPage" id="nextPage">
+                      {% endif %}
                   </div>
                 </div>
               </div>
@@ -184,6 +193,7 @@
                 {{form.selected_filter}}
                 {{form.selected_filter_outerHTML}}
                 {{form.selected_filter_class}}
+                {{form.page}}
                 {{form.gpa_min}}
                 {{form.gpa_max}}
                 <center>
@@ -502,6 +512,7 @@
 
 
     <script>
+        let page = Number($("[name=page]").val());
         {% if filterClasses %}
         var oldCls =  unescape({{filterClasses | safe }}).split(',');
         var oldHTMLs = unescape({{filterHTML| safe }}).split(',');
@@ -543,6 +554,21 @@
         $("#firstPage").click(fnc);
 
         $("#lastPage").click(fnc);
+
+        $("#nextPage").click(function() {
+          page ++;
+          $("[name=page]").val(page);
+        });
+
+        $("#prevPage").click(function() {
+          page --;
+          $("[name=page]").val(page);
+        });
+
+        $("#filter").click(function() {
+          page = 1;
+          $("[name=page]").val(page);
+        });
 
         $('html').bind('keypress', function(e)
         {
