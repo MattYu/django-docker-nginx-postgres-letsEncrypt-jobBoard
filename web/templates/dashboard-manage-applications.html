@@ -134,6 +134,9 @@
                   {% if request.user.user_type == 2 or request.user.user_type == 4%}
                     <button class="button" class="add-new-field" name="pdf" id="pdf">Download Selection as one PDF</button>
                   {% endif %}
+                  {% if request.user.user_type == 2 or request.user.user_type == 4%}
+                    <button class="button" class="add-new-field" name="contact" id="contact">Get Contact Info</button>
+                  {% endif %}
                   <br>
                   {% if job %}
                       <h6>Applications for {{job.title}} [{{job.id}}] at {{job.company.name}}</h6>
@@ -143,7 +146,7 @@
                       <tr>
                         <th>Job Title</th>
                         <th>Status</th>
-                        <th class="action">Action</th>
+                        <th class="action"><a href="{{ request.path }}&oldest=True"> Applied On </a></th>
                       </tr>
                     </thead>
                     <tbody>
@@ -165,8 +168,7 @@
                           </td>
                           <td class="status"><i data-feather="check-circle"></i>{{application.status}}</td>
                           <td class="action">
-                            <a href="#" class="download"><i data-feather="download"></i></a>
-                            <a href="#" class="inbox"><i data-feather="mail"></i></a>
+                            {{application.created_at}}
                           </td>
                         </tr>
                           {% endfor %}
@@ -215,6 +217,14 @@
                     {{form.lastName}}
                     {{form.email}}
                     {{form.studentId}}
+                    {{form.companyName}}
+                </ul>
+                {% endif %}
+
+                {% if request.user.user_type == 1 %}
+                <h4 class="option-title">Optional Keywords</h4>
+                <ul id="formInput">
+                    {{form.companyName}}
                 </ul>
                 {% endif %}
                 </div>
@@ -260,7 +270,7 @@
                   <h4 class="option-title">Order By</h4>
                   <ul>
                     <li><a href="#" data-attr="Latest First">Latest First</a></li>
-                    <li><a href="#" data-attr="Oldest First">Oldest First</a></li>
+                    <li><a href="" data-attr="Oldest First">Oldest First</a></li>
                   </ul>
                 </div>
               </div>

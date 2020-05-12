@@ -424,11 +424,17 @@ class FilterApplicationForm(forms.Form):
                                 required= False,
                                 )
 
+    companyName = forms.CharField(max_length=MAX_LENGTH_STANDARDFIELDS,
+                                widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Company Name'}),
+                                required= False,
+                                )
+
     program = forms.ChoiceField(
                                 choices=CATEGORY_CHOICES,
                                 widget=forms.Select(attrs={'class': 'form-control'}),
                                 required= False,
                                 )
+                                
 
     def getSelectedFilterAsSet(self):
         if self['selected_filter'] != None:

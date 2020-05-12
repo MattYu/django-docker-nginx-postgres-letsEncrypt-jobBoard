@@ -149,6 +149,19 @@ def browse_job_applications(request, searchString = "", jobId= -1):
     # Applying filter value here
     filterSet = form.getSelectedFilterAsSet()
 
+    if searchString:
+        searchWords = searchString.split("&")
+    else:
+        searchWords = []
+
+    search = {}
+
+    for searchWord in searchWords:
+        pair = searchWord.split("=")
+        if len(pair) == 2:
+            search[pair[0]] = pair[1]
+
+
     try:
         if "Last 24 hours" in filterSet:
             query &= Q(created_at__gte=datetime.now()-timedelta(days=1))
@@ -160,20 +173,24 @@ def browse_job_applications(request, searchString = "", jobId= -1):
             query &= Q(created_at__gte=datetime.now()-timedelta(days=30))
         if "Last 3 months" in filterSet:
             query &= Q(created_at__gte=datetime.now()-timedelta(days=90))
-        if form["firstName"].value() != None and form["firstName"].value() != "":
-            query &= (Q(firstName__contains= form["firstName"].value()) | Q(candidate__user__preferredName__contains=form["firstName"].value()))
-        if form["lastName"].value() != None and form["lastName"].value() != "":
-            query &= Q(lastName__contains= form["lastName"].value())
-        if form["email"].value() != None and form["email"].value() != "":
-            query &= Q(candidate__user__email__contains=form["email"].value())
-        if form["studentId"].value() != None and form["studentId"].value() != "":
-            query &= Q(candidate__studentID__contains=form["studentId"].value())
+        if form["companyName"].value() != None and form["companyName"].value() != "":
+                query &= Q(job__company__name__icontains=form["companyName"].value())
+        if request.user.user_type != USER_TYPE_CANDIDATE:
+            if form["firstName"].value() != None and form["firstName"].value() != "":
+                query &= (Q(firstName__icontains= form["firstName"].value()) | Q(candidate__user__preferredName__contains=form["firstName"].value()))
+            if form["lastName"].value() != None and form["lastName"].value() != "":
+                query &= Q(lastName__icontains= form["lastName"].value())
+            if form["email"].value() != None and form["email"].value() != "":
+                query &= Q(candidate__user__email__icontains=form["email"].value())
+            if form["studentId"].value() != None and form["studentId"].value() != "":
+                query &= Q(candidate__studentID__icontains=form["studentId"].value())
+            
+            if form["gpa_min"].value() != None and form["gpa_min"].value() != "1.7" :
+                query &= Q(candidate__gpa__gte = float(form["gpa_min"].value()))
+            if form["gpa_max"].value() != None and form["gpa_max"].value() != "4.3" :
+                query &= Q(candidate__gpa__lte = float(form["gpa_max"].value()))
         if form["program"].value() != None and form["program"].value() != "ANY":
             query &= Q(candidate__program= form["program"].value())
-        if form["gpa_min"].value() != None and form["gpa_min"].value() != "1.7" :
-            query &= Q(candidate__gpa__gte = float(form["gpa_min"].value()))
-        if form["gpa_max"].value() != None and form["gpa_max"].value() != "4.3" :
-            query &= Q(candidate__gpa__lte = float(form["gpa_max"].value()))
         if 'Oldest First' in filterSet:
             sortOrder = 'created_at'
         if "Pending Review" in filterSet:
@@ -188,9 +205,13 @@ def browse_job_applications(request, searchString = "", jobId= -1):
             query &= Q(status="Matched")
         if "Not Matched/Closed" in filterSet:
             query &= (Q(status= "Not Matched") | Q(status="Closed"))
-    except:
+    except Exception as e:
+        import sys
+        print(e, file=sys.stderr)
         pass
-    
+    if 'oldest' in searchString:
+        import sys
+        sortOrder = 'created_at'
 
     jobApplications = JobApplication.objects.filter(query).order_by(sortOrder)
     context["jobApplications"] = jobApplications
