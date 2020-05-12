@@ -67,11 +67,14 @@ def add_resume(request, pk= None, *args, **kwargs):
             user=request.user
             )
         #request.session['form'] = form.as_p()
-        if form.is_valid():
-            form.clean()
-            jobApplication = form.save(instance, request.user)
 
-            return HttpResponseRedirect('/')
+        if 'Apply' in request.POST:
+            context["showError"] = True
+            if form.is_valid():
+                form.clean()
+                jobApplication = form.save(instance, request.user)
+
+                return HttpResponseRedirect('/')
     else:
         form = ApplicationForm(extra_edu_count=1, extra_exp_count=1, extra_doc_count=0, user=request.user, initWithHistory=True)
     context['form'] = form

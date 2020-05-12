@@ -137,14 +137,14 @@ class ApplicationForm(forms.Form):
 
         self.fields['extra_edu_count'].initial = max(min(int(extra_edu_fields), 10),1)
         for i in range(int(self.fields['extra_edu_count'].initial)):
-            if initWithHistory:
+            if initWithHistory and len(educations) > i:
                 self.add_education(i,  education=educations[i])
             else:
                 self.add_education(i)
 
         self.fields['extra_exp_count'].initial = max(min(int(extra_exp_fields), 10),1)
         for i in range(int(self.fields['extra_exp_count'].initial)):
-            if initWithHistory:
+            if initWithHistory and len(experience) > i:
                 self.add_experience(i, experience=experience[i])
             else:
                 self.add_experience(i)
