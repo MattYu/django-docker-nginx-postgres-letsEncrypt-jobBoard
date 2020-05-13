@@ -405,7 +405,11 @@ def view_application_details(request, pk):
                     jobApplication.save()
 
                     connection = mail.get_connection()
-                    connection.open()
+                    try:
+                        connection.open()
+                    except Exception as e:
+                        import sys
+                        print(e, file=sys.stderr)
                     messages = []
                     email = jobApplication.candidate.user.email
 
@@ -468,7 +472,11 @@ def view_application_details(request, pk):
                     jobApplication.save()
 
                     connection = mail.get_connection()
-                    connection.open()
+                    try:
+                        connection.open()
+                    except Exception as e:
+                        import sys
+                        print(e, file=sys.stderr)
                     messages = []
                     email = jobApplication.candidate.user.email
 

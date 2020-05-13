@@ -83,6 +83,9 @@ body {
   justify-content: center;
   overflow: hidden;
 }
+#map {
+  height: 100%;
+}
 
 #button-5 {
   position: relative;
