@@ -200,7 +200,7 @@ def resend_activation(request):
 
         try:
             email.send()
-            description = "We have sent you another confirmation link to " + email + ". If you have not received the link, please click here "
+            description = "We have sent you another confirmation link to " + to_email + ". If you have not received the link, please click here "
         except Exception as e:
             import sys
             print(e, file=sys.stderr)
