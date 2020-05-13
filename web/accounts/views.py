@@ -47,9 +47,6 @@ def register_user(request, employer=None):
 
         import sys
         print(request.recaptcha_is_valid, file=sys.stderr)
-
-        if settings.DEV == True:
-            request.recaptcha_is_valid = True
         
         if 'Register' in request.POST and request.recaptcha_is_valid:
             context["showError"] = True
@@ -88,10 +85,6 @@ def login_user(request):
         #if form.is_valid() and request.recaptcha_is_valid:
         import sys
         print(request.recaptcha_is_valid, file=sys.stderr)
-        if settings.DEV == True:
-            request.recaptcha_is_valid = True
-
-        
         
         if form.is_valid() and request.recaptcha_is_valid:
 

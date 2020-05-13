@@ -180,20 +180,20 @@ SENDFILE_URL = '/media'
 # SECURITY WARNING: Not prod ready. Do not used in prod
 
 
-if DEV:
+'''
     EMAIL_USE_TLS = True
     EMAIL_HOST = os.environ.get("EMAIL_HOST")
     EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
     EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
     EMAIL_PORT = 587
-else:
-    EMAIL_BACKEND = 'django_mailjet.backends.MailjetBackend'
-    MAILJET_API_KEY = os.environ.get("EMAIL_HOST_PASSWORD")
-    MAILJET_API_SECRET = os.environ.get("EMAIL_HOST_USER")
+'''
+EMAIL_BACKEND = 'django_mailjet.backends.MailjetBackend'
+MAILJET_API_KEY = os.environ.get("EMAIL_HOST_PASSWORD")
+MAILJET_API_SECRET = os.environ.get("EMAIL_HOST_USER")
 
 
 # SECURITY WARNING: Uncomment below in production once certificate at hand to force HTTPS 
-#SECURE_SSL_REDIRECT = True # PASS: Done by nginx
+#SECURE_SSL_REDIRECT = True # Done by nginx
 
 LOGGING = {
     'version': 1,
