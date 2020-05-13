@@ -6,7 +6,7 @@ from django.db.models import Q
 from accounts.models import Employer
 from joblistings.models import Job
 
-from ace.constants import USER_TYPE_SUPER
+from ace.constants import USER_TYPE_SUPER, RECAPTCHA_PUBLIC_KEY
 from accounts.models import Candidate
 
 from django.contrib import messages
@@ -22,7 +22,11 @@ from django.http import HttpResponse
 
 from .decorators import check_recaptcha
 from notifications.signals import notify
-
+import ace.settings as settings
+import json
+import urllib
+import requests as requests
+import ace.settings as settings
 
 DEBUG =True
 
@@ -40,8 +44,11 @@ def register_user(request, employer=None):
             employerCompany=request.POST.get('employerCompany'),
             extra_language_count=request.POST.get('extra_language_count'),
             )
+
+        if settings.DEV == True:
+            request.recaptcha_is_valid = True
         
-        if 'Register' in request.POST:
+        if 'Register' in request.POST and request.recaptcha_is_valid:
             context["showError"] = True
             #if form.is_valid() and request.recaptcha_is_valid:
             if form.is_valid():
@@ -66,15 +73,40 @@ def register_user(request, employer=None):
         return render(request, "404.html")
 
     context['form'] = form
+    context['recaptchaPubKey'] = RECAPTCHA_PUBLIC_KEY
 
     return render(request, "register.html", context)
 
+@check_recaptcha
 @transaction.atomic
 def login_user(request):
     if (request.method == 'POST'):
         form = LoginForm(request.POST)
+        #if form.is_valid() and request.recaptcha_is_valid:
+        import sys
+        recaptcha_response = request.POST.get('g-recaptcha-response')
+        data = {
+            'secret': settings.GOOGLE_RECAPTCHA_SECRET_KEY,
+            'response': recaptcha_response
+        }
+        ''' Begin reCAPTCHA validation '''
+        recaptcha_response = request.POST.get('g-recaptcha-response')
+        print(recaptcha_response, file=sys.stderr)
+        url = 'https://www.google.com/recaptcha/api/siteverify'
+        values = {
+            'secret': settings.GOOGLE_RECAPTCHA_SECRET_KEY,
+            'response': recaptcha_response
+        }
+        data = urllib.parse.urlencode(values).encode()
+        req =  urllib.request.Request(url, data=data)
+        response = urllib.request.urlopen(req)
+        result = json.loads(response.read().decode())
+        ''' End reCAPTCHA validation '''
 
-        if form.is_valid():
+        if settings.DEV == True:
+            result['success'] = True
+        
+        if form.is_valid() and result['success']:
 
             email = form.cleaned_data.get('email')
             raw_password = form.cleaned_data.get('password')
@@ -122,7 +154,7 @@ def login_user(request):
     else:
         request.session['attempts'] = 1
         context['locked'] = False
-
+    context['recaptchaPubKey'] = RECAPTCHA_PUBLIC_KEY
     return render(request, "login.html", context)
 
 
