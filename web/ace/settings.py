@@ -193,7 +193,8 @@ EMAIL_HOST = os.environ.get("EMAIL_HOST")
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
 EMAIL_PORT = 587
-
+DEFAULT_FROM_EMAIL = os.environ.get("FROM_EMAIL")
+EMAIL_FROM = os.environ.get("FROM_EMAIL")
 
 # SECURITY WARNING: Uncomment below in production once certificate at hand to force HTTPS 
 #SECURE_SSL_REDIRECT = True # Done by nginx
