@@ -130,7 +130,7 @@
               <div class="dashboard-content-wrapper">
                 <div class="manage-job-container">
                 <form method="POST" class="job-post-form" enctype="multipart/form-data">
-                        {% csrf_token %}
+                  {% csrf_token %}
                   <table class="table">
                     <thead>
                       <tr>
@@ -414,5 +414,22 @@
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC87gjXWLqrHuLKR0CTV5jNLdP4pEHMhmg"></script>
     <script src={% static "js/map.js" %}></script>
+
+    <script>
+
+      isFormHtml5Valid(form) {
+        for(var el of form.querySelectorAll('input,textarea,select')){
+          if(!el.checkValidity())
+            return false;
+        }
+        return true;
+      }
+
+      $("#open")onclick = function() {
+        if(this.form && isFormHtml5Valid(this.form))
+          this.disabled=true;
+        this.form.submit();
+      }
+    </script>
   </body>
 </html>

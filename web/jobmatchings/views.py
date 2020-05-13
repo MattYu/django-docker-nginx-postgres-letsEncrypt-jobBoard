@@ -277,18 +277,20 @@ def admin_matchmaking(request):
 
                 for match in Match.objects.filter(isOpenToPublic=False).all():
                     #Create message for employer
-                    import sys
-                    print("Sending messages??", file=sys.stderr)
+                    #import sys
+                    #print("Sending messages??", file=sys.stderr)
                     current_site = get_current_site(request)
                     # Step 1: find the email(s) of the job owner(s) in the system
-                    email_to = []
+                    email_to = set()
+                    
                     job = match.jobApplication.job
                     for employer in match.jobApplication.job.jobAccessPermission.all():
                         # Step 2 Send individual notification
                         description = "Hello, We are pleased to inform you that you matched with one of your selected candidates: http://" + str(current_site.domain) + "/jobApplicationDetails/" + str(match.jobApplication.pk)
                         notify.send(request.user, recipient=employer.user, verb='Job Match: ' + match.candidate.user.preferredName + " " + match.candidate.user.firstName + " " + match.candidate.user.lastName, description = description, public=False)
                         if employer.notify_by_email:
-                            email_to.append(employer.user.email)
+                            email_to.add(employer.user.email)
+                    email_to = list(email_to)
                     # Step 3: Create email for employer(s)
                     mail_subject = 'Concordia ACE Job Match: ' + match.candidate.user.preferredName + " " + match.candidate.user.firstName + " " + match.candidate.user.lastName
                     message = render_to_string('email-match-employer.html', {
@@ -323,19 +325,22 @@ def admin_matchmaking(request):
                         )
 
                         messages.append(email)
-                    
-                    # Final Step: Send messages
-                    try:
-                        connection.send_messages(messages)
-                    except Exception as e:
-                        import sys
-                        print(e, file=sys.stderr)
-
-                    connection.close()
 
                     match.isOpenToPublic = True
                     match.save()
+                    
+                # Final Step: Send messages
+                
+                try:
+                    connection.send_messages(messages)
+                except Exception as e:
+                    import sys
+                    print(e, file=sys.stderr)
+                
+                connection.close()
 
+
+                    
 
 
             if request.POST.get("Undo last 7 days"):
@@ -362,7 +367,9 @@ def admin_matchmaking(request):
 
     return render(request, "dashboard-ranking-matchday.html", context)
 
-
+def admin_open_matching(request):
+    if request.user.user_type == USER_TYPE_SUPER:
+        return HttpResponseRedirect('/')
 
 def view_matching(request, jobId= None):
     if not request.user.is_authenticated:
