@@ -13,7 +13,7 @@ from io import BytesIO, StringIO
 from PyPDF2 import PdfFileWriter, PdfFileReader, PdfFileMerger
 import requests
 
-from ace.constants import FILE_TYPE_RESUME, FILE_TYPE_COVER_LETTER, FILE_TYPE_TRANSCRIPT, FILE_TYPE_OTHER, USER_TYPE_SUPER, USER_TYPE_CANDIDATE, USER_TYPE_EMPLOYER
+from ace.constants import MAX_PER_PAGE, FILE_TYPE_RESUME, FILE_TYPE_COVER_LETTER, FILE_TYPE_TRANSCRIPT, FILE_TYPE_OTHER, USER_TYPE_SUPER, USER_TYPE_CANDIDATE, USER_TYPE_EMPLOYER
 
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_text
@@ -22,7 +22,8 @@ from accounts.models import User, Candidate, Employer, Language, PreferredName
 import uuid
 from django.db import transaction
 from django.db.models import Q
-
+import re
+from django.utils import timezone
 import json as simplejson
 from datetime import datetime, timedelta
 from django.core.files.storage import FileSystemStorage
@@ -92,12 +93,14 @@ def download_test(request, pk):
     download = get_object_or_404(Job, pk=pk)
     return sendfile(request, "/" + download.company.image.path)
 
+
 @transaction.atomic
 def browse_job_applications(request, searchString = "", jobId= -1):
     context = {}
     jobApplications = None
     form = FilterApplicationForm()
     query = Q()
+    page = 1
 
     filterClasses = []
     filterHTML = []
@@ -112,7 +115,7 @@ def browse_job_applications(request, searchString = "", jobId= -1):
 
     if request.user.user_type == USER_TYPE_SUPER:
         kwargs = {}
-        if jobId != None:
+        if jobId != None and jobId !=-1:
             query = Q(job__pk=jobId)
             try:
                 context["job"] = Job.objects.get(pk=jobId)
@@ -125,7 +128,7 @@ def browse_job_applications(request, searchString = "", jobId= -1):
         query &= ~Q(status="Pending Review")
         query &= ~Q(status="Not Approved")
         
-        if jobId != None:
+        if jobId != None and jobId !=-1:
             query &= Q(job__pk=jobId)
             try:
                 context["job"] = Job.objects.get(pk=jobId)
@@ -137,9 +140,9 @@ def browse_job_applications(request, searchString = "", jobId= -1):
         query = Q(candidate= Candidate.objects.get(user=request.user))
 
     if (request.method == 'POST'):
-        form = FilterApplicationForm(request.POST)        
-
-        if 'filter' in request.POST:
+        form = FilterApplicationForm(request.POST, page=request.POST.get('page'),)        
+        page = int(form.fields['page'].initial)
+        if 'filter' in request.POST or 'nextPage' in request.POST or 'prevPage' in request.POST:
             context['filterClasses'] = simplejson.dumps(form.getSelectedFilterClassAsList())
             context['filterHTML'] = simplejson.dumps(form.getSelectedFilterHTMLAsList())
             #for ob in request.POST.get('selected_filter'):
@@ -148,32 +151,44 @@ def browse_job_applications(request, searchString = "", jobId= -1):
 
     # Applying filter value here
     filterSet = form.getSelectedFilterAsSet()
-
+    newSet = set()
+    for element in filterSet:
+        newSet.add(re.sub('[^A-Za-z0-9 ]', '', element))
+    filterSet = newSet
+    import sys
+    #print(filterSet, file=sys.stderr)
     try:
-        if "Last 24 hours" in filterSet:
-            query &= Q(created_at__gte=datetime.now()-timedelta(days=1))
+        if "Last 24 hours".lower() in filterSet:
+            query &= Q(created_at__gte=timezone.now()-timedelta(days=1))
         if "Last 7 days" in filterSet:
-            query &= Q(created_at__gte=datetime.now()-timedelta(days=7))
+            query &= Q(created_at__gte=timezone.now()-timedelta(days=7))
         if "Last 14 days" in filterSet:
-            query &= Q(created_at__gte=datetime.now()-timedelta(days=14))
+            query &= Q(created_at__gte=timezone.now()-timedelta(days=14))
         if "Last month" in filterSet:
-            query &= Q(created_at__gte=datetime.now()-timedelta(days=30))
+            query &= Q(created_at__gte=timezone.now()-timedelta(days=30))
         if "Last 3 months" in filterSet:
-            query &= Q(created_at__gte=datetime.now()-timedelta(days=90))
-        if form["firstName"].value() != None and form["firstName"].value() != "":
-            query &= (Q(firstName__contains= form["firstName"].value()) | Q(candidate__user__preferredName__contains=form["firstName"].value()))
-        if form["lastName"].value() != None and form["lastName"].value() != "":
-            query &= Q(lastName__contains= form["lastName"].value())
-        if form["email"].value() != None and form["email"].value() != "":
-            query &= Q(candidate__user__email__contains=form["email"].value())
-        if form["studentId"].value() != None and form["studentId"].value() != "":
-            query &= Q(candidate__studentID__contains=form["studentId"].value())
+            query &= Q(created_at__gte=timezone.now()-timedelta(days=90))
+        if form["companyName"].value() != None and form["companyName"].value() != "":
+                query &= Q(job__company__name__icontains=form["companyName"].value())
+        if request.user.user_type != USER_TYPE_CANDIDATE:
+            if form["firstName"].value() != None and form["firstName"].value() != "":
+                query &= (Q(firstName__icontains= form["firstName"].value()) | Q(candidate__user__preferredName__contains=form["firstName"].value()))
+            if form["lastName"].value() != None and form["lastName"].value() != "":
+                query &= Q(lastName__icontains= form["lastName"].value())
+            if form["email"].value() != None and form["email"].value() != "":
+                query &= Q(candidate__user__email__icontains=form["email"].value())
+            if form["studentId"].value() != None and form["studentId"].value() != "":
+                query &= Q(candidate__studentID__icontains=form["studentId"].value())
+            try:
+                if form["gpa_min"].value() != None and form["gpa_min"].value() != "1.7" :
+                    query &= Q(candidate__gpa__gte = float(form["gpa_min"].value()))
+                
+                if form["gpa_max"].value() != None and form["gpa_max"].value() != "4.3" :
+                    query &= Q(candidate__gpa__lte = float(form["gpa_max"].value()))
+            except:
+                pass
         if form["program"].value() != None and form["program"].value() != "ANY":
             query &= Q(candidate__program= form["program"].value())
-        if form["gpa_min"].value() != None and form["gpa_min"].value() != "1.7" :
-            query &= Q(candidate__gpa__gte = float(form["gpa_min"].value()))
-        if form["gpa_max"].value() != None and form["gpa_max"].value() != "4.3" :
-            query &= Q(candidate__gpa__lte = float(form["gpa_max"].value()))
         if 'Oldest First' in filterSet:
             sortOrder = 'created_at'
         if "Pending Review" in filterSet:
@@ -188,14 +203,19 @@ def browse_job_applications(request, searchString = "", jobId= -1):
             query &= Q(status="Matched")
         if "Not Matched/Closed" in filterSet:
             query &= (Q(status= "Not Matched") | Q(status="Closed"))
-    except:
-        pass
-    
+    except Exception as e:
+        import sys
+        print(e, file=sys.stderr)
+    if 'oldest' in searchString:
+        sortOrder = 'created_at'
+
 
     jobApplications = JobApplication.objects.filter(query).order_by(sortOrder)
     context["jobApplications"] = jobApplications
     context["form"] = form
-
+    #import sys
+    #print(query, file=sys.stderr)
+    
     if (request.method == 'POST'):
         if 'pdf' in request.POST:
             '''
@@ -295,9 +315,57 @@ def browse_job_applications(request, searchString = "", jobId= -1):
 
             #User.objects.filter(id=request.user.id).update(protect_file_temp_download_key="")
             return response
+        if 'contact' in request.POST:
+            emails = set()
+            candidates = {}
+
+            for application in jobApplications:
+                emails.add(application.candidate.user.email)
+                if application.candidate in candidates:
+                    candidates[application.candidate].append(application)
+                else:
+                    candidates[application.candidate] = [application]
+
+            context["emails"] = emails
+            context["candidates"] = candidates
+            return render(request, "contact_info.html", context)
 
     context["newMessageCount"] = len(request.user.notifications.unread())
+
+
+    #form.fields['page'].initial = 4
+    #print(form.fields['page'].initial)
+
+    maxCount = len(context['jobApplications'])
+
+    low = max((page-1)*MAX_PER_PAGE, 0)
+    high = min(page*MAX_PER_PAGE, maxCount)
+
+    maxPage = int(maxCount/MAX_PER_PAGE)
+    minPage = 1
+
+    if page > maxPage:
+        page = maxPage
+        form.fields['page'].initial = maxPage
     
+    if page < minPage:
+        page = minPage
+        form.fields['page'].initial = minPage
+    context['form'] = form
+    low = max((page-1)*MAX_PER_PAGE, 0)
+    high = min(page*MAX_PER_PAGE, maxCount)
+
+    context['pageLow'] = low+1
+    context['pageHigh'] = high
+    context['pageRange'] = maxCount
+   
+    context['jobApplications'] = context['jobApplications'][low:high]
+
+    if page == 1:
+        context['hideLow'] = True
+    if page == maxPage:
+        context['hideHigh'] = True
+
     return render(request, "dashboard-manage-applications.html", context)
 
 

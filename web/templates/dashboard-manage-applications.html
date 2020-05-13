@@ -134,20 +134,27 @@
                   {% if request.user.user_type == 2 or request.user.user_type == 4%}
                     <button class="button" class="add-new-field" name="pdf" id="pdf">Download Selection as one PDF</button>
                   {% endif %}
+                  {% if request.user.user_type == 1 or request.user.user_type == 2 or request.user.user_type == 4%}
+                    <button class="button" class="add-new-field" name="contact" id="contact">Get Contact Info and Summary Views</button>
+                  {% endif %}
                   <br>
                   {% if job %}
+                  <p>
                       <h6>Applications for {{job.title}} [{{job.id}}] at {{job.company.name}}</h6>
+                  </p>
                   {% endif %}
+                  <p>
+                    <h7>Showing {{pageLow}} to {{pageHigh}} out of {{pageRange}} results</h7>
+                  </P>
                   <table class="table">
                     <thead>
                       <tr>
                         <th>Job Title</th>
                         <th>Status</th>
-                        <th class="action">Action</th>
+                        <th class="action"><a href="{{ request.path }}&oldest=True"> Applied On </a></th>
                       </tr>
                     </thead>
                     <tbody>
-                      
                         {% if jobApplications %}
                           {% for application in jobApplications %}
                         <tr class="candidates-list">
@@ -165,8 +172,7 @@
                           </td>
                           <td class="status"><i data-feather="check-circle"></i>{{application.status}}</td>
                           <td class="action">
-                            <a href="#" class="download"><i data-feather="download"></i></a>
-                            <a href="#" class="inbox"><i data-feather="mail"></i></a>
+                            {{application.created_at}}
                           </td>
                         </tr>
                           {% endfor %}
@@ -174,16 +180,12 @@
                     </tbody>
                   </table>
                   <div class="pagination-list text-center">
-                    <nav class="navigation pagination">
-                      <div class="nav-links">
-                        <a class="prev page-numbers" href="#"><i class="fas fa-angle-left"></i></a>
-                        <a class="page-numbers" href="#">1</a>
-                        <span aria-current="page" class="page-numbers current">2</span>
-                        <a class="page-numbers" href="#">3</a>
-                        <a class="page-numbers" href="#">4</a>
-                        <a class="next page-numbers" href="#"><i class="fas fa-angle-right"></i></a>
-                      </div>
-                    </nav>                
+                      {% if not hideLow %}
+                      <input type="submit" class="page-numbers" formnovalidate value="Prev" name="prevPage" id="prevPage">
+                      {% endif %}
+                      {% if not hideHigh %}
+                      <input type="submit" class="page-numbers" formnovalidate value="Next" name="nextPage" id="nextPage">
+                      {% endif %}
                   </div>
                 </div>
               </div>
@@ -191,6 +193,7 @@
                 {{form.selected_filter}}
                 {{form.selected_filter_outerHTML}}
                 {{form.selected_filter_class}}
+                {{form.page}}
                 {{form.gpa_min}}
                 {{form.gpa_max}}
                 <center>
@@ -215,6 +218,14 @@
                     {{form.lastName}}
                     {{form.email}}
                     {{form.studentId}}
+                    {{form.companyName}}
+                </ul>
+                {% endif %}
+
+                {% if request.user.user_type == 1 %}
+                <h4 class="option-title">Optional Keywords</h4>
+                <ul id="formInput">
+                    {{form.companyName}}
                 </ul>
                 {% endif %}
                 </div>
@@ -260,7 +271,7 @@
                   <h4 class="option-title">Order By</h4>
                   <ul>
                     <li><a href="#" data-attr="Latest First">Latest First</a></li>
-                    <li><a href="#" data-attr="Oldest First">Oldest First</a></li>
+                    <li><a href="" data-attr="Oldest First">Oldest First</a></li>
                   </ul>
                 </div>
               </div>
@@ -501,6 +512,7 @@
 
 
     <script>
+        let page = Number($("[name=page]").val());
         {% if filterClasses %}
         var oldCls =  unescape({{filterClasses | safe }}).split(',');
         var oldHTMLs = unescape({{filterHTML| safe }}).split(',');
@@ -516,7 +528,7 @@
 
         {% endif %}
 
-        $("#filter").click(function() {
+        var fnc = function() {
           var res = [];
           var htmls = [];
           var cls = [];
@@ -531,6 +543,31 @@
           $("[name=selected_filter_class]").val(cls);
           $("[name=gpa_min]").val(document.getElementById('minSlider').textContent);
           $("[name=gpa_max]").val(document.getElementById('maxSlider').textContent);
+        }
+
+        $("#nextPage").click(fnc);
+
+        $("#filter").click(fnc);
+
+        $("#prevPage").click(fnc);
+
+        $("#firstPage").click(fnc);
+
+        $("#lastPage").click(fnc);
+
+        $("#nextPage").click(function() {
+          page ++;
+          $("[name=page]").val(page);
+        });
+
+        $("#prevPage").click(function() {
+          page --;
+          $("[name=page]").val(page);
+        });
+
+        $("#filter").click(function() {
+          page = 1;
+          $("[name=page]").val(page);
         });
 
         $('html').bind('keypress', function(e)

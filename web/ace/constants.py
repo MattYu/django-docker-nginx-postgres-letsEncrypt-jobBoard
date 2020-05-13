@@ -165,3 +165,5 @@ FILE_TYPE_OTHER = 4
 DEFAULT_VIDEO = "https://www.youtube.com/watch?v=NwAxNFwEEbM"
 
 PASSWORD_MIN_LENGTH = 9
+
+MAX_PER_PAGE = 1

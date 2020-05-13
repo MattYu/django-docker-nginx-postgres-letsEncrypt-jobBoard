@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.db.models import Q
 
 
-from ace.constants import USER_TYPE_CANDIDATE, USER_TYPE_EMPLOYER, USER_TYPE_SUPER, DEFAULT_VIDEO
+from ace.constants import MAX_PER_PAGE, USER_TYPE_CANDIDATE, USER_TYPE_EMPLOYER, USER_TYPE_SUPER, DEFAULT_VIDEO
 from joblistings.models import Job, JobPDFDescription
 from joblistings.forms import JobForm, AdminAddRemoveJobPermission, FilterApplicationForm
 from companies.models import Company
@@ -15,14 +15,18 @@ from jobapplications.models import JobApplication
 from django.db.models import Q
 import json as simplejson
 from datetime import datetime, timedelta
-
+import re
+from django.utils import timezone
+from django.db import transaction
 # Create your views here.
+@transaction.atomic
 def job_search(request, searchString="", *args, **kwargs):
     context = {}
     jobApps = None
     form = FilterApplicationForm()
 
     args = []
+    page = 1
 
     
     filterClasses = []
@@ -31,11 +35,14 @@ def job_search(request, searchString="", *args, **kwargs):
     query = Q()
 
     if request.method == 'POST':
-        form = FilterApplicationForm(request.POST)
-        if 'filter' in request.POST:
+        form = FilterApplicationForm(request.POST, page=request.POST.get('page'))        
+        page = int(form.fields['page'].initial)
+        import sys
+        print(page, file=sys.stderr)
+        if 'filter' in request.POST or 'nextPage' in request.POST or 'prevPage' in request.POST:
             context['filterClasses'] = simplejson.dumps(form.getSelectedFilterClassAsList())
             context['filterHTML'] = simplejson.dumps(form.getSelectedFilterHTMLAsList())
-
+        
         keywords = request.POST['keyword']
 
         queries = keywords.split(" ")
@@ -48,19 +55,23 @@ def job_search(request, searchString="", *args, **kwargs):
             query &= (combined_q)
             
         filterSet = form.getSelectedFilterAsSet()
+        newSet = set()
+        for element in filterSet:
+            newSet.add(re.sub('[^A-Za-z0-9 ]', '', element))
+        filterSet = newSet
         #if not request.user.is_authenticated or request.user.user_type != USER_TYPE_SUPER:
             #query &=(Q(status= "Approved") | Q(status="Interviewing") | Q(status="Filled") | Q(status="Partially Filled") | Q(status="Closed"))
 
         if "Last 24 hours" in filterSet:
-            query &= Q(created_at__gte=datetime.now()-timedelta(days=1))
+            query &= Q(created_at__gte=timezone.now()-timedelta(days=1))
         if "Last 7 days" in filterSet:
-            query &= Q(created_at__gte=datetime.now()-timedelta(days=7))
+            query &= Q(created_at__gte=timezone.now()-timedelta(days=7))
         if "Last 14 days" in filterSet:
-            query &= Q(created_at__gte=datetime.now()-timedelta(days=14))
+            query &= Q(created_at__gte=timezone.now()-timedelta(days=14))
         if "Last month" in filterSet:
-            query &= Q(created_at__gte=datetime.now()-timedelta(days=30))
+            query &= Q(created_at__gte=timezone.now()-timedelta(days=30))
         if "Last 3 months" in filterSet:
-            query &= Q(created_at__gte=datetime.now()-timedelta(days=90))
+            query &= Q(created_at__gte=timezone.now()-timedelta(days=90))
         if 'Oldest First' in filterSet:
             sortOrder = 'created_at'
         if "Active" in filterSet:
@@ -90,19 +101,75 @@ def job_search(request, searchString="", *args, **kwargs):
         context['job_num'] = str(len(queryset))
 
         context["form"] = form
+
+        maxCount = len(context['joblist'])
+
+        low = max((page-1)*MAX_PER_PAGE, 0)
+        high = min(page*MAX_PER_PAGE, maxCount)
+
+        maxPage = int(maxCount/MAX_PER_PAGE)
+        minPage = 1
+
+        if page > maxPage:
+            page = maxPage
+            form.fields['page'].initial = maxPage
+        
+        if page < minPage:
+            page = minPage
+            form.fields['page'].initial = minPage
+        context['form'] = form
+        low = max((page-1)*MAX_PER_PAGE, 0)
+        high = min(page*MAX_PER_PAGE, maxCount)
+
+        context['pageLow'] = low+1
+        context['pageHigh'] = high
+        context['pageRange'] = maxCount
+    
+        context['joblist'] = context['joblist'][low:high]
+
+        if page == 1:
+            context['hideLow'] = True
+        if page == maxPage:
+            context['hideHigh'] = True
         return render(request, 'job-listing.html', context)
 
-    query = Q()
     if not request.user.is_authenticated or request.user.user_type != USER_TYPE_SUPER:
-        query =(Q(status= "Approved") | Q(status="Interviewing") | Q(status="Filled") | Q(status="Partially Filled") | Q(status="Closed"))
+        query &=(Q(status= "Approved") | Q(status="Interviewing") | Q(status="Filled") | Q(status="Partially Filled") | Q(status="Closed"))
     args.append(query)
     queryset = Job.objects.filter(*args).order_by(sortOrder).distinct()
 
-    context = {
-        'joblist': queryset,
-        'job_num': str(len(queryset))
-    }
-    context["form"] = form
+    context['joblist']= queryset
+    context['job_num']= str(len(queryset))
+    
+    maxCount = len(context['joblist'])
+
+    low = max((page-1)*MAX_PER_PAGE, 0)
+    high = min(page*MAX_PER_PAGE, maxCount)
+
+    maxPage = int(maxCount/MAX_PER_PAGE)
+    minPage = 1
+
+    if page > maxPage:
+        page = maxPage
+        form.fields['page'].initial = maxPage
+    
+    if page < minPage:
+        page = minPage
+        form.fields['page'].initial = minPage
+    context['form'] = form
+    low = max((page-1)*MAX_PER_PAGE, 0)
+    high = min(page*MAX_PER_PAGE, maxCount)
+
+    context['pageLow'] = low+1
+    context['pageHigh'] = high
+    context['pageRange'] = maxCount
+
+    context['joblist'] = context['joblist'][low:high]
+
+    if page == 1:
+        context['hideLow'] = True
+    if page == maxPage:
+        context['hideHigh'] = True
 
     return render(request, 'job-listing.html', context)
 

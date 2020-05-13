@@ -119,7 +119,7 @@
                   </div>
                     {% if user.is_authenticated and user.user_type == 4 %}
                     <div class="buttons">
-                    <a class="save" href="/admin/companies/company/{{company.pk}}/change/"><i data-feather="heart"></i>Edit</a>
+                    <a class="save" href="/admin/companies/company/{{company.pk}}/change/"><i data-feather="briefcase"></i><b> Edit </b></a>
                     </div>
                     {% endif %}
                 </div>
@@ -138,7 +138,9 @@
                       {{form.validCompany}}
                       {{form.employer}}
                       <input type="submit" class="add-new-field" formnovalidate value="Migrate" name="Migrate" id="Migrate">
+                      
                     </div>
+                    <em> Tip: Use the above to migrate an employer to another company. Only approved employers belonging to the currently company are shown in the list </em>
                   </form>
                   {% endif %}
               </div>

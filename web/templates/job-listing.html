@@ -137,6 +137,8 @@
 
 
     <!-- Job Listing -->
+  <form method="POST" class="job-post-form" enctype="multipart/form-data">
+    {% csrf_token %}
     <div class="alice-bg section-padding-bottom">
       <div class="container">
         <div class="row no-gutters">
@@ -153,7 +155,7 @@
                     </div>
                   </div>
                   <div class="showing-number">
-                    <span>Showing {{ job_num }} jobs</span>
+                    <span>Showing {{pageLow}} to {{pageHigh}} out of {{pageRange}} results</span>
                   </div>
                 </div>
                 <div class="job-filter-result">
@@ -229,24 +231,20 @@
                   </div>
                 </div>
                 <div class="pagination-list text-center">
-                  <nav class="navigation pagination">
-                    <div class="nav-links">
-                      <a class="prev page-numbers" href="#"><i class="fas fa-angle-left"></i></a>
-                      <a class="page-numbers" href="#">1</a>
-                      <span aria-current="page" class="page-numbers current">2</span>
-                      <a class="page-numbers" href="#">3</a>
-                      <a class="page-numbers" href="#">4</a>
-                      <a class="next page-numbers" href="#"><i class="fas fa-angle-right"></i></a>
-                    </div>
-                  </nav>                
+                      {% if not hideLow %}
+                      <input type="submit" class="page-numbers" formnovalidate value="Prev" name="prevPage" id="prevPage">
+                      {% endif %}
+                      {% if not hideHigh %}
+                      <input type="submit" class="page-numbers" formnovalidate value="Next" name="nextPage" id="nextPage">
+                      {% endif %}
                 </div>
+                </form>
               </div>
-              <form method="POST" class="job-post-form" enctype="multipart/form-data">
-                {% csrf_token %}
                 <div class="job-filter-wrapper">
                 {{form.selected_filter}}
                 {{form.selected_filter_outerHTML}}
                 {{form.selected_filter_class}}
+                {{form.page}}
                 <center>
                 <input type="submit" class="add-new-field" formnovalidate value="Apply Filter" name="filter" id="filter">
                 </center>
@@ -299,12 +297,12 @@
                   </ul>
                 </div>
               </div>
-              </form>
             </div>
           </div>
         </div>
       </div>
     </div>
+    </form>
     <!-- Job Listing End -->
 
     <!-- Footer -->
@@ -436,6 +434,7 @@
     <script src={% static "js/map.js" %}></script>
 
     <script>
+        let page = Number($("[name=page]").val());
         {% if filterClasses %}
         var oldCls =  unescape({{filterClasses | safe }}).split(',');
         var oldHTMLs = unescape({{filterHTML| safe }}).split(',');
@@ -448,9 +447,19 @@
             }
           }
         }
-        {% endif %}
 
-        $("#filter").click(function() {
+        {% endif %}
+        
+        $("#nextPage").click(function() {
+          page ++;
+          $("[name=page]").val(page);
+        });
+
+        $("#prevPage").click(function() {
+          page --;
+          $("[name=page]").val(page);
+        });
+        var fnc = function() {
           var res = [];
           var htmls = [];
           var cls = [];
@@ -463,6 +472,23 @@
           $("[name=selected_filter]").val(res);
           $("[name=selected_filter_outerHTML]").val(htmls);
           $("[name=selected_filter_class]").val(cls);
+          $("[name=gpa_min]").val(document.getElementById('minSlider').textContent);
+          $("[name=gpa_max]").val(document.getElementById('maxSlider').textContent);
+        }
+
+        $("#nextPage").click(fnc);
+
+        $("#filter").click(fnc);
+
+        $("#prevPage").click(fnc);
+
+        $("#firstPage").click(fnc);
+
+        $("#lastPage").click(fnc);
+
+        $("#filter").click(function() {
+          page = 1;
+          $("[name=page]").val(page);
         });
 
         $('html').bind('keypress', function(e)

@@ -276,11 +276,11 @@
                     </div>
                   </div>
                   <div class="col-xl-4 offset-xl-1 col-lg-4">
-                    {% if user.user_type == 4 or user.user_type == 1 %}
+                    {% if user.user_type == 4 or user.user_type == 1 or user.user_type == 2 %}
                     <div class="information-and-contact">
                       <div class="information">
                         <h4>Contact</h4>
-                        <h4>Can be seen by job owner only when you are selected for an interview. Exception: Co-op review staff</h4>
+                        <h4>Only visible to yourself, the job owners and co-op staffs</h4>
                         <ul>
                           <li><span>Phone number:</span> {{jobApplication.candidate.user.phoneNumber}}</li>
                           <li><span>Main Email address:</span> {{jobApplication.candidate.user.email}}</li>
@@ -291,22 +291,6 @@
                       </div>
                       {% endif %}
 
-                    {% if user.user_type == 2 %}
-                    <div class="information-and-contact">
-                      <div class="information">
-                        <h4>Contact</h4>
-                        <h4>Visible only if selected for an interview</h4>
-                        {% if user.user_type == 2 and jobApplication.status != "Submitted" and  jobApplication.status != "Not Selected"%}
-                        <ul>
-                          <li><span>Phone number:</span> {{jobApplication.candidate.user.phoneNumber}}</li>
-                          <li><span>Main Email address:</span> {{jobApplication.candidate.user.email}}</li>
-                          <li><span>Is email confirmed:</span> {{jobApplication.candidate.user.is_email_confirmed}}</li>
-                          <li><span>Concordia Email on file:</span> {{jobApplication.candidate.concordia_email}}</li>
-                          <li><span>Is Concordia Email confirmed:</span> <h5><b>{{jobApplication.candidate.is_condia_email_confirmed}} </b></h5></li>
-                        </ul>
-                        {% endif %}
-                      </div>
-                      {% endif %}
                       <div class="buttons">
                         <a href="/getFileWithAuth/2/{{jobApplication.pk}}/" class="button cover-download"><i data-feather="download"></i>Cover Letter</a>
                         <a href="/getFileWithAuth/3/{{jobApplication.pk}}/" class="button contact-download"><i data-feather="download"></i>Transcript</a>
