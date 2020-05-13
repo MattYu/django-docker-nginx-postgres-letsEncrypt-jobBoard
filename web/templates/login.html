@@ -139,6 +139,7 @@
                 <div class="form-group">
                   {{form.password}}
                 </div>
+                {% block content %}
                 {% csrf_token %}
                   <script src='https://www.google.com/recaptcha/api.js'></script>
                   <div class="g-recaptcha" data-sitekey="{{recaptchaPubKey}}"></div>

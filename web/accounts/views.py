@@ -86,9 +86,12 @@ def login_user(request):
     if (request.method == 'POST'):
         form = LoginForm(request.POST)
         #if form.is_valid() and request.recaptcha_is_valid:
-
+        import sys
+        print(request.recaptcha_is_valid, file=sys.stderr)
         if settings.DEV == True:
             request.recaptcha_is_valid = True
+
+        
         
         if form.is_valid() and request.recaptcha_is_valid:
 
