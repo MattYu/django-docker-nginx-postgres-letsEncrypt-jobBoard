@@ -332,8 +332,7 @@ def browse_job_applications(request, searchString = "", jobId= -1):
 
     context["newMessageCount"] = len(request.user.notifications.unread())
 
-    import sys
-    print(page, file=sys.stderr)
+
     #form.fields['page'].initial = 4
     #print(form.fields['page'].initial)
 
@@ -355,7 +354,6 @@ def browse_job_applications(request, searchString = "", jobId= -1):
     context['form'] = form
     low = max((page-1)*MAX_PER_PAGE, 0)
     high = min(page*MAX_PER_PAGE, maxCount)
-    print(page, file=sys.stderr)
 
     context['pageLow'] = low+1
     context['pageHigh'] = high
