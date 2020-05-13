@@ -159,7 +159,7 @@ def admin_matchmaking(request):
 
 
     if request.user.user_type == USER_TYPE_SUPER:
-
+        context = {}
         if (request.method == "POST"):
 
             if request.POST.get("closeEmp"):
@@ -168,11 +168,14 @@ def admin_matchmaking(request):
                     rank.is_ranking_open_for_employer = False
                     rank.is_ranking_open_for_candidate = True
                     rank.save()
+                context["message"] = "1 - Success. Employer Ranking Closed. Candidate Ranking Opened."
 
             if request.POST.get("closeCan"):
                 for rank in Ranking.objects.filter(is_ranking_open_for_candidate=True):
                     rank.is_ranking_open_for_candidate = False
                     rank.save()
+
+                context["message"] = "2 - Success. Candidate Ranking Closed. All Rankings are now locked."
 
             if request.POST.get("MATCH"):
                 matchingHistory = MatchingHistory()
@@ -255,6 +258,7 @@ def admin_matchmaking(request):
                         rank.status = "Matched"
                         rank.is_closed = True
                         rank.save()
+                context["message"] = "3 - Success. Matches generated in favour of candidates. Matches are currently only visible to you (admin). Please review them. The next step notify all candidates and employers. Note that step 4 can be slow. This is normal behavior since sending emails takes time."
 
             if request.POST.get("open"):
                 connection = mail.get_connection()
@@ -338,7 +342,7 @@ def admin_matchmaking(request):
                     print(e, file=sys.stderr)
                 
                 connection.close()
-
+                context["message"] = "4 - Success. Matches are now visible to candidates and employers. Notifications and mass emails sent."
 
                     
 
@@ -358,14 +362,13 @@ def admin_matchmaking(request):
                     rank.save()
                     for match in Match.objects.filter(jobApplication=rank.jobApplication):
                         match.delete()
+                context["message"] = "Success. Reverted back to step 1 while preserving existing rankings"
 
-        context = {
-            "user": request.user
-            }
+        context["user"] = request.user
         
-    context["newMessageCount"] = len(request.user.notifications.unread())
+        context["newMessageCount"] = len(request.user.notifications.unread())
 
-    return render(request, "dashboard-ranking-matchday.html", context)
+        return render(request, "dashboard-ranking-matchday.html", context)
 
 def admin_open_matching(request):
     if request.user.user_type == USER_TYPE_SUPER:
