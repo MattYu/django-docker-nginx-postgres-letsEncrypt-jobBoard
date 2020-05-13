@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>Oficiona</title>
+    <title>Concordia ACE</title>
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href={% static "assets/css/bootstrap.min.css" %}>
@@ -185,9 +185,9 @@
         </row>
         </form>
       {% endif %}
-      {% if user.user_type == 4 and not showButton and showInterview%}
+      {% if user.user_type == 4 and not showButton and not showInterview%}
       <p> We have notified the candidate that they have been selected for an interview. Please let the employer reach out to them by email or phone. </P>
-      <p> <a href="/jobApplication"> Tip: You can find a list of all selected candidates by going into your <b>Dashboard->Manage Applications->Filter Interview->Get Contact Info</b></a> </p>
+      <p> <a href="/jobApplication"> Tip: You can find a list of all selected candidates by going into your <b>Dashboard->Applications->Filter Interview->Get Contact Info</b></a> </p>
       <p> Once you have interviewed the candidate, please rank them <a href="/employerRanking"> <b>here</b></a> by order of preference. The candidate will also rank you. </P>
       <p> Our algorithm will generate the optimal match on Match day. </p>
       {% endif %}
@@ -202,7 +202,7 @@
       {% endif %}
       {% if user.user_type == 2 and not showButton%}
       <p> We have notified the candidate that they have been selected for an interview. Please reach out to them by email or phone. </P>
-      <p> <a href="/jobApplication"> Tip: You can find a list of all selected candidates by going into your <b>Dashboard->Manage Applications-></b>Filter Selected Interview->Get Contact Info</a> </p>
+      <p> <a href="/jobApplication"> Tip: You can find a list of all selected candidates by going into your <b>Dashboard->Applications-></b>Filter Selected Interview->Get Contact Info</a> </p>
       <p> <a href="/manageJobs"> To find candidates for a specific job, <b>navigate to the job </b>and click on view candidates->Filter Selected for interview->Get Contact Info </a><p>
       <p> Once you have interviewed the candidate, please rank them <a href="/employerRanking"> <b>here</b></a> by order of preference. The candidate will also rank you. </P>
       <p> Our algorithm will generate the optimal match on Match day. </p>
@@ -463,7 +463,7 @@
                 <div class="row">
                   <div class="col-lg-6">
                     <p class="copyright-text">Software developped by Concordia Capstone ACE team. <a href= "#"></a> 2020</p>
-                    <p class="copyright-text"><a href= "#">Style Templates used under license, Oficiona 2019</a></p>
+                    <p class="copyright-text"><a href= "#">Style Templates used under license, Concordia ACE 2019</a></p>
                   </div>
                   <div class="col-lg-6">
                     <div class="back-to-top">

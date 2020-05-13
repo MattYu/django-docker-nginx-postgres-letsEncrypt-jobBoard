@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>Oficiona</title>
+    <title>Concordia ACE</title>
  
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href={% static "assets/css/bootstrap.min.css" %}>
@@ -117,7 +117,7 @@
                 <li><b>Name: {{candidate.user.firstName}} {{candidate.user.firstName}}  {{candidate.user.lastName}}, email: {{candidate.user.email}}, phone: {{candidate.user.phoneNumber}} </b></li>
                 <li><em> Concordia Email on file: {{candidate.concordia_email}}, confirmed? {{candidate.is_concordia_email_confirmed}}, student ID: {{candidate.studentID}}, program: {{candidate.program}}, gpa: {{candidate.gpa}}, credit completed: {{candidate.creditCompleted}}, credit left: {{candidate.creditLeft}}, citizenship: {{candidate.citizenship}}</em></li>
               {% for application in applications %}
-                <li> Applied to: {{application.job.title}} at {{application.job.company.name}} on {{application.created_at}}. <a href="/jobApplicationDetails/{{application.pk}}"> Click <b>here</b> to view application </a> </li>
+                <li> Applied to: {{application.job.title}} at {{application.job.company.name}} on {{application.created_at}}. <a href="/jobApplicationDetails/{{application.pk}}"> Click <b>here</b> to view application. Status: {{application.status}} </a> </li>
               {% endfor %}
                 
               {% endfor%}

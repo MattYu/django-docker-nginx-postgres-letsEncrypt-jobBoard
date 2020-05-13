@@ -41,7 +41,7 @@ def view_notifications(request, searchString= ""):
                 user.notifications.mark_all_as_read()
                 notifications = user.notifications.all()
         else:
-            notifications = user.notifications.unread()
+            notifications = user.notifications.all()[:min(15, len(user.notifications.all()))]
 
         if "redirectHome" in search:
             return HttpResponseRedirect("/") 

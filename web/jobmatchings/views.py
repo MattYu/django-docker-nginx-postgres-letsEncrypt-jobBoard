@@ -195,7 +195,7 @@ def admin_matchmaking(request):
                 employer_prefs = {}
                 capacities = {}
 
-                for rank in Ranking.objects.filter(~Q(status="Not Matched")).order_by('employerRank'):
+                for rank in Ranking.objects.filter(~Q(status="Matched") & ~Q(status="Not Matched")).order_by('employerRank'):
                     jobId = rank.jobApplication.job.id
                     job = rank.jobApplication.job
 
@@ -206,7 +206,7 @@ def admin_matchmaking(request):
                         employer_prefs[jobId].append(rank.candidate.id)
                 
                 candidate_prefs = {}
-                for rank in Ranking.objects.filter(~Q(status="Matched") | ~Q(status="Not Matched")).order_by('candidateRank'):
+                for rank in Ranking.objects.filter(~Q(status="Matched") & ~Q(status="Not Matched")).order_by('candidateRank'):
                     candidate = rank.candidate.id
 
                     if candidate not in candidate_prefs:
@@ -219,6 +219,7 @@ def admin_matchmaking(request):
                 matchResult = match.solve(optimal="resident")
 
                 matchingHistory = MatchingHistory()
+                matchingHistory.save()
 
                 for jobObj in matchResult:
                     for candidate in matchResult[jobObj]:
@@ -274,68 +275,67 @@ def admin_matchmaking(request):
                         rank.save()
                         rank.jobApplication.save()
 
-                        #Create message for employer
+                for match in Match.objects.filter(isOpenToPublic=False).all():
+                    #Create message for employer
+                    import sys
+                    print("Sending messages??", file=sys.stderr)
+                    current_site = get_current_site(request)
+                    # Step 1: find the email(s) of the job owner(s) in the system
+                    email_to = []
+                    job = match.jobApplication.job
+                    for employer in match.jobApplication.job.jobAccessPermission.all():
+                        # Step 2 Send individual notification
+                        description = "Hello, We are pleased to inform you that you matched with one of your selected candidates: http://" + str(current_site.domain) + "/jobApplicationDetails/" + str(match.jobApplication.pk)
+                        notify.send(request.user, recipient=employer.user, verb='Job Match: ' + match.candidate.user.preferredName + " " + match.candidate.user.firstName + " " + match.candidate.user.lastName, description = description, public=False)
+                        if employer.notify_by_email:
+                            email_to.append(employer.user.email)
+                    # Step 3: Create email for employer(s)
+                    mail_subject = 'Concordia ACE Job Match: ' + match.candidate.user.preferredName + " " + match.candidate.user.firstName + " " + match.candidate.user.lastName
+                    message = render_to_string('email-match-employer.html', {
+                        'candidate': match.candidate,
+                        'domain': current_site.domain,
+                        'job': match.jobApplication.job,
+                    })
+                    email = EmailMessage(
+                                mail_subject, message, to=email_to
+                    )
+                    if len(email_to) != 0:
+                        messages.append(email)
 
-                        current_site = get_current_site(request)
+                    # Step 4: Notify candiddate
 
-                        
-                        # Step 1: find the email(s) of the job owner(s) in the system
-                        email_to = []
-                        job = rank.jobApplication.job
-                        for employer in job.jobAccessPermission.all():
-                            # Step 2 Send individual notification
-                            description = "Hello, We are pleased to inform you that you matched with one of your selected candidates: http://" + str(current_site.domain) + "/jobApplicationDetails/" + str(rank.jobApplication.pk)
-                            notify.send(request.user, recipient=employer.user, verb='Job Match: ' + rank.candidate.preferredName + " " + rank.candidate.firstName + " " + rank.candidate.lastName, description = description, public=False)
-                            if employer.notify_by_email:
-                                email_to.append(employer.user.email)
-                        # Step 3: Create email for employer(s)
-                        mail_subject = 'Concordia ACE Job Match: ' + rank.candidate.preferredName + " " + rank.candidate.firstName + " " + rank.candidate.lastName
-                        message = render_to_string('email-match-employer.html', {
-                            'candidate': rank.candidate,
+                    candidate = match.candidate
+
+                    description = "Congratulation! We have shared your contact information with your future employer."
+
+                    notify.send(request.user, recipient=candidate.user, verb='Job Match: ' + match.jobApplication.job.title + " at " + match.jobApplication.job.company.name, description = description, public=False)
+                    
+                    # Step 5: Create email for the candidate
+                    if candidate.notify_by_email:
+                        mail_subject = 'Concordia ACE Job Match: ' + match.jobApplication.job.title + " at " + match.jobApplication.job.company.name
+                        message = render_to_string('email-match-candidate.html', {
+                            'user': match.candidate,
                             'domain': current_site.domain,
-                            'job': rank.jobApplication.job,
+                            'job': match.jobApplication.job,
                         })
                         email = EmailMessage(
-                                    mail_subject, message, to=email_to
+                                    mail_subject, message, to=[candidate.user.email]
                         )
-                        if len(email_to) != 0:
-                            messages.append(email)
 
-                        # Step 4: Notify candiddate
+                        messages.append(email)
+                    
+                    # Final Step: Send messages
+                    try:
+                        connection.send_messages(messages)
+                    except Exception as e:
+                        import sys
+                        print(e, file=sys.stderr)
 
-                        candidate = rank.candidate
+                    connection.close()
 
-                        description = "Congratulation! We have shared your contact information with your future employer."
+                    match.isOpenToPublic = True
+                    match.save()
 
-                        notify.send(request.user, recipient=candidate.user, verb='Job Match: ' + rank.jobApplication.job.title + " at " + rank.jobApplication.job.company.name, description = description, public=False)
-                        
-                        # Step 5: Create email for the candidate
-                        if candidate.notify_by_email:
-                            mail_subject = 'Concordia ACE Job Match: ' + rank.jobApplication.job.title + " at " + rank.jobApplication.job.company.name
-                            message = render_to_string('email-match-candidate.html', {
-                                'user': rank.candidate,
-                                'domain': current_site.domain,
-                                'job': rank.jobApplication.job,
-                            })
-                            email = EmailMessage(
-                                        mail_subject, message, to=[candidate.user.email]
-                            )
-
-                            messages.append(email)
-                
-
-                for match in Match.objects.filter(isOpenToPublic=False):
-                        match.isOpenToPublic = True
-                        match.save()
-
-                # Final Step: Send messages
-                try:
-                    connection.send_messages(messages)
-                except Exception as e:
-                    import sys
-                    print(e, file=sys.stderr)
-
-                connection.close()
 
 
             if request.POST.get("Undo last 7 days"):
