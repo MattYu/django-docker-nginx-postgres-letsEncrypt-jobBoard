@@ -130,7 +130,7 @@
               <div class="dashboard-content-wrapper">
                 <div class="manage-job-container">
                 <form method="POST" class="job-post-form" enctype="multipart/form-data">
-                        {% csrf_token %}
+                  {% csrf_token %}
                   <table class="table">
                     <thead>
                       <tr>
@@ -180,7 +180,7 @@
               <div class="dashboard-sidebar">
                 <div class="company-info">
                   <div class="thumb">
-                    <img src="dashboard/images/company-logo.png" class="img-fluid" alt="">
+                    <img src="dashboard/#" class="img-fluid" alt="">
                   </div>
                   <div class="company-body">
                     <h5>{{user.firstName}} {{user.lastName}}</h5>
@@ -217,7 +217,7 @@
                     {% if user.user_type != 1 %}
                     <li><i class="fas fa-briefcase"></i><a href="/manageJobs/">Manage Jobs</a></li>
                     {% endif %}
-                    <li><i class="fas fa-users"></i><a href="/jobApplications/">Manage Applications</a></li>
+                    <li><i class="fas fa-users"></i><a href="/jobApplications/">Applications</a></li>
                     <li><i class="fas fa-heart"></i><a href="/employerRanking">Interview Ranking</a></li>
                     {% if user.user_type == 4 %}
                     <li class="active"><i class="fas fa-plus-square"></i><a href="/matchDay">Admin Matchday</a></li>
@@ -374,7 +374,7 @@
                 <div class="row">
                   <div class="col-lg-6">
                     <p class="copyright-text">Software developped by Concordia Capstone ACE team. <a href= "#"></a> 2020</p>
-                    <p class="copyright-text"><a href= "#">Style Templates used under license, Oficiona 2019</a></p>
+                    <p class="copyright-text"><a href= "#">Style Templates used under license, Concordia ACE 2019</a></p>
                   </div>
                   <div class="col-lg-6">
                     <div class="back-to-top">
@@ -414,5 +414,22 @@
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC87gjXWLqrHuLKR0CTV5jNLdP4pEHMhmg"></script>
     <script src={% static "js/map.js" %}></script>
+
+    <script>
+
+      isFormHtml5Valid(form) {
+        for(var el of form.querySelectorAll('input,textarea,select')){
+          if(!el.checkValidity())
+            return false;
+        }
+        return true;
+      }
+
+      $("#open")onclick = function() {
+        if(this.form && isFormHtml5Valid(this.form))
+          this.disabled=true;
+        this.form.submit();
+      }
+    </script>
   </body>
 </html>

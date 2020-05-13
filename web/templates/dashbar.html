@@ -13,7 +13,7 @@
                     {% if user.user_type != 1 %}
                     {% if location == "Manage Jobs" %}<li class="active">{% else %}<li>{% endif %}<i class="fas fa-briefcase"></i><a href="/manageJobs/">Manage Jobs</a></li>
                     {% endif %}
-                    {% if location == "Manage Applications" %}<li class="active">{% else %}<li>{% endif %}<i class="fas fa-users"></i><a href="/jobApplications/">Manage Applications</a></li>
+                    {% if location == "Applications" %}<li class="active">{% else %}<li>{% endif %}<i class="fas fa-users"></i><a href="/jobApplications/">Applications</a></li>
                     {% if user.user_type != 1 %}
                     {% if location == "Interview Ranking" %}<li class="active">{% else %}<li>{% endif %}<i class="fas fa-heart"></i><a href="/employerRanking">Interview Ranking</a></li>
                     {% else %}
