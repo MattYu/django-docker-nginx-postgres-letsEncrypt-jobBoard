@@ -381,7 +381,11 @@ class RegistrationForm(forms.Form):
                 language.save()
 
         connection = mail.get_connection()
-        connection.open()
+        try:
+            connection.open()
+        except Exception as e:
+            import sys
+            print(e, file=sys.stderr)
         messages = []
         email = cleaned_data.get('email')
         raw_password = cleaned_data.get('password')
@@ -436,6 +440,7 @@ class RegistrationForm(forms.Form):
         except Exception as e:
             import sys
             print(e, file=sys.stderr)
+            pass
             
         connection.close()
         return user

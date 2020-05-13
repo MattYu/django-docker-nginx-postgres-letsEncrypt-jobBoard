@@ -1,7 +1,7 @@
 from django.db import models
 from companies.models import Company
 from tinymce import models as tinymce_models
-from ace.constants import MAX_LENGTH_TITLE, MAX_LENGTH_DESCRIPTION, MAX_LENGTH_RESPONSABILITIES, MAX_LENGTH_REQUIREMENTS, MAX_LENGTH_STANDARDFIELDS, CATEGORY_CHOICES, LOCATION_CHOICES, JOB_STATUS
+from ace.constants import MONTREAL_LAT, MONTREAL_LNG, MAX_LENGTH_TITLE, MAX_LENGTH_DESCRIPTION, MAX_LENGTH_RESPONSABILITIES, MAX_LENGTH_REQUIREMENTS, MAX_LENGTH_STANDARDFIELDS, CATEGORY_CHOICES, LOCATION_CHOICES, JOB_STATUS
 from accounts.models import Employer
 from django.contrib.postgres.fields import ArrayField
 
@@ -35,6 +35,8 @@ class Job(models.Model):
 
     company = models.ForeignKey(Company, on_delete=models.CASCADE, default= "")
 
+    addressLat = models.FloatField(max_length=20, default=MONTREAL_LAT)
+    addressLat = models.FloatField(max_length=20, default=MONTREAL_LNG)
     jobAccessPermission = models.ManyToManyField(Employer, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)

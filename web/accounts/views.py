@@ -45,6 +45,9 @@ def register_user(request, employer=None):
             extra_language_count=request.POST.get('extra_language_count'),
             )
 
+        import sys
+        print(request.recaptcha_is_valid, file=sys.stderr)
+
         if settings.DEV == True:
             request.recaptcha_is_valid = True
         
@@ -83,30 +86,11 @@ def login_user(request):
     if (request.method == 'POST'):
         form = LoginForm(request.POST)
         #if form.is_valid() and request.recaptcha_is_valid:
-        import sys
-        recaptcha_response = request.POST.get('g-recaptcha-response')
-        data = {
-            'secret': settings.GOOGLE_RECAPTCHA_SECRET_KEY,
-            'response': recaptcha_response
-        }
-        ''' Begin reCAPTCHA validation '''
-        recaptcha_response = request.POST.get('g-recaptcha-response')
-        print(recaptcha_response, file=sys.stderr)
-        url = 'https://www.google.com/recaptcha/api/siteverify'
-        values = {
-            'secret': settings.GOOGLE_RECAPTCHA_SECRET_KEY,
-            'response': recaptcha_response
-        }
-        data = urllib.parse.urlencode(values).encode()
-        req =  urllib.request.Request(url, data=data)
-        response = urllib.request.urlopen(req)
-        result = json.loads(response.read().decode())
-        ''' End reCAPTCHA validation '''
 
         if settings.DEV == True:
-            result['success'] = True
+            request.recaptcha_is_valid = True
         
-        if form.is_valid() and result['success']:
+        if form.is_valid() and request.recaptcha_is_valid:
 
             email = form.cleaned_data.get('email')
             raw_password = form.cleaned_data.get('password')

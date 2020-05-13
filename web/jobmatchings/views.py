@@ -262,7 +262,11 @@ def admin_matchmaking(request):
 
             if request.POST.get("open"):
                 connection = mail.get_connection()
-                connection.open()
+                try:
+                    connection.open()
+                except Exception as e:
+                    import sys
+                    print(e, file=sys.stderr)
 
 
                 messages = []
