@@ -178,12 +178,12 @@
                       <div class="more">
                         <div class="buttons">
                           {% if job.status != "Closed" and job.status != "Filled" and job.status != "Partially Filled"%}
-                          <a href="/add-resume/{{job.pk}}/" class="button">Apply Now</a>
+                          <a target="_blank" rel="noopener noreferrer" href="/add-resume/{{job.pk}}/" class="button">Apply Now</a>
                           {% else %}
                           <a href="/" class="button">Closed</a>
                           {% endif %}
                         </div>
-                        <p class="deadline">Status: {{job.status}}</p>
+                        <p class="deadline">Deadline: {{job.expirationDate}}</p>
                       </div>
                     </div>
                   </div>

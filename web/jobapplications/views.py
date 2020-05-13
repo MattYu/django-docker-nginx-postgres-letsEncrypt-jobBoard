@@ -27,7 +27,10 @@ from django.utils import timezone
 import json as simplejson
 from datetime import datetime, timedelta
 from django.core.files.storage import FileSystemStorage
-
+from django.core.mail import EmailMessage
+from django.core import mail
+from django.template.loader import render_to_string
+from notifications.signals import notify
 #u = uuid.uuid4()
 #u.hex
 
@@ -391,15 +394,50 @@ def view_application_details(request, pk):
                 jobApplication.status= "Not Approved"
                 jobApplication.save()
             if request.POST.get('Interview'):
-                ranking = Ranking()
-                ranking.jobApplication = jobApplication
-                ranking.job = jobApplication.job
-                ranking.candidate = jobApplication.candidate
-                ranking.save()
-                jobApplication.status= "Interviewing"
-                jobApplication.job.status= "Interviewing"
-                jobApplication.save()
+                if Ranking.objects.filter(jobApplication=jobApplication).count() == 0:
+                    ranking = Ranking()
+                    ranking.jobApplication = jobApplication
+                    ranking.job = jobApplication.job
+                    ranking.candidate = jobApplication.candidate
+                    ranking.save()
+                    jobApplication.status= "Interviewing"
+                    jobApplication.job.status= "Interviewing"
+                    jobApplication.save()
 
+                    connection = mail.get_connection()
+                    connection.open()
+                    messages = []
+                    email = jobApplication.candidate.user.email
+
+                    current_site = get_current_site(request)
+                    mail_subject = 'Selected for an interview - Concordia ACE'
+                    message = render_to_string('email-interview-candidate.html', {
+                        'user': jobApplication.candidate.user,
+                        'domain': current_site.domain,
+                        'job': jobApplication.job
+                    })
+                    to_email = email
+                    email = EmailMessage(
+                                mail_subject, message, to=[to_email]
+                    )
+                    messages.append(email)
+                    try:
+                        #email.send()
+                        connection.send_messages(messages)
+                        description = "You have been selected for an interview. We have shared your contact information with your potential employer and they will get in touch with you shortly. After you are done with the interview, please visit the ranking page of the ACE website for the next step."
+                        notify.send(request.user, recipient=jobApplication.candidate.user, verb='Interview' + " " + jobApplication.job.title + " at " + jobApplication.job.company.name, description = description, public=False)
+                    except Exception as e:
+                        import sys
+                        print(e, file=sys.stderr)
+                else:
+                    rank = Ranking.objects.filter(jobApplication=jobApplication).first()
+                    jobApplication.status= "Interviewing"
+                    jobApplication.job.status= "Interviewing"
+                    jobApplication.save()
+                    rank.status = "Interviewing"
+                    rank.save()
+
+                connection.close()
         if jobApplication.status == "Pending Review" or jobApplication.status== "Not Approved":
             context['showButton'] = True
         
@@ -419,14 +457,49 @@ def view_application_details(request, pk):
 
         if request.method == 'POST':
             if request.POST.get('Approved'):
-                ranking = Ranking()
-                ranking.jobApplication = jobApplication
-                ranking.job = jobApplication.job
-                ranking.candidate = jobApplication.candidate
-                ranking.save()
-                jobApplication.status= "Interviewing"
-                jobApplication.job.status= "Interviewing"
-                jobApplication.save()
+                if Ranking.objects.filter(jobApplication=jobApplication).count() == 0:
+                    ranking = Ranking()
+                    ranking.jobApplication = jobApplication
+                    ranking.job = jobApplication.job
+                    ranking.candidate = jobApplication.candidate
+                    ranking.save()
+                    jobApplication.status= "Interviewing"
+                    jobApplication.job.status= "Interviewing"
+                    jobApplication.save()
+
+                    connection = mail.get_connection()
+                    connection.open()
+                    messages = []
+                    email = jobApplication.candidate.user.email
+
+                    current_site = get_current_site(request)
+                    mail_subject = 'Selected for an interview - Concordia ACE'
+                    message = render_to_string('email-interview-candidate.html', {
+                        'user': jobApplication.candidate.user,
+                        'domain': current_site.domain,
+                        'job': jobApplication.job
+                    })
+                    to_email = email
+                    email = EmailMessage(
+                                mail_subject, message, to=[to_email]
+                    )
+                    messages.append(email)
+                    try:
+                        #email.send()
+                        connection.send_messages(messages)
+                        description = "You have been selected for an interview. We have shared your contact information with your potential employer and they will get in touch with you shortly. After you are done with the interview, please visit the ranking page of the ACE website for the next step."
+                        notify.send(request.user, recipient=jobApplication.candidate.user, verb='Interview' + " " + jobApplication.job.title + " at " + jobApplication.job.company.name, description = description, public=False)
+                    except Exception as e:
+                        import sys
+                        print(e, file=sys.stderr)
+                else:
+                    rank = Ranking.objects.filter(jobApplication=jobApplication).first()
+                    jobApplication.status= "Interviewing"
+                    jobApplication.job.status= "Interviewing"
+                    jobApplication.save()
+                    rank.status = "Interviewing"
+                    rank.save()
+
 
             if request.POST.get('Reject'):
                 jobApplication.status= "Not Selected"
