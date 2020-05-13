@@ -477,7 +477,7 @@
                 {% block content %}
                   {% csrf_token %}
                   <script src='https://www.google.com/recaptcha/api.js'></script>
-                  <div class="g-recaptcha" data-sitekey="6Lf0je8UAAAAAN4gmK-Oko9dhhvj1sF4UKkqWip3"></div>
+                  <div class="g-recaptcha" data-sitekey="{{recaptchaPubKey}}"></div>
                   <br>
                 {% endblock %}
                 <input type="submit" class="button primary-bg btn-block" formnovalidate value="Register" name="Register" id="Register">

@@ -134,7 +134,8 @@
                   <table class="table">
                     <thead>
                       <tr>
-                        <th>Follows the steps carefully</th>
+                        <th>Click on the following buttons in order to generate new matches from all existing opened ranking results where status == Interviewing</th>
+                        {{message}}
                       </tr>
                     </thead>
                     <tbody>
@@ -143,25 +144,25 @@
                   </table>
                       <tr>
                         <div>
-                        <input type="submit" class="add-new-field" formnovalidate value="1 - Close Employers Ranking and Open Candidates Ranking" name="closeEmp" id="closeEmp">
+                        <input type="submit" class="add-new-field" formnovalidate value="1 - Close Employers Rankings and Open Candidates Rankings. Make 1st, ranked, rejects status visible to candidates" name="closeEmp" id="closeEmp">
                         </div>
                         </tr>
                         <tr>
                         <div>
-                        <input type="submit" class="add-new-field" formnovalidate value="2 - Close Candidates Ranking" name="closeCan" id="closeCan">
+                        <input type="submit" class="add-new-field" formnovalidate value="2 - Close Candidates Ranking. All ranking results will be locked" name="closeCan" id="closeCan">
                         </div>
                         </tr>
 
                         <tr>
                         <div>
                         <div class ="button_3">
-                        <input type="submit" class="button_3" formnovalidate value="3- Generate Matching" name="MATCH" id="MATCH">
+                        <input type="submit" class="button_3" formnovalidate value="3- Generate Matches from rankings status == interviewing, and then update their ranking status. Matches will only be visble to admins" name="MATCH" id="MATCH">
                         </div>
                         </div>
                         </tr>
                         <tr>
                         <div>
-                        <input type="submit" class="add-new-field" formnovalidate value="4 - Open Match Viewing to candidates and Employee" name="open" id="open">
+                        <input type="submit" class="add-new-field" formnovalidate value="4 - Open All Matches to candidates and Employers, send notification and emails" name="open" id="open">
                         </div>
                         </tr>
                         <tr>
@@ -171,7 +172,7 @@
                         </tr>
                         <tr>
                         <div>
-                         Only affect changes within the last 7 days: Will delete all matches from past 7 days, reopen ranking to employer (back to step 1), but preserve existing candidate and employer ranking choices
+                         Note that the emergency button only affects changes within the last 7 days: Will delete all matches from past 7 days, reopen ranking to employer (back to step 1 status == interviewing), but preserve existing candidate and employer ranking choices
                         </div>
                         </tr>
                 </form>

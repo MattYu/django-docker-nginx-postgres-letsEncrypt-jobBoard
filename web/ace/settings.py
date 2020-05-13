@@ -21,8 +21,8 @@ SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'r#y4_mwy(0xuhb8xo2_))0dg8qhb@dnz1(!*@ac3tgrbl@^8q@'
-GOOGLE_RECAPTCHA_SECRET_KEY = '6LcU4dQUAAAAAPuB2fRHexfmyTP8Gg52B87crNPD'
+SECRET_KEY = os.environ.get("SECRET_KEY")
+GOOGLE_RECAPTCHA_SECRET_KEY = os.environ.get("GOOGLE_RECAPTCHA_SECRET_KEY")
 # TODO - Add Google maps API Key
 GOOGLE_MAPS_API_KEY = None 
 
@@ -32,7 +32,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
 
-
+DEV = bool(os.environ.get("DEV"))
 # Application definition
 
 INSTALLED_APPS = [
@@ -108,9 +108,9 @@ WSGI_APPLICATION = 'ace.wsgi.application'
 DATABASES = {
 'default': {
     'ENGINE': 'django.db.backends.postgresql',
-    'NAME': 'postgres',
-    'USER': 'postgres',
-    'PASSWORD': 'postgres',
+    'NAME': os.environ.get("POSTGRES_DB"),
+    'USER': os.environ.get("POSTGRES_USER"),
+    'PASSWORD':os.environ.get("POSTGRES_PASSWORD"),
     'HOST': 'db',
     'PORT': 5432,
     }
@@ -179,9 +179,9 @@ SENDFILE_URL = '/media'
 # Email notification settings
 # SECURITY WARNING: Not prod ready. Do not used in prod
 EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'concordia.ace.coop@gmail.com'
-EMAIL_HOST_PASSWORD = 'aceconcordiadev'
+EMAIL_HOST = os.environ.get("EMAIL_HOST")
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
 EMAIL_PORT = 587
 
 # SECURITY WARNING: Uncomment below in production once certificate at hand to force HTTPS 
