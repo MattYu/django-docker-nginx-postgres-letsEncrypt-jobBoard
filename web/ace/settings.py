@@ -187,7 +187,7 @@ SENDFILE_URL = '/media'
     EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
     EMAIL_PORT = 587
 '''
-EMAIL_BACKEND = 'django.core.mail.backends.mailjet.EmailBackend'
+EMAIL_BACKEND = 'django_mailjet.backends.MailjetBackend'
 MAILJET_API_KEY = os.environ.get("EMAIL_HOST_PASSWORD")
 MAILJET_API_SECRET = os.environ.get("EMAIL_HOST_USER")
 
