@@ -49,7 +49,7 @@ services:
       - URL=concordia-ace.ca
       - SUBDOMAINS=www,
       - VALIDATION=http
-      - STAGING=true #optional
+      - STAGING=false #optional
 
 volumes:
   static:

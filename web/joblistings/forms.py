@@ -70,7 +70,7 @@ class JobForm(forms.Form):
         widget=forms.Select(attrs={'class': 'form-control', 'placeholder': 'Select Country'})
     )
 
-    location = forms.CharField(max_length=20,
+    location = forms.CharField(max_length=100,
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'City'})
     )
 
@@ -78,7 +78,7 @@ class JobForm(forms.Form):
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Postal Code'})
     )
 
-    yourLocation = forms.CharField(max_length=20,
+    yourLocation = forms.CharField(max_length=100,
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Your address'})
     )
 

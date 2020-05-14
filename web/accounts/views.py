@@ -80,6 +80,7 @@ def register_user(request, employer=None):
 @check_recaptcha
 @transaction.atomic
 def login_user(request):
+    context = {}
     if (request.method == 'POST'):
         form = LoginForm(request.POST)
         #if form.is_valid() and request.recaptcha_is_valid:
@@ -107,6 +108,10 @@ def login_user(request):
             if not request.user.is_email_confirmed:
                 return HttpResponseRedirect('/activate')
             return HttpResponseRedirect('/')
+        else:
+            context['form'] = form
+            context['recaptchaPubKey'] = RECAPTCHA_PUBLIC_KEY
+            return render(request, "login.html", context)
 
     if request.user.is_authenticated:
         return render(request, "404.html")
