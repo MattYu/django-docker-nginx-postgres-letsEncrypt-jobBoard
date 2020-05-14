@@ -171,11 +171,11 @@ def validate(request, uidb64, token):
             candidate.is_concordia_email_confirmed = True
             candidate.save()
             # return redirect('home')
-            return  render(request, "activationLink.html", context={'message':'Thank you for your secondary email confirmation.'})
+            return render(request, "activationLink.html", context={'message':'Thank you for your secondary email confirmation.'})
         except Exception as e:
-            return  render(request, "activationLink.html", context={'message':"Confirmation link is invalid!"})
+            return render(request, "activationLink.html", context={'message':"Confirmation link is invalid!"})
     else:
-        return  render(request, "activationLink.html", context={'message':'Confirmation link is invalid!'})
+        return render(request, "activationLink.html", context={'message':'Confirmation link is invalid!'})
 
 def resend_activation(request):
     if request.user.is_authenticated:
@@ -201,7 +201,7 @@ def resend_activation(request):
             import sys
             print(e, file=sys.stderr)
 
-        return render(request, "activationLink.html", context = {'message': 'An activation link has been sent to your account. To resend the link, press <a href="/resend_activation"> <b> here /b></a>. Please check your spam folder first.'})
+        return render(request, "activationLink.html", context = {'message': 'An activation link has been sent to your account. Please check your spam folder first.', 'resend': True})
 
     else:
         return HttpResponse('You must be logged in to resend your email activation link')
