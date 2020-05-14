@@ -35,8 +35,8 @@ class Job(models.Model):
 
     company = models.ForeignKey(Company, on_delete=models.CASCADE, default= "")
 
-    addressLat = models.FloatField(max_length=20, default=MONTREAL_LAT)
-    addressLat = models.FloatField(max_length=20, default=MONTREAL_LNG)
+    locationLat = models.FloatField(max_length=20, default=MONTREAL_LAT, blank=True)
+    locationLng = models.FloatField(max_length=20, default=MONTREAL_LNG, blank=True)
     jobAccessPermission = models.ManyToManyField(Employer, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)

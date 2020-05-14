@@ -23,9 +23,9 @@ SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get("SECRET_KEY")
 GOOGLE_RECAPTCHA_SECRET_KEY = os.environ.get("GOOGLE_RECAPTCHA_SECRET_KEY")
-# TODO - Add Google maps API Key
-GOOGLE_MAPS_API_KEY = None 
 
+GOOGLE_MAPS_KEY = os.environ.get("GOOGLE_MAPS_KEY")
+GOOGLE_API_KEY = os.environ.get('GOOGLE_API_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 #DEBUG = os.getenv('DEBUG', 'NO').lower() in ('on', 'true', 'y', 'yes')
 DEBUG = False
@@ -180,20 +180,24 @@ SENDFILE_URL = '/media'
 # SECURITY WARNING: Not prod ready. Do not used in prod
 
 
-if DEV:
+'''
     EMAIL_USE_TLS = True
     EMAIL_HOST = os.environ.get("EMAIL_HOST")
     EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
     EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
     EMAIL_PORT = 587
-else:
-    EMAIL_BACKEND = 'django_mailjet.backends.MailjetBackend'
-    MAILJET_API_KEY = os.environ.get("EMAIL_HOST_PASSWORD")
-    MAILJET_API_SECRET = os.environ.get("EMAIL_HOST_USER")
-
+'''
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS = True
+EMAIL_HOST = os.environ.get("EMAIL_HOST")
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
+EMAIL_PORT = 587
+DEFAULT_FROM_EMAIL = os.environ.get("FROM_EMAIL")
+EMAIL_FROM = os.environ.get("FROM_EMAIL")
 
 # SECURITY WARNING: Uncomment below in production once certificate at hand to force HTTPS 
-#SECURE_SSL_REDIRECT = True # PASS: Done by nginx
+#SECURE_SSL_REDIRECT = True # Done by nginx
 
 LOGGING = {
     'version': 1,

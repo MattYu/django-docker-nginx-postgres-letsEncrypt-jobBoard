@@ -7,7 +7,8 @@ from companies.models import Company
 from joblistings.models import Job, JobPDFDescription
 from django.shortcuts import get_object_or_404
 from accounts.models import Employer
-
+from ace.settings import GOOGLE_API_KEY
+from geopy.geocoders import GoogleV3 
 
 class JobForm(forms.Form):
     title = forms.CharField(max_length=MAX_LENGTH_TITLE,
@@ -24,6 +25,14 @@ class JobForm(forms.Form):
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Salary range'})
     )
 
+    lat = forms.FloatField( 
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Optinal Latitude for Goog MAP'})
+    )
+    lng = forms.FloatField( 
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Optinal Lontitude for Goog MAP'})
+    )
     vacancy = forms.IntegerField( 
         required=True,
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Vacancy'})
@@ -61,7 +70,7 @@ class JobForm(forms.Form):
         widget=forms.Select(attrs={'class': 'form-control', 'placeholder': 'Select Country'})
     )
 
-    location = forms.CharField(max_length=20,
+    location = forms.CharField(max_length=100,
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'City'})
     )
 
@@ -69,8 +78,8 @@ class JobForm(forms.Form):
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Postal Code'})
     )
 
-    yourLocation = forms.CharField(max_length=20,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Your location'})
+    yourLocation = forms.CharField(max_length=100,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Your address'})
     )
 
     company = forms.ChoiceField(
@@ -113,10 +122,12 @@ class JobForm(forms.Form):
         yourLocation = cleaned_data.get('yourLocation')
         company = cleaned_data.get('company')
 
-        self.cleaned_data = cleaned_data
 
         if not title and not location and not salaryRange and not description and not location and not postcode:
             raise forms.ValidationError('You have to write something')
+
+
+        self.cleaned_data = cleaned_data
         '''
         name = cleaned_data.get('name')
         email = cleaned_data.get('email')
@@ -126,8 +137,27 @@ class JobForm(forms.Form):
         '''
 
     def save(self):
-        job = Job()
+        self.clean()
+
+        
+
+
+
         cleaned_data = self.cleaned_data
+
+
+        job = Job()
+        googleLat = None
+        googleLng = None
+        try:
+            geolocator = GoogleV3(api_key=GOOGLE_API_KEY)
+            location = geolocator.geocode(cleaned_data.get('postcode'), timeout=5)
+            googleLat = float(location.latitude)
+            googleLng = float(location.longitude)
+        except Exception as e:
+            import sys
+            print(e, file=sys.stderr)
+            pass
         job.title = cleaned_data.get('title')
         job.category = cleaned_data.get('category')
         job.salaryRange = cleaned_data.get('salaryRange')
@@ -139,6 +169,22 @@ class JobForm(forms.Form):
         job.responsabilities = cleaned_data.get('responsabilities')
         job.requirements = cleaned_data.get('requirements')
         job.country = cleaned_data.get('country')
+        if googleLat:
+            job.addressLat = googleLat
+        if googleLng:
+            job.addressLng = googleLng
+        import sys
+        print(cleaned_data.get('lat'), file=sys.stderr)
+        if cleaned_data.get('lat') !='' and cleaned_data.get('lat') !=None:
+            try:
+                job.locationLat = cleaned_data.get('lat')
+            except:
+                pass
+        if cleaned_data.get('lng') !='' and cleaned_data.get('lng') !=None:
+            try:
+                job.locationLng = cleaned_data.get('lng')
+            except:
+                pass 
         job.location = cleaned_data.get('location')
         job.postcode = cleaned_data.get('postcode')
         job.yourLocation = cleaned_data.get('yourLocation')

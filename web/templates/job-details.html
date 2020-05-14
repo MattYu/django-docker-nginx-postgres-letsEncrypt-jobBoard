@@ -206,7 +206,21 @@
                       <div class="job-location">
                         <h4>Job Location</h4>
                         <div id="map-area">
-                          <div class="cp-map" id="location" data-lat="40.713355" data-lng="-74.005535" data-zoom="10"></div>
+                          <div id="map" style="object-fit: cover; width: 270px; height: 300px;"></div>
+                          <script src="https://maps.googleapis.com/maps/api/js?key={{googleMapsKey}}"></script>
+                          <script>
+                            var joblat = parseFloat("{{object.locationLat}}");
+                            var joblng = parseFloat("{{object.locationLng}}");
+                            var map = new google.maps.Map(document.getElementById('map'), {
+                              center: {lat: joblat, lng: joblng},
+                              zoom: 13
+                            });
+                            var marker = new google.maps.Marker({
+                              position: {lat: joblat, lng: joblng},
+                              map: map,
+                              title: 'Job'
+                            });
+                          </script>
                           <!-- <div class="cp-map" id="location" data-lat="40.713355" data-lng="-74.005535" data-zoom="10"></div> -->
                         </div>
                       </div>
@@ -479,9 +493,15 @@
     <script src={% static "dashboard/js/dashboard.js" %}></script>
     <script src={% static "dashboard/js/datePicker.js" %}></script>
     <script src={% static "dashboard/js/upload-input.js" %}></script>
-
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC87gjXWLqrHuLKR0CTV5jNLdP4pEHMhmg"></script>
     <script src={% static "js/map.js" %}></script>
 
+    <script>
+    $(document).ready(function() {
+    $(window).resize(function() {
+        google.maps.event.trigger(map, 'resize');
+    });
+    google.maps.event.trigger(map, 'resize');
+});
+</script>
   </body>
 </html>
