@@ -26,9 +26,8 @@ For production
 2) Navigate to the root path of the files
 3) Change env.dev keys to match production keys, including your host ip/domain name. 
 4) Enter the following command `docker-compose -f production.yml up --build` 
-5) If you are setting this up for the first time, or made changes to a db model. Create migration files and migrate the db tables: `docker exec -it <web id> python manage.py makegrations` and then `docker exec -it <web id> python manage.py migrate --no-input`. To find web id, `docker ps`.
-6) The website is now running. You may access it using your host ip/domain name with any web browser
-7) To create the first superuser (admin), run the command `docker exec -it yourWebDockerID python manage.py createsuperuser` . Choose user type 4 when asked. Subsequent admin can be created in the admin menu options.
+5) The website is now running. Migration files are auto generated and saved in your web directory. You may access it using your host ip/domain name with any web browser. Db and media files are stored in /prod_storage folder via volume mount. 
+6) To create the first superuser (admin), run the command `docker exec -it yourWebDockerID python manage.py createsuperuser` . Choose user type 4 when asked. Subsequent admin can be created in the admin menu options.
 
 For test
 
