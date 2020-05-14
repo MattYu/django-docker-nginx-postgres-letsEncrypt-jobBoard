@@ -156,7 +156,7 @@ def activate(request, uidb64, token):
         # return redirect('home')
         #return HttpResponse('Thank you for your email confirmation. Now you can log into your account.')
     else:
-        return HttpResponse('Activation link is invalid!')
+        return render(request, "activationLink.html", context={'message':'Activation link is invalid!'})
 
 @transaction.atomic
 def validate(request, uidb64, token):
@@ -171,11 +171,11 @@ def validate(request, uidb64, token):
             candidate.is_concordia_email_confirmed = True
             candidate.save()
             # return redirect('home')
-            return HttpResponse('Thank you for your secondary email confirmation.')
+            return  render(request, "activationLink.html", context={'message':'Thank you for your secondary email confirmation.'})
         except Exception as e:
-            return HttpResponse("Confirmation link is invalid!")
+            return  render(request, "activationLink.html", context={'message':"Confirmation link is invalid!"})
     else:
-        return HttpResponse('Confirmation link is invalid!')
+        return  render(request, "activationLink.html", context={'message':'Confirmation link is invalid!'})
 
 def resend_activation(request):
     if request.user.is_authenticated:
@@ -201,7 +201,7 @@ def resend_activation(request):
             import sys
             print(e, file=sys.stderr)
 
-        return HttpResponse('A new activation link has been sent to your email account.')
+        return render(request, "activationLink.html", context = {'message': 'An activation link has been sent to your account. To resend the link, press <a href="/resend_activation"> <b> here /b></a>. Please check your spam folder first.'})
 
     else:
         return HttpResponse('You must be logged in to resend your email activation link')
@@ -246,7 +246,7 @@ def activate_account(request):
     if request.user.is_authenticated and not request.user.is_email_confirmed:
         return render(request, "activate-account.html", context)
     if request.user.is_email_confirmed:
-        return HttpResponse('Your email address has already been validated')
+        return render('Your email address has already been validated')
 
 def validated(request):
 
