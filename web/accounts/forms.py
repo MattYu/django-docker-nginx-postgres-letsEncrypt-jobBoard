@@ -297,7 +297,7 @@ class RegistrationForm(forms.Form):
         self.clean()
         cleaned_data = self.cleaned_data
         userManager = MyUserManager()
-        email = cleaned_data.get('email')
+        email = cleaned_data.get('email').lower()
         firstName = cleaned_data.get('firstName')
         lastName = cleaned_data.get('lastName')
         phoneNumber = cleaned_data.get('phoneNumber')

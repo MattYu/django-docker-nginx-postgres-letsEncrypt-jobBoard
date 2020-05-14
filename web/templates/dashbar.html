@@ -5,7 +5,7 @@
                     <li></li>
                     <li></li>
                     {% if location == "Notifications" %}<li class="active">{% else %}<li>{% endif %}<i class="fas fa-plus-square"></i><a href="/notifications">Notifications</a></li>
-                    {% if location == "Edit Profile" %}<li class="active">{% else %}<li>{% endif %}<i class="fas fa-user"></i><a href="employer-dashboard-edit-profile.html">Edit Profile</a></li>
+                    {% if location == "Edit Profile" %}<li class="active">{% else %}<li>{% endif %}<i class="fas fa-user"></i><a href="/edit-profile">Edit Profile</a></li>
                     {% if user.user_type == 4 %}
                     {% if location == "Manage Employer" %}<li class="active">{% else %}<li>{% endif %}<i class="fas fa-users"></i><a href="/manageEmployers/">Manage Employer</a></li>
                     {% if location == "Manage Company" %}<li class="active">{% else %}<li>{% endif %}<i class="fas fa-briefcase"></i><a href="/manageCompanies/">Manage Company</a></li>

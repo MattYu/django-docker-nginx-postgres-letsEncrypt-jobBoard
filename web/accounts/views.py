@@ -6,7 +6,7 @@ from django.db.models import Q
 from accounts.models import Employer
 from joblistings.models import Job
 
-from ace.constants import USER_TYPE_SUPER, RECAPTCHA_PUBLIC_KEY
+from ace.constants import USER_TYPE_SUPER, RECAPTCHA_PUBLIC_KEY, USER_TYPE_CANDIDATE, USER_TYPE_EMPLOYER
 from accounts.models import Candidate
 
 from django.contrib import messages
@@ -89,7 +89,7 @@ def login_user(request):
         
         if form.is_valid() and request.recaptcha_is_valid:
 
-            email = form.cleaned_data.get('email')
+            email = form.cleaned_data.get('email').lower()
             raw_password = form.cleaned_data.get('password')
             user = authenticate(email=email, password=raw_password)
 
@@ -256,3 +256,21 @@ def activate_account(request):
 def validated(request):
 
     return render(request, "validated.html")
+
+
+def edit_profile(request):
+    if request.user.is_authenticated and request.user.user_type == USER_TYPE_CANDIDATE:
+        candidate = get_object_or_404(Candidate, user = request.user)
+        context = {'candidate' : candidate}
+        return render(request, 'edit-profile.html', context)
+    
+    if request.user.is_authenticated and request.user.user_type == USER_TYPE_EMPLOYER:
+        employer = get_object_or_404(Employer, user = request.user)
+        context = {'employer' : candidate}
+        return render(request, 'edit-profile.html', context)
+
+    if request.user.is_authenticated and request.user.user_type == USER_TYPE_SUPER:
+
+        return HttpResponseRedirect('/admin/user/' + str(request.user.pk) + "/change")
+
+    return HttpResponse('403 Permission Denied')
