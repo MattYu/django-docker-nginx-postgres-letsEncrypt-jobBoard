@@ -23,9 +23,9 @@ SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get("SECRET_KEY")
 GOOGLE_RECAPTCHA_SECRET_KEY = os.environ.get("GOOGLE_RECAPTCHA_SECRET_KEY")
-# TODO - Add Google maps API Key
-GOOGLE_MAPS_API_KEY = None 
 
+GOOGLE_MAPS_KEY = os.environ.get("GOOGLE_MAPS_KEY")
+GOOGLE_API_KEY = os.environ.get('GOOGLE_API_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 #DEBUG = os.getenv('DEBUG', 'NO').lower() in ('on', 'true', 'y', 'yes')
 DEBUG = False

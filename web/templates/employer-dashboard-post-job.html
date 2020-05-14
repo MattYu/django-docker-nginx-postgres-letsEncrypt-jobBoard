@@ -143,13 +143,13 @@
                       <label class="col-md-3 col-form-label">Job Title</label>
                       <div class="col-md-9">
                         {{form.title}}
-                        {% if form.title.errors %}
-                          <ol>
-                          {% for error in form.title.errors %}
-                              <li><strong>{{ error|escape }}</strong></li>
-                          {% endfor %}
-                          </ol>
-                        {% endif %}                        
+                        {% if showError %}
+                        {% for error in form.title.errors %}
+                            <div class="alert alert-danger">
+                                <strong>{{ error|escape }}</strong>
+                            </div>
+                        {% endfor %}
+                        {% endif %}                       
                       </div>
                     </div>
                     <div class="row">
@@ -159,37 +159,27 @@
                           <div class="col-md-6">
                             <div class="form-group">
                               {{form.vacancy}}
-                              {% if form.vacancy.errors %}
-                                <ol>
-                                {% for error in form.vacancy.errors %}
-                                    <li><strong>{{ error|escape }}</strong></li>
-                                {% endfor %}
-                                </ol>
-                              {% endif %}
+                              {% if showError %}
+                        {% for error in form.vacancy.errors %}
+                            <div class="alert alert-danger">
+                                <strong>{{ error|escape }}</strong>
+                            </div>
+                        {% endfor %}
+                        {% endif %}
                             </div>
                           </div>
                           <div class="col-md-6">
-                            <div class="form-group">
-                              {{form.location}}
-                              {% if form.location.errors %}
-                                <ol>
-                                {% for error in form.location.errors %}
-                                    <li><strong>{{ error|escape }}</strong></li>
-                                {% endfor %}
-                                </ol>
-                              {% endif %}
-                            </div>
                           </div>
                           <div class="col-md-6">
                             <div class="form-group">
                               {{form.salaryRange}}
-                              {% if form.salaryRange.errors %}
-                                <ol>
-                                {% for error in form.salaryRange.errors %}
-                                    <li><strong>{{ error|escape }}</strong></li>
-                                {% endfor %}
-                                </ol>
-                              {% endif %}
+                              {% if showError %}
+                        {% for error in form.salaryRange.errors %}
+                            <div class="alert alert-danger">
+                                <strong>{{ error|escape }}</strong>
+                            </div>
+                        {% endfor %}
+                        {% endif %}
                             </div>
                           </div>
                           <div class="col-md-6">
@@ -202,13 +192,13 @@
                       <div class="col-md-9">
                         <div class="form-group datepicker">
                           {{form.expirationDate}}
-                          {% if form.expirationDate.errors %}
-                            <ol>
-                            {% for error in form.expirationDate.errors %}
-                                <li><strong>{{ error|escape }}</strong></li>
-                            {% endfor %}
-                            </ol>
-                          {% endif %}
+                          {% if showError %}
+                        {% for error in form.expirationDate.errors %}
+                            <div class="alert alert-danger">
+                                <strong>{{ error|escape }}</strong>
+                            </div>
+                        {% endfor %}
+                        {% endif %}
                         </div>                     
                       </div>
                     </div>
@@ -219,25 +209,25 @@
                           <div class="col-md-6">
                             <div class="form-group datepicker">
                               {{form.startDate}}
-                              {% if form.startDate.errors %}
-                                <ol>
-                                {% for error in form.startDate.errors %}
-                                    <li><strong>{{ error|escape }}</strong></li>
-                                {% endfor %}
-                                </ol>
-                              {% endif %}
+                              {% if showError %}
+                        {% for error in form.startDate.errors %}
+                            <div class="alert alert-danger">
+                                <strong>{{ error|escape }}</strong>
+                            </div>
+                        {% endfor %}
+                        {% endif %}
                             </div>                     
                           </div>
                           <div class="col-md-6">
                             <div class="form-group">
                               {{form.duration}}
-                              {% if form.duration.errors %}
-                                <ol>
-                                {% for error in form.duration.errors %}
-                                    <li><strong>{{ error|escape }}</strong></li>
-                                {% endfor %}
-                                </ol>
-                              {% endif %}
+                              {% if showError %}
+                        {% for error in form.duration.errors %}
+                            <div class="alert alert-danger">
+                                <strong>{{ error|escape }}</strong>
+                            </div>
+                        {% endfor %}
+                        {% endif %}
                             </div>
                           </div>
                         </div>                     
@@ -247,12 +237,12 @@
                       <label class="col-md-3 col-form-label">Job Description</label>
                       <div class="col-md-9">
                         {{form.description}}
-                        {% if form.description.errors %}
-                          <ol>
-                          {% for error in form.description.errors %}
-                              <li><strong>{{ error|escape }}</strong></li>
-                          {% endfor %}
-                          </ol>
+                        {% if showError %}
+                        {% for error in form.description.errors %}
+                            <div class="alert alert-danger">
+                                <strong>{{ error|escape }}</strong>
+                            </div>
+                        {% endfor %}
                         {% endif %}                        
                       </div>
                     </div>
@@ -260,12 +250,12 @@
                       <label class="col-md-3 col-form-label">Responsibilities</label>
                       <div class="col-md-9">
                         {{form.responsabilities}}
-                        {% if form.responsabilities.errors %}
-                          <ol>
-                          {% for error in form.responsabilities.errors %}
-                              <li><strong>{{ error|escape }}</strong></li>
-                          {% endfor %}
-                          </ol>
+                        {% if showError %}
+                        {% for error in form.responsabilities.errors %}
+                            <div class="alert alert-danger">
+                                <strong>{{ error|escape }}</strong>
+                            </div>
+                        {% endfor %}
                         {% endif %}
                       </div>
                     </div>
@@ -273,12 +263,12 @@
                       <label class="col-md-3 col-form-label">Requirements</label>
                       <div class="col-md-9">
                         {{form.requirements}}
-                        {% if form.requirements.errors %}
-                          <ol>
-                          {% for error in form.requirements.errors %}
-                              <li><strong>{{ error|escape }}</strong></li>
-                          {% endfor %}
-                          </ol>
+                        {% if showError %}
+                        {% for error in form.requirements.errors %}
+                            <div class="alert alert-danger">
+                                <strong>{{ error|escape }}</strong>
+                            </div>
+                        {% endfor %}
                         {% endif %}
                       </div>
                     </div>
@@ -286,12 +276,12 @@
                       <label class="col-md-3 col-form-label">Target Categories</label>
                       <div class="col-md-9">
                       {{form.category}}
-                        {% if form.category.errors %}
-                          <ol>
-                          {% for error in form.category.errors %}
-                              <li><strong>{{ error|escape }}</strong></li>
-                          {% endfor %}
-                          </ol>
+                        {% if showError %}
+                        {% for error in form.category.errors %}
+                            <div class="alert alert-danger">
+                                <strong>{{ error|escape }}</strong>
+                            </div>
+                        {% endfor %}
                         {% endif %}
                       </div>
                     </div>
@@ -302,52 +292,55 @@
                           <div class="col-md-6">
                             <div class="form-group">
                               {{form.country}}
-                              {% if form.country.errors %}
-                                <ol>
-                                {% for error in form.country.errors %}
-                                    <li><strong>{{ error|escape }}</strong></li>
-                                {% endfor %}
-                                </ol>
+                              {% if showError %}
+                              {% for error in form.country.errors %}
+                                  <div class="alert alert-danger">
+                                      <strong>{{ error|escape }}</strong>
+                                  </div>
+                              {% endfor %}
                               {% endif %}
                               <i class="fa fa-caret-down"></i>
                             </div>
                             <div class="form-group">
                               {{form.location}}
-                              {% if form.location.errors %}
-                                <ol>
-                                {% for error in form.location.errors %}
-                                    <li><strong>{{ error|escape }}</strong></li>
-                                {% endfor %}
-                                </ol>
+                              {% if showError %}
+                              {% for error in form.location.errors %}
+                                  <div class="alert alert-danger">
+                                      <strong>{{ error|escape }}</strong>
+                                  </div>
+                              {% endfor %}
                               {% endif %}
                             </div>
                             <div class="form-group">
                               {{form.postcode}}
-                              {% if form.postcode.errors %}
-                                <ol>
-                                {% for error in form.postcode.errors %}
-                                    <li><strong>{{ error|escape }}</strong></li>
-                                {% endfor %}
-                                </ol>
-                              {% endif %}
+                              {% if showError %}
+                        {% for error in form.postcode.errors %}
+                            <div class="alert alert-danger">
+                                <strong>{{ error|escape }}</strong>
+                            </div>
+                        {% endfor %}
+                        {% endif %}
                             </div>
                             <div class="form-group">
                               {{form.yourLocation}}
-                              {% if form.yourLocation.errors %}
-                                <ol>
-                                {% for error in form.yourLocation.errors %}
-                                    <li><strong>{{ error|escape }}</strong></li>
-                                {% endfor %}
-                                </ol>
-                              {% endif %}
+                              {% if showError %}
+                        {% for error in form.yourLocation.errors %}
+                            <div class="alert alert-danger">
+                                <strong>{{ error|escape }}</strong>
                             </div>
+                        {% endfor %}
+                        {% endif %}
+                            {{form.lat}}
+                            {{form.lng}}
+                            </div>
+                             <br>
+                             <p>For Google Map Display, the system should auto locate your job position based on your address</p>
+                             <P>If Auto GeoLocating currently is off: Admin, please manually enter the longitute and latitude positions of your job for our Google Map display by going into "Admin Edit". You may find the geo code by typing your postal code + "Longitude Latitude" on Google</p>
+                             <P>To enter the data, use float numbers. For example, 45.4970° N, 73.5788° W (Concordia University's address) should be entered as "45.4970" Latitude and "-73.6460" Longtitude without the quotation marks. The admin can edit this value at a later time</p>
                           </div>
                           <div class="col-md-6">
                             <div class="set-location">
                               <h5>Pin Location</h5>
-                              <div id="map-area" class="contact-location">
-                                <div class="cp-map" id="location" data-lat="40.713355" data-lng="-74.005535" data-zoom="10"></div>
-                              </div>
                             </div>
                           </div>
                         </div>
@@ -360,13 +353,13 @@
                           <div class="col-md-6">
                             <div class="form-group">
                               {{form.company}}
-                              {% if form.company.errors %}
-                                <ol>
-                                {% for error in form.company.errors %}
-                                    <li><strong>{{ error|escape }}</strong></li>
-                                {% endfor %}
-                                </ol>
-                              {% endif %}
+                              {% if showError %}
+                        {% for error in form.location.errors %}
+                            <div class="alert alert-danger">
+                                <strong>{{ error|escape }}</strong>
+                            </div>
+                        {% endfor %}
+                        {% endif %}
                               <i class="fa fa-caret-down"></i>
                             </div>
                           </div>
@@ -383,6 +376,21 @@
                         <div class="row">
                           <div class="col-md-6">
                             {{form.descriptionFile}}
+                            {% if showError %}
+                        {% for error in form.location.errors %}
+                            <div class="alert alert-danger">
+                                <strong>{{ error|escape }}</strong>
+                            </div>
+                        {% endfor %}
+                        {% endif %}
+
+                        {% if form.non_field_errors %}
+                        {% for error in form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                <strong>{{ error|escape }}</strong>
+                            </div>
+                        {% endfor %}
+                        {% endif %}
                           </div>
                         </div>
                       </div>
@@ -390,10 +398,6 @@
                     <div class="row">
                       <div class="col-md-9 offset-md-3">
                         <div class="form-group terms">
-                          <input class="custom-radio" type="checkbox" id="radio-4" name="termsandcondition">
-                          <label for="radio-4">
-                            <span class="dot"></span> You accepts our <a href="#">Terms and Conditions</a> and <a href="#">Privacy Policy</a>
-                          </label>
                         </div>
                       </div>
                     </div>
@@ -505,19 +509,16 @@
           <div class="row">
             <div class="col-md-6">
               <div class="footer-logo">
-                <a href="#">
-                  <img src="images/footer-logo.png" class="img-fluid" alt="">
-                </a>
               </div>
             </div>
             <div class="col-md-6">
               <div class="footer-social">
                 <ul class="social-icons">
-                  <li><a href="#"><i data-feather="facebook"></i></a></li>
-                  <li><a href="#"><i data-feather="twitter"></i></a></li>
-                  <li><a href="#"><i data-feather="linkedin"></i></a></li>
-                  <li><a href="#"><i data-feather="instagram"></i></a></li>
-                  <li><a href="#"><i data-feather="youtube"></i></a></li>
+                  <li><a href= "https://www.facebook.com/concordiacoop"><i data-feather="facebook"></i></a></li>
+                  <li><a href= "https://twitter.com/concordiacoop"><i data-feather="twitter"></i></a></li>
+                  <li><a href= "http://www.linkedin.com/groups/Concordia-Coop-Institute-Cooperative-Education-3214761/about"><i data-feather="linkedin"></i></a></li>
+                  <li><a href= "https://www.instagram.com/concordiacoop/?hl=en"><i data-feather="instagram"></i></a></li>
+                  <li><a href= "https://www.youtube.com/user/ConcordiaUni"><i data-feather="youtube"></i></a></li>
                 </ul>
               </div>
             </div>
@@ -532,10 +533,10 @@
                 <h4>Information</h4>
                 <div class="widget-inner">
                   <ul>
-                    <li><a href="#">About Us</a></li>
-                    <li><a href="#">Contact Us</a></li>
-                    <li><a href="#">Privacy Policy</a></li>
-                    <li><a href="#">Terms &amp; Conditions</a></li>
+                    <li><a href= "https://www.concordia.ca/academics/co-op.html">About Us</a></li>
+                    <li><a href= "https://www.concordia.ca/academics/co-op/contact.html">Contact Us</a></li>
+                    <li><a href= "https://www.concordia.ca/academics/co-op/programs/accelerated-career-experience.html">Terms &amp; Conditions</a></li>
+                    <li><a href= "https://www.concordia.ca/academics/co-op/students/fees.html">Fees</a></li>
                   </ul>
                 </div>
               </div>
@@ -545,11 +546,8 @@
                 <h4>Job Seekers</h4>
                 <div class="widget-inner">
                   <ul>
-                    <li><a href="/register">Create Account</a></li>
-                    <li><a href="#">Career Counseling</a></li>
-                    <li><a href="#">My Concordia ACE</a></li>
-                    <li><a href="#">FAQ</a></li>
-                    <li><a href="#">Video Guides</a></li>
+                    <li><a href= "/register/2">Create Account</a></li>
+                    <li><a href= "https://www.concordia.ca/academics/co-op/students/career-development/services-counselling.html">Career Counseling</a></li>
                   </ul>
                 </div>
               </div>
@@ -559,10 +557,10 @@
                 <h4>Employers</h4>
                 <div class="widget-inner">
                   <ul>
-                    <li><a href="/register">Create Account</a></li>
-                    <li><a href="#">Products/Service</a></li>
-                    <li><a href="/employer-dashboard-post-job">Post a Job</a></li>
-                    <li><a href="#">FAQ</a></li>
+                    <li><a href= "/register/2">Create Account</a></li>
+                    <li><a href= "/employer-dashboard-post-job">Post a Job</a></li>
+                    <li><a href= "https://www.concordia.ca/academics/co-op/employers/benefits-for-employers.html">FAQ</a></li>
+                    <li><a href= "https://www.concordia.ca/academics/co-op/students/fees.html">Fees</a></li>
                   </ul>
                 </div>
               </div>
@@ -570,14 +568,12 @@
             <div class="col-lg-5 offset-lg-1 col-sm-6">
               <div class="footer-widget footer-newsletter">
                 <h4>Newsletter</h4>
-                <p>Get e-mail updates about our latest news and Special offers.</p>
+                <p>Get e-mail updates about our latest news and upcoming events.</p>
                 <form action="#" class="newsletter-form form-inline">
                   <div class="form-group">
                     <input type="text" class="form-control" placeholder="Email address...">
                   </div>
-                  <button class="btn button primary-bg">Submit<i class="fas fa-caret-right"></i></button>
-                  <p class="newsletter-error">0 - Please enter a value</p>
-                  <p class="newsletter-success">Thank you for subscribing!</p>
+                  <button class="btn button primary-bg">Coming soon<i class="fas fa-caret-right"></i></button>
                 </form>
               </div>
             </div>
@@ -590,18 +586,13 @@
             <div class="col">
               <div class="footer-bottom border-top">
                 <div class="row">
-                  <div class="col-xl-4 col-lg-5 order-lg-2">
-                    <div class="footer-app-download">
-                      <a href="#" class="apple-app">Apple Store</a>
-                      <a href="#" class="android-app">Google Play</a>
-                    </div>
+                  <div class="col-lg-6">
+                    <p class="copyright-text">Software developped by Concordia Capstone ACE team. <a href= "#"></a> 2020</p>
+                    <p class="copyright-text"><a href= "#">Style Templates used under license, Concordia ACE 2019</a></p>
                   </div>
-                  <div class="col-xl-4 col-lg-4 order-lg-1">
-                    <p class="copyright-text">Copyright <a href="#">Concordia ACE</a> 2019, All right reserved</p>
-                  </div>
-                  <div class="col-xl-4 col-lg-3 order-lg-3">
+                  <div class="col-lg-6">
                     <div class="back-to-top">
-                      <a href="#">Back to top<i class="fas fa-angle-up"></i></a>
+                      <a href= "#">Back to top<i class="fas fa-angle-up"></i></a>
                     </div>
                   </div>
                 </div>
@@ -636,7 +627,6 @@
     <script src={% static "dashboard/js/datePicker.js"%}></script>
     <script src={% static "dashboard/js/upload-input.js"%}></script>
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC87gjXWLqrHuLKR0CTV5jNLdP4pEHMhmg"></script>
     <script src={% static "js/map.js"%}></script>
 
   </body>

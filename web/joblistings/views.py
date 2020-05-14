@@ -4,7 +4,7 @@ from django import forms
 from django.http import HttpResponseRedirect, HttpResponse
 from django.db.models import Q
 
-
+from ace.settings import GOOGLE_MAPS_KEY
 from ace.constants import MAX_PER_PAGE, USER_TYPE_CANDIDATE, USER_TYPE_EMPLOYER, USER_TYPE_SUPER, DEFAULT_VIDEO
 from joblistings.models import Job, JobPDFDescription
 from joblistings.forms import JobForm, AdminAddRemoveJobPermission, FilterApplicationForm
@@ -18,6 +18,8 @@ from datetime import datetime, timedelta
 import re
 from django.utils import timezone
 from django.db import transaction
+from ace.settings import GOOGLE_MAPS_KEY
+
 # Create your views here.
 @transaction.atomic
 def job_search(request, searchString="", *args, **kwargs):
@@ -210,11 +212,12 @@ def job_details(request, pk=None, *args, **kwargs):
 
         form = AdminAddRemoveJobPermission(jobId=pk)
         context["form"] = form
+        context["googleMapsKey"] = GOOGLE_MAPS_KEY
 
     return render(request, "job-details.html", context)
 
 def post_job(request,  *args, **kwargs):
-
+    context = {}
     if not request.user.is_authenticated:
 
         request.session['redirect'] = request.path
@@ -232,8 +235,8 @@ def post_job(request,  *args, **kwargs):
     if (request.method == "POST"):
         form = JobForm(user=request.user, data=request.POST, files=request.FILES)
         if form.is_valid():
-            form.clean()
             job = form.save()
+            
 
             if request.user.user_type == USER_TYPE_EMPLOYER:
                 job.jobAccessPermission.add(Employer.objects.get(user=request.user)) 
@@ -244,16 +247,24 @@ def post_job(request,  *args, **kwargs):
                 job.save()
                 
             job_pk = job.pk
-            
-            
-
+        
+        
             return HttpResponseRedirect('/job-details/' + str(job_pk))
+        
+        else:
+            context['form'] = form
+            context['googleMapsKey'] = GOOGLE_MAPS_KEY
+            context['showError'] = True
+            return render(request, "employer-dashboard-post-job.html", context)
+
 
     
     jobForm = JobForm(user=request.user)
-    context = {'form' : jobForm}
+    context['form'] = jobForm
+    context['googleMapsKey'] = GOOGLE_MAPS_KEY
 
     return render(request, "employer-dashboard-post-job.html", context)
+
 
 def manage_jobs(request, searchString=""):
     if not request.user.is_authenticated:
