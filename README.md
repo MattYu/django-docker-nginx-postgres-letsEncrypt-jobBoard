@@ -24,7 +24,7 @@ Job board made for Concordia University, Montreal, Canada, Co-op ACE program.
 For production
 1) Make sure Docker is installed on the machine. No other installation is needed. 
 2) Navigate to the root path of the files
-3) Change env.dev keys to match production keys, including your host ip/domain name. You will need your own Google Captcha and Google Map API key, stmp email login credentials, etc. You should generate a new strong secret encryption key.  
+3) Change env.dev keys to match production keys, including your host ip/domain name. Also add your domain to production.yml letsEncryption environment parameters. You will need your own Google Captcha and Google Map API key, stmp email login credentials, etc. You should generate a new strong secret encryption key.  
 4) Enter the following command `docker-compose -f production.yml up --build` 
 5) The website is now running. Collection Static and migrations are automated, migration files are saved in your web directory. You may access it using your host ip/domain name with any web browser. Db and media files are stored in /prod_storage folder via volume mount. 
 6) To create the first superuser (admin), run the command `docker exec -it yourWebDockerID python manage.py createsuperuser` . Choose user type 4 when asked. Subsequent admin can be created in the admin menu options.
