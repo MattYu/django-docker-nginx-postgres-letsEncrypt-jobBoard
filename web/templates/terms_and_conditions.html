@@ -51,14 +51,6 @@
                 <div class="header-top-toggler-button"></div>
               </div>
               <div class="top-nav">
-                    {% if user.user_type == 2%}
-                      <a href="/jobApplications/"><span class="ti-user"></span> Dashboard </a>
-                    {% endif %}
-
-                    {% if user.user_type == 4 %}
-                      <a href="/jobApplications/"><span class="ti-user"></span> Dashboard </a>
-                      <a href="/admin"><span class="ti-user"></span> Admin DB </a>
-                    {% endif %}
                 <div class="dropdown header-top-account">
                   <a href="#" class="account-button">My Account</a>
                   <div class="account-card">
@@ -89,6 +81,14 @@
               <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav">
                   <li class="menu-item active"><a title="Home" href="/">Home</a></li>
+                  {% if user.user_type == 2%}
+                    <li class="menu-item active"><a href="/jobApplications/">Dashboard </a></li>
+                  {% endif %}
+
+                  {% if user.user_type == 4 %}
+                    <li class="menu-item active"><a href="/jobApplications/"> Dashboard </a></li>
+                    <li class="menu-item active"><a href="/admin"> Admin DB </a></li>
+                  {% endif %}
                 </ul>
               </div>
             </nav>

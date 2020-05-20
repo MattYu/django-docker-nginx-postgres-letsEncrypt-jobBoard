@@ -271,6 +271,6 @@ def edit_profile(request):
 
     if request.user.is_authenticated and request.user.user_type == USER_TYPE_SUPER:
 
-        return HttpResponseRedirect('/admin/user/' + str(request.user.pk) + "/change")
+        return HttpResponseRedirect('/admin/accounts/user/' + str(request.user.pk) + "/change")
 
     return HttpResponse('403 Permission Denied')
