@@ -7,7 +7,7 @@ from accounts.models import Employer
 from joblistings.models import Job
 
 from ace.constants import USER_TYPE_SUPER, RECAPTCHA_PUBLIC_KEY, USER_TYPE_CANDIDATE, USER_TYPE_EMPLOYER
-from accounts.models import Candidate
+from accounts.models import Candidate, Language
 
 from django.contrib import messages
 from django.contrib.auth import login, authenticate
@@ -114,7 +114,7 @@ def login_user(request):
             return render(request, "login.html", context)
 
     if request.user.is_authenticated:
-        return render(request, "404.html")
+        return HttpResponseRedirect('/')
 
     form = LoginForm()
     context = {'form': form}
@@ -262,11 +262,16 @@ def edit_profile(request):
     if request.user.is_authenticated and request.user.user_type == USER_TYPE_CANDIDATE:
         candidate = get_object_or_404(Candidate, user = request.user)
         context = {'candidate' : candidate}
+        languages = Language.objects.filter(user=request.user)
+        context['subject'] = candidate
+        context['languages'] = languages
+        context["newMessageCount"] = len(request.user.notifications.unread())
         return render(request, 'edit-profile.html', context)
     
     if request.user.is_authenticated and request.user.user_type == USER_TYPE_EMPLOYER:
         employer = get_object_or_404(Employer, user = request.user)
         context = {'employer' : candidate}
+        context["newMessageCount"] = len(request.user.notifications.unread())
         return render(request, 'edit-profile.html', context)
 
     if request.user.is_authenticated and request.user.user_type == USER_TYPE_SUPER:

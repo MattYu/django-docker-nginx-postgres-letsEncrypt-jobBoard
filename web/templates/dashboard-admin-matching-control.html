@@ -83,7 +83,7 @@
               <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav">
                   <li class="menu-item active"><a title="Home" href="/">Home</a></li>
-                  {% if user.user_type == 2%}
+                  {% if user.user_type == 2 or user.user_type == 1 %}
                     <li class="menu-item active"><a href="/jobApplications/">Dashboard </a></li>
                   {% endif %}
 
