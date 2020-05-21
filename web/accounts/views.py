@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from accounts.forms import RegistrationForm, LoginForm
+from accounts.forms import RegistrationForm, LoginForm, CandidateEditProfileForm
 from django.contrib.auth import logout
 from django.http import HttpResponseRedirect
 from django.db.models import Q
@@ -44,9 +44,6 @@ def register_user(request, employer=None):
             employerCompany=request.POST.get('employerCompany'),
             extra_language_count=request.POST.get('extra_language_count'),
             )
-
-        import sys
-        print(request.recaptcha_is_valid, file=sys.stderr)
         
         if 'Register' in request.POST and request.recaptcha_is_valid:
             context["showError"] = True
@@ -279,3 +276,36 @@ def edit_profile(request):
         return HttpResponseRedirect('/admin/accounts/user/' + str(request.user.pk) + "/change")
 
     return HttpResponse('403 Permission Denied')
+
+
+@transaction.atomic
+def edit_candidate_profile(request, employer=None):
+    context = {}
+    
+    if not request.user.is_authenticated:
+        return render(request, "404.html")
+    
+    if request.user.user_type != USER_TYPE_CANDIDATE:
+        return render(request, "404.html")
+
+    if (request.method == 'POST'):
+        form = CandidateEditProfileForm(
+            request.POST, 
+            request.FILES,
+            extra_language_count=request.POST.get('extra_language_count'),
+            )
+
+        
+        if 'Update' in request.POST:
+            context["showError"] = True
+            #if form.is_valid() and request.recaptcha_is_valid:
+            if form.is_valid():
+                form.save(request)
+                return HttpResponseRedirect('/edit-profile')
+    else:
+        form = CandidateEditProfileForm(extra_language_count=1)
+
+
+    context['form'] = form
+
+    return render(request, "edit-profile-candidate.html", context)
