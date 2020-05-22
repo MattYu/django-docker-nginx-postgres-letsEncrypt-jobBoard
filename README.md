@@ -9,7 +9,7 @@ Job board made for Concordia University, Montreal, Canada, Co-op ACE program.
 
 | Security        | Job Ranking & Matching          | Media servicing  | User Notification  | Other Job Board Services  | Database  | CI/CD  |
 | ------------- |:-------------:| :-----:|:-----:| :-----:|-----:|-----:|
-| Google Captcha      | Candidate-Employer preference ranking system| Nginx file servicing | [django-notifications-hq](https://pypi.org/project/django-notifications-hq/) | ATS and full admin control | Postgres Db docker service| Prod Ready easy Docker-Compose setup and dedicated test docker-compose setup
+| Google Captcha      | Candidate-Employer preference ranking system| [Nginx file servicing](https://www.nginx.com/) | [django-notifications-hq](https://pypi.org/project/django-notifications-hq/) | ATS and full admin control | Postgres Db docker service| Prod Ready easy Docker-Compose setup and dedicated test docker-compose setup
 | [Let's Encrypt SSL with certificate autorenewal](https://letsencrypt.org/) |  ["hospital-resident" matching algorithm](https://pypi.org/project/matching/)      |   [Dynamic Plyr video player](https://github.com/sampotts/plyr)  | Email/Mass Email notification| Post/review/edit jobs, interview invite, job matching, email notification | Persistent docker db mount | Persistent Volumes and storage mount, django migrations
 | [Nginx-Sendfile Firewall](https://github.com/johnsensible/django-sendfile) |  |   Dynamic upload forms | Annoncements | Apply to jobs/Cache old applications and autofill forms | | Separated test media and test db volumes with 99% coding sharing between prod and test docker-compose setups
 | uuid protected dynamic file paths |  |    Secured resume caching and reuse| | E-commerce grade search and filter for jobs
