@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from accounts.forms import RegistrationForm, LoginForm, CandidateEditProfileForm, CreateNewAdminForm
+from accounts.forms import RegistrationForm, LoginForm, CandidateEditProfileForm, CreateNewAdminForm, changePasswordForm, updateGeneralInfoForm
 from django.contrib.auth import logout
 from django.http import HttpResponseRedirect
 from django.db.models import Q
@@ -301,13 +301,14 @@ def edit_profile(request):
     
     if request.user.is_authenticated and request.user.user_type == USER_TYPE_EMPLOYER:
         employer = get_object_or_404(Employer, user = request.user)
-        context = {'employer' : employer}
+        context = {'subject' : employer}
         context["newMessageCount"] = len(request.user.notifications.unread())
         return render(request, 'edit-profile.html', context)
 
     if request.user.is_authenticated and request.user.user_type == USER_TYPE_SUPER:
-
-        return HttpResponseRedirect('/admin/accounts/user/' + str(request.user.pk) + "/change")
+        context = {}
+        context["newMessageCount"] = len(request.user.notifications.unread())
+        return render(request, 'edit-profile.html', context)
 
     return HttpResponse('403 Permission Denied')
 
@@ -527,6 +528,82 @@ def create_new_admin(request):
         context['form'] = form
 
     return render(request, "create_new_admin.html", context)
+
+
+def change_password(request):
+    context = {}
+    if not request.user.is_authenticated:
+
+        request.session['redirect'] = request.path
+        request.session['warning'] = "Warning: Please login before applying to a job"
+        return HttpResponseRedirect('/login')
+        
+
+    if (request.method == 'POST'):
+        form = changePasswordForm(
+            request.POST,
+            )
+        form.request = request
+        context['form'] = form
+        
+        if 'Update' in request.POST:
+            context["showError"] = True
+            #if form.is_valid() and request.recaptcha_is_valid:
+            if form.is_valid():
+                newUser = form.save(request)
+                raw_password = form.cleaned_data.get('password')
+                user = authenticate(email=request.user.email, password=raw_password)
+                login(request, user)
+                return HttpResponseRedirect('/edit-profile')
+    else:
+        form = changePasswordForm()
+
+        context['form'] = form
+
+    return render(request, "edit-profile-change-password.html", context)
+
+
+def update_generalInfo(request):
+    context = {}
+    if not request.user.is_authenticated:
+
+        request.session['redirect'] = request.path
+        request.session['warning'] = "Warning: Please login before applying to a job"
+        return HttpResponseRedirect('/login')
+        
+
+    if (request.method == 'POST'):
+        form = updateGeneralInfoForm(
+            request.POST,
+            )
+        form.request = request
+        if request.user.user_type == USER_TYPE_CANDIDATE:
+            candidate = get_object_or_404(Candidate, user = request.user)
+            form.subject = candidate
+    
+        if request.user.user_type == USER_TYPE_EMPLOYER:
+            employer = get_object_or_404(Employer, user = request.user)
+            form.subject = employer
+        
+        if request.user.user_type == USER_TYPE_SUPER:
+            form.subject = None
+        context['form'] = form
+        
+        if 'Update' in request.POST:
+            context["showError"] = True
+            #if form.is_valid() and request.recaptcha_is_valid:
+            if form.is_valid():
+                newUser = form.save(request)
+                raw_password = form.cleaned_data.get('password')
+                user = authenticate(email=request.user.email, password=raw_password)
+                login(request, user)
+                return HttpResponseRedirect('/edit-profile')
+    else:
+        form = updateGeneralInfoForm()
+
+        context['form'] = form
+
+    return render(request, "edit-profile-general.html", context)
 
 
     

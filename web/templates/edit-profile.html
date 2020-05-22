@@ -132,13 +132,20 @@
                 <h5><i></i> Click on Section Title to Edit  </h5>
                 <br>
                  <div class="about-details details-section dashboard-section">
-                  <a href="post-job.html"><h4><i data-feather="edit"></i> General Information  </h4> </a>
+                  <a href="/edit-profile/generalInfo/"><h4><i data-feather="edit"></i> General Information  </h4> </a>
                 <p> Name: {{request.user.preferredName}} {{request.user.firstName}} {{request.user.lastName}} </p>
                 <p> Email: {{request.user.email}} </p>
                 <p> Email is confirmed: {{request.user.is_email_confirmed}} </p>
                 <p> Email notification: {% if subject.notify_by_email %} On {% else %} off {% endif %} </p>
                 <p> Phone number: {{request.user.phoneNumber}} </p>
                 </div>
+                {% if  user.user_type == 2 %}
+                <div class="about-details details-section dashboard-section">
+                  <a href="#"><h4><i data-feather="edit"></i> Company </h4> </a>
+                </div>
+                <p> Company linked to profile: {{subject.company.name}} </p>
+                <p> To request a change, please contact our Co-op staff </p>
+                {% endif %}
                 {% if  user.user_type == 1 %}
                 <div class="about-details details-section dashboard-section">
                   <a href="/edit-profile/candidateInfo"><h4><i data-feather="edit"></i> Student Information and Confirm Concordia Email</h4> </a>
@@ -178,11 +185,11 @@
                       </div>
                     </div>
                 </div>
+                {% endif %}
                 <div class="about-details details-section dashboard-section">
                   <br>
-                  <a href="post-job.html"><h4><i data-feather="edit"></i> Reset Password  </h4> </a>
+                  <a href="/changePassword"><h4><i data-feather="edit"></i> Change Password  </h4> </a>
                 </div>
-                {% endif %}
                 </div>
 
 
