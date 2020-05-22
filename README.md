@@ -20,7 +20,7 @@ Job board made for Concordia University, Montreal, Canada, Co-op ACE program.
 - All python/django code are created by us and available under MIT licence
 - html template license was purchased for single app use for Concordia ACE website on [oficiona](https://themeforest.net/item/oficiona-job-board-html-template/23042674?gclid=CjwKCAjw8J32BRBCEiwApQEKgbP9mgS7W95LgCMymKU4waaAczkaKAq180Rv_QEZPPBjtvQkdnVa2BoCR-sQAvD_BwE) License must be re-purchased for other project. Permission to reuse template not under MIT license. 
 
-# Launch code on your machine
+# How to host the website on your machine
 For production
 1) Make sure [Docker](https://www.docker.com/) is installed and running on the machine. No other installation is needed. 
 2) Make a `web.env`file (not included in the code) using the same format as `web.env.dev` file (include here) as template and in the same folder location. Change the keys to your own production keys:
@@ -44,7 +44,8 @@ For test
 
   Skip step 2) above. 
 
-  4) Enter the following command `docker-compose up --build` 
+  4) Enter the following command `docker-compose up --build`
+  5) Go to `locahost` to access the website.
 
   All other step are identical. Note: don't run test volumes on the same machine as prod volumes; they share the same volume names.
 
