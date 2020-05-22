@@ -23,7 +23,8 @@ Job board made for Concordia University, Montreal, Canada, Co-op ACE program.
 # How to host the website on your machine
 For production
 1) Make sure [Docker](https://www.docker.com/) is installed and running on the machine. No other installation is needed. 
-2) Make a `web.env`file (not included in the code) using the same format as `web.env.dev` file (include here) as template and in the same folder location. Change the keys to your own production keys:
+2) Clone this repo and navigate to the root path of the files, where `production.yml` is located.
+3) Make a `web.env`file (not included in the code) using the same format as `web.env.dev` file (include here) as template and in the same folder location. Change the keys to your own production keys:
     - Add your host ip/domain name to `DJANGO_ALLOWED_HOSTS`. 
     - Add your [Google reCaptcha V2](https://www.google.com/recaptcha/intro/v3.html) key (make sure that your domain is in your Google Key API account's allowed list) 
     - You should generate a new strong `secret key`; this will be used for RSA.
@@ -35,7 +36,6 @@ For production
 
     - Make a `db.env` file with the same content as `db.env.dev`. 
     - In `production.yml`, add your domain to the letsEncryption environment parameters (i.e. replace concordia-ace.ca in `URL=concordia-ace.ca`with your own domain name). 
-3) Navigate to the root path of the files, where `production.yml` is located.
 4) Enter the following command `docker-compose -f production.yml up --build` OR `docker-compose -f production.yml up --build -d` (deamon mode). This will spin up the docker server, install all dependencies and set up the website with https encryption.  
 5) The website is now running. Collection Static and migrations are automated in step 4), migration files are saved in your web/prod_storage/ directory. You may access it using your host `ip/domain name` with any web browser. Db and media files are also stored in web/prod_storage folder via volume mount. 
 6) To create the first superuser (admin), run the command `docker exec -it yourWebDockerID python manage.py createsuperuser` . Choose user type `4` when asked. Subsequent admin can be created in the admin menu options. To find out the value of `yourWbDockerID`, run the command line `docker ps`
