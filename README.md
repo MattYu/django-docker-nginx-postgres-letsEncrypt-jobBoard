@@ -23,7 +23,7 @@ Job board made for Concordia University, Montreal, Canada, Co-op ACE program.
 # Launch code on your machine
 For production
 1) Make sure [Docker](https://www.docker.com/) is installed and running on the machine. No other installation is needed. 
-2) Make a `web.env`file (not included in the code) using the same format as `web.env.dev` file (include here) as template and in the same folder location, but with your own production keys:
+2) Make a `web.env`file (not included in the code) using the same format as `web.env.dev` file (include here) as template and in the same folder location. Change the keys to your own production keys:
 - Add your host ip/domain name to `DJANGO_ALLOWED_HOSTS`. 
 - Add your Google Captcha key (make sure that the key is linked to your domain) . 
 - You should generate a new strong `secret key`; this will be used for RSA.
