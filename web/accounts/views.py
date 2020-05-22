@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from accounts.forms import RegistrationForm, LoginForm, CandidateEditProfileForm
+from accounts.forms import RegistrationForm, LoginForm, CandidateEditProfileForm, CreateNewAdminForm
 from django.contrib.auth import logout
 from django.http import HttpResponseRedirect
 from django.db.models import Q
@@ -496,3 +496,37 @@ def browse_candidate(request, searchString = ""):
         context['hideHigh'] = True
 
     return render(request, "dashboard-manage-candidates.html", context)
+
+def create_new_admin(request):
+    context = {}
+    if not request.user.is_authenticated:
+
+        request.session['redirect'] = request.path
+        request.session['warning'] = "Warning: Please login before applying to a job"
+        return HttpResponseRedirect('/login')
+        
+    if request.user.user_type != USER_TYPE_SUPER:
+        return HttpResponseRedirect('/')
+
+    if (request.method == 'POST'):
+        form = CreateNewAdminForm(
+            request.POST,
+            )
+        form.request = request
+        context['form'] = form
+        
+        if 'Create' in request.POST:
+            context["showError"] = True
+            #if form.is_valid() and request.recaptcha_is_valid:
+            if form.is_valid():
+                newUser = form.save(request)
+                return HttpResponseRedirect('/admin/accounts/user/' + str(newUser.pk) + "/change/")
+    else:
+        form = CreateNewAdminForm()
+
+        context['form'] = form
+
+    return render(request, "create_new_admin.html", context)
+
+
+    

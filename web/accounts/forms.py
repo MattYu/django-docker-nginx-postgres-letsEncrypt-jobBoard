@@ -1,5 +1,5 @@
 from django import forms
-from ace.constants import AGREE_DISAGREE, PASSWORD_MIN_LENGTH, MAX_LENGTH_STANDARDFIELDS, MAX_LENGTH_LONGSTANDARDFIELDS, USER_TYPE_CANDIDATE, USER_TYPE_EMPLOYER, LANGUAGE_CHOICES, LANGUAGE_FLUENCY_CHOICES, YES_NO, CITIZENSHIP, CATEGORY_CHOICES
+from ace.constants import USER_TYPE_SUPER, AGREE_DISAGREE, PASSWORD_MIN_LENGTH, MAX_LENGTH_STANDARDFIELDS, MAX_LENGTH_LONGSTANDARDFIELDS, USER_TYPE_CANDIDATE, USER_TYPE_EMPLOYER, LANGUAGE_CHOICES, LANGUAGE_FLUENCY_CHOICES, YES_NO, CITIZENSHIP, CATEGORY_CHOICES
 from accounts.models import Candidate, Employer, PreferredName, MyUserManager
 from accounts.models import User, Language
 from companies.models import Company
@@ -16,6 +16,9 @@ from django.utils.encoding import force_bytes, force_text
 from django.core.mail import EmailMessage
 from django.core import mail
 from ace.models import Employer_termsAndConditions, Candidate_termsAndConditions
+
+import django.contrib.auth.password_validation as validators
+
 
 class RegistrationForm(forms.Form):
     registrationType = forms.CharField(widget=forms.HiddenInput(), required=False)
@@ -664,4 +667,96 @@ class CandidateEditProfileForm(forms.Form):
                 pass
             
             connection.close()
+        return user
+
+
+class CreateNewAdminForm(forms.Form):
+
+
+    class Meta:
+        model = User
+
+    email = forms.EmailField(max_length=MAX_LENGTH_STANDARDFIELDS,
+                                widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Email'})
+                                )
+
+    currentAdminPassword = forms.CharField(max_length=32, widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Current Admin Password'}))
+
+    password = forms.CharField(max_length=32, widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Password'}))
+
+    passwordConfirm = forms.CharField(max_length=32, widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Confirm password'}))
+
+    firstName = forms.CharField(max_length=MAX_LENGTH_STANDARDFIELDS,
+                                widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'First name'})
+                                )
+
+    lastName = forms.CharField(max_length=MAX_LENGTH_STANDARDFIELDS,
+                                widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last name'})
+                                )
+
+    def clean(self):
+        self.raise_errors = []
+        adminUser = self.request.user
+        cleaned_data = super().clean()
+        User.objects.all()
+
+        if cleaned_data.get('email') != "" and self.is_valid():
+                if not re.match(r"[^@]+@[^@]+\.[^@]+", str(cleaned_data.get('email'))): 
+                    self.raise_errors.append('Invalid Email address')
+        if cleaned_data.get('password') != cleaned_data.get('passwordConfirm'):
+            #raise forms.ValidationError('Passwords do not match')
+            self.raise_errors.append('Passwords do not match')
+        if User.objects.filter(email=cleaned_data.get('email')).count() != 0:
+            #raise forms.ValidationError('Email is already in use')
+            self.raise_errors.append('Email is already in use')
+        
+        adminpassword = self.cleaned_data.get('currentAdminPassword')
+
+        try:
+            validators.validate_password(password=adminpassword, user=adminUser)
+        except forms.ValidationError as error:
+            self.raise_errors.append('Wrong current Admin Password')
+
+        password = self.cleaned_data.get('password')
+
+        if password != None:
+            if len(password) < PASSWORD_MIN_LENGTH:
+                #raise forms.ValidationError("The new password must be at least %d characters long." % PASSWORD_MIN_LENGTH)
+
+                self.raise_errors.append("The password must be at least %d characters long." % PASSWORD_MIN_LENGTH)
+            # At least one letter and one non-letter
+            first_isalpha = password[0].isalpha()
+            if all(c.isalpha() == first_isalpha for c in password):
+                #raise forms.ValidationError("The new password must contain at least one letter and at least one digit or" " punctuation character.")
+
+                self.raise_errors.append("The password must contain at least one letter and at least one digit or punctuation character.")
+
+        if self.raise_errors:
+            raise forms.ValidationError(self.raise_errors)
+        
+        self.cleaned_data = cleaned_data
+
+    def save(self, request):
+        self.clean()
+        cleaned_data = self.cleaned_data
+        userManager = MyUserManager()
+        email = cleaned_data.get('email').lower()
+        firstName = cleaned_data.get('firstName')
+        lastName = cleaned_data.get('lastName')
+        user_type = USER_TYPE_SUPER
+        password = cleaned_data.get('password')
+        
+        user = User()
+        user.email = email
+        user.firstName = firstName
+        user.lastName = lastName
+        user.user_type = user_type
+        user.is_admin = True
+        user.is_staff = True
+        user.is_superuser = True
+        user.is_active = True
+
+        user.set_password(password)
+        user.save()
+        
         return user
