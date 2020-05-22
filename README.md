@@ -23,7 +23,7 @@ Job board made for Concordia University, Montreal, Canada, Co-op ACE program.
 # How to host the website on your Machine/Cloud Server
 For production
 1) Make sure [Docker](https://www.docker.com/) is installed and running on the machine. No other installation is needed. 
-2) Clone this repo and navigate to the root path of the files, where `production.yml` is located.
+2) Clone this repo and navigate to its root path, where `production.yml` is located.
 3) Make a `web.env`file (not included in the code) using the same format as `web.env.dev` file (include here) as template and in the same folder location. Change the keys to your own production keys:
     - Add your host ip/domain name to `DJANGO_ALLOWED_HOSTS`. (Note that your Domain Name must be linked to your server IP address. this is outside the scope of this readme; please consult your server provider for more details.)
     - Add your [Google reCaptcha V2](https://www.google.com/recaptcha/intro/v3.html) key (make sure that your domain is in your Google Key API account's allowed list) 
