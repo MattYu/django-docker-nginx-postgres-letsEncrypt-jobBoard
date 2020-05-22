@@ -35,7 +35,7 @@ def employer_view_rankings(request, jobId= None):
 
         if jobId == None:
         
-            jobQuery = Job.objects.all()
+            jobQuery = Job.objects.filter().order_by('-created_at').all()
 
             jobs = {}
 
@@ -148,7 +148,7 @@ def candidate_view_rankings(request):
             "form" : form,
             }
     context["newMessageCount"] = len(request.user.notifications.unread())
-    context["announcements"] = RankingMessage.objects.filter().all()
+    context["announcements"] = RankingMessage.objects.filter().order_by('-created_at').all()
     return render(request, "dashboard-ranking-candidate.html", context)
 
 @transaction.atomic
@@ -392,7 +392,7 @@ def view_matching(request, jobId= None):
 
         if jobId == None:
         
-            jobQuery = Job.objects.all()
+            jobQuery = Job.objects.filter().order_by("-created_at").all()
 
             jobs = []
 
@@ -424,7 +424,7 @@ def view_matching(request, jobId= None):
     if request.user.user_type == USER_TYPE_EMPLOYER:
 
         if jobId == None:
-            jobQuery = Job.objects.filter(jobAccessPermission = Employer.objects.get(user=request.user))
+            jobQuery = Job.objects.filter(jobAccessPermission = Employer.objects.get(user=request.user)).order_by("-created_at")
 
 
             jobs = []
@@ -453,7 +453,7 @@ def view_matching(request, jobId= None):
 
     if request.user.user_type == USER_TYPE_CANDIDATE:
 
-        matches = Match.objects.filter(candidate=Candidate.objects.get(user=request.user), isOpenToPublic=True)
+        matches = Match.objects.filter(candidate=Candidate.objects.get(user=request.user), isOpenToPublic=True).order_by("-created_at")
 
         context = {
                     "job": True,
