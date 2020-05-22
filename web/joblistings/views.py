@@ -267,16 +267,39 @@ def post_job(request,  *args, **kwargs):
 
 
 def manage_jobs(request, searchString=""):
+    orderby = '-created_at'
+
     if not request.user.is_authenticated:
 
         request.session['redirect'] = request.path
         request.session['warning'] = "Warning: Please login first"
         return HttpResponseRedirect('/login')
 
+    if searchString:
+            searchWords = searchString.split("&")
+    else:
+        searchWords = []
+
+    search = {}
+
+    for searchWord in searchWords:
+        pair = searchWord.split("=")
+        if len(pair) == 2:
+            search[pair[0]] = pair[1]
+
+    user = request.user
+
+    notifications = []
+    if "chronological" in search:   
+        orderby = '-created_at'
+    if "alphabetical" in search:
+        orderby = '-title'
+    if "company" in search:
+        orderby = '-company__name'
 
     if request.user.user_type == USER_TYPE_SUPER:
         
-        jobQuery = Job.objects.all()
+        jobQuery = Job.objects.order_by(orderby).all()
 
         jobs = {}
 
@@ -295,7 +318,7 @@ def manage_jobs(request, searchString=""):
 
     if request.user.user_type == USER_TYPE_EMPLOYER:
 
-        jobQuery = Job.objects.filter(jobAccessPermission = Employer.objects.get(user=request.user))
+        jobQuery = Job.objects.filter(jobAccessPermission = Employer.objects.get(user=request.user)).order_by(orderby)
 
         query1 = ~Q(status="Pending Review")
         query2 = ~Q(status="Not Approved")

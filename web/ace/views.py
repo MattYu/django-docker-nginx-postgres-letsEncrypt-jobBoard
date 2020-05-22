@@ -6,6 +6,7 @@ from jobapplications.models import JobApplication
 from joblistings.models import Job
 from accounts.models import Candidate
 from ace.models import Candidate_termsAndConditions, Employer_termsAndConditions
+from django.db.models import Q
 
 #import sys
 
@@ -19,6 +20,8 @@ def home_page(request):
     context["applicationCount"] = JobApplication.objects.count()
 
     context["candidateCount"] = Candidate.objects.count()
+
+    context["activeJobCount"] = Job.objects.filter(Q(status="Approved") | Q(status="Interviewing")).count()
 
     #print("It's working", file=sys.stderr)
 

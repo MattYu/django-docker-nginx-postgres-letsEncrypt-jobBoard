@@ -128,10 +128,11 @@
             <div class="dashboard-container">
               <div class="dashboard-content-wrapper">
                 <div class="manage-job-container">
-                  <input type="submit" value="Sort Chronologically">
-                  <input type="submit" value="Sort Alphabetically">
+                
+                  <a class="button" href="/manageJobs/&chronological=True">Sort: Chronologically</a>
+                  <a class="button" href="/manageJobs/&alphabetical=True">Alphabetically</a>
                   {% if user.user_type == 4 %}
-                  <input type="submit" value="Sort by Company">
+                  <a class="button" href="/manageJobs/&company=True">By Company</a>
                   {% endif %}
                   <table class="table">
                     <thead>
@@ -164,17 +165,7 @@
                       {% endfor %}
                     </tbody>
                   </table>
-                  <div class="pagination-list text-center">
-                    <nav class="navigation pagination">
-                      <div class="nav-links">
-                        <a class="prev page-numbers" href="#"><i class="fas fa-angle-left"></i></a>
-                        <a class="page-numbers" href="#">1</a>
-                        <span aria-current="page" class="page-numbers current">2</span>
-                        <a class="page-numbers" href="#">3</a>
-                        <a class="page-numbers" href="#">4</a>
-                        <a class="next page-numbers" href="#"><i class="fas fa-angle-right"></i></a>
-                      </div>
-                    </nav>                
+                  <div class="pagination-list text-center">                
                   </div>
                 </div>
               </div>

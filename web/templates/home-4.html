@@ -59,19 +59,15 @@
           <div class="col-12">
             <div class="banner-content">
               <h1>Find your Next ACE Internship</h1>
-              <a href= "https://www.concordia.ca/academics/co-op.html"> <p> Concordia Institute for Co-operative Education</p></a>
+                  <p> There are <b>{{activeJobCount}}</b> active jobs. Click below to see them </P>
                   <div id="container">
                     <div class="button_2" id="button-5" onclick="window.location='/search';">
                       <div id="translate"></div>
-                      <a href="/search/">Browse Jobs</a>
+                      <a href="/search/">See All Jobs</a>
                     </div>
                   </div>
               <div class="banner-search">
-                <form action="/search/" class="search-form" method="POST">
-                  {% csrf_token %}
-                  <input type="text" placeholder="Enter Keywords (Optional)" id="keyword" name="keyword">
-                  <button class="button2" type="submit"><i class="fas fa-search"></i>Search Job</button>
-                </form>
+                <a href= "https://www.concordia.ca/academics/co-op.html"> <h5> Concordia Institute for Co-operative Education</h5></a>
                 <div class="trending-key" style="text-align: center;">
                   <span>Accelerated Career Experience (ACE)</span>
                 </div>

@@ -39,9 +39,31 @@ def view_company_details(request, pk):
 
 
 def manage_companies(request, searchString=""):
+    orderby = '-created_at'
+
+    if searchString:
+            searchWords = searchString.split("&")
+    else:
+        searchWords = []
+
+    search = {}
+
+    for searchWord in searchWords:
+        pair = searchWord.split("=")
+        if len(pair) == 2:
+            search[pair[0]] = pair[1]
+
+    user = request.user
+
+    notifications = []
+    if "chronological" in search:   
+        orderby = '-created_at'
+    if "alphabetical" in search:
+        orderby = '-name'
+
     if request.user.is_authenticated and request.user.user_type == USER_TYPE_SUPER:
         filterquery = Q()
-        companies = Company.objects.filter(filterquery).order_by('-created_at').all()
+        companies = Company.objects.filter(filterquery).order_by(orderby).all()
         
         context = {
             "companies": companies,

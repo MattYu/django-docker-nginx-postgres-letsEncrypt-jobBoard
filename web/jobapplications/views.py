@@ -31,6 +31,8 @@ from django.core.mail import EmailMessage
 from django.core import mail
 from django.template.loader import render_to_string
 from notifications.signals import notify
+
+from announcements.models import GlobalAnnouncement
 #u = uuid.uuid4()
 #u.hex
 
@@ -100,6 +102,7 @@ def download_test(request, pk):
 @transaction.atomic
 def browse_job_applications(request, searchString = "", jobId= -1):
     context = {}
+    context['announcements'] = GlobalAnnouncement.objects.filter().all()
     jobApplications = None
     form = FilterApplicationForm()
     query = Q()
