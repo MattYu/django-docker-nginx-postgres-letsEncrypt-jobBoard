@@ -35,7 +35,7 @@ For test
 
   4) Enter the following command `docker-compose up --build` 
 
-  All other step are identical.
+  All other step are identical. Note: don't run test volumes on the same machine as prod volumes; they share the same volume names.
 
 Turning on and off
 
