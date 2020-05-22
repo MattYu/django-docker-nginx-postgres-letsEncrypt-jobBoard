@@ -17,7 +17,7 @@ Job board made for Concordia University, Montreal, Canada, Co-op ACE program.
 | Let's Encrypt SSL with autorenewal | |  | | Login as Admin, Candidate or Employer
 | | |  | | Google Map,  PDF Concatination
 # Licensing
-- All python/django code are created by us and available under MIT licence
+- All python/django/yml code are created by us and available under MIT licence
 - html template license was purchased for single app use for Concordia ACE website on [oficiona](https://themeforest.net/item/oficiona-job-board-html-template/23042674?gclid=CjwKCAjw8J32BRBCEiwApQEKgbP9mgS7W95LgCMymKU4waaAczkaKAq180Rv_QEZPPBjtvQkdnVa2BoCR-sQAvD_BwE) License must be re-purchased for other project. Permission to reuse template not under MIT license. 
 
 # How to host the website on your Machine/Cloud Server
