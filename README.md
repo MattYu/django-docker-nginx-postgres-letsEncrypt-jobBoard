@@ -29,7 +29,7 @@ For production
     - Add your [Google reCaptcha V2](https://www.google.com/recaptcha/intro/v3.html) key (make sure that your domain is in your Google Key API account's allowed list) 
     - You should generate a new strong `secret key`; this will be used for RSA.
     - `DEV=False`
-    - Leave the DB login credentials item (i.e. use the default linux postgre db login credentials) - the DB is not exposed to the web and there is no need to further secure it. 
+    - Leave the DB login credentials idem (i.e. use the default linux postgre db login credentials) - the DB is not exposed to the web and there is no need to further secure it. 
     - Add your email credentials and `smtp` host. `web/ace/settings.py` uses PORT = 587 and TLS by default.
     - and [Google Map API](https://cloud.google.com/maps-platform/) key (make sure that your domain is in the allowed list)
     - The `GOOGLE_API_KEY` is optional and currently not use, use the same key as dev to omit it.  
