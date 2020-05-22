@@ -39,8 +39,6 @@ For test
 
 Turning on and off
 
-To turn off website: `docker-compose down`
-
-To turn on without rebuilding: `docker-compose -f production.yml up`
-
-To turn on with rebuilding: Step 4) above
+- To turn off website: `docker-compose down`
+- To turn on without rebuilding: `docker-compose -f production.yml up`
+- To turn on with rebuilding: Step 4) above
