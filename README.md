@@ -31,7 +31,7 @@ For production
 
 For test
 
-  Skip step 3) above. 
+  Skip step 2) above. 
 
   4) Enter the following command `docker-compose up --build` 
 
