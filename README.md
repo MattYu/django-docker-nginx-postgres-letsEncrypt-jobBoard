@@ -25,12 +25,12 @@ For production
 1) Make sure [Docker](https://www.docker.com/) is installed and running on the machine. No other installation is needed. 
 2) Make a `web.env`file (not included in the code) using the same format as `web.env.dev` file (include here) as template and in the same folder location. Change the keys to your own production keys:
 - Add your host ip/domain name to `DJANGO_ALLOWED_HOSTS`. 
-- Add your Google Captcha key (make sure that the key is linked to your domain) . 
+- Add your Google Captcha key (make sure that your domain is in the allowed list) 
 - You should generate a new strong `secret key`; this will be used for RSA.
-- `DEV=False
+- `DEV=False`
 - Leave the DB login credentials item (i.e. use the default linux postgre db login credentials) - the DB is not exposed to the web and there is no need to further secure it. 
-- Add your email credentials and `smtp` host. `web/ace/settings.py` uses PORT = 587 and TLS.
-- and Google Map API key and stmp email logi
+- Add your email credentials and `smtp` host. `web/ace/settings.py` uses PORT = 587 and TLS by default.
+- and Google Map API key (make sure that your domain is in the allowed list)
 - The `GOOGLE_API_KEY` is optional and currently not use, use the same key as dev to omit it.  
 
 - Make a `db.env` file with the same content as `db.env.dev`. 
