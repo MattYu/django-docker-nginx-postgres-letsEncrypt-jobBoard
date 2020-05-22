@@ -760,3 +760,119 @@ class CreateNewAdminForm(forms.Form):
         user.save()
         
         return user
+
+
+class changePasswordForm(forms.Form):
+
+
+    class Meta:
+        model = User
+
+
+    currentPassword = forms.CharField(max_length=32, widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Current Password'}))
+
+    password = forms.CharField(max_length=32, widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Password'}))
+
+    passwordConfirm = forms.CharField(max_length=32, widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Confirm password'}))
+
+
+    def clean(self):
+        self.raise_errors = []
+        user = self.request.user
+        cleaned_data = super().clean()
+        User.objects.all()
+
+        if cleaned_data.get('password') != cleaned_data.get('passwordConfirm'):
+            #raise forms.ValidationError('Passwords do not match')
+            self.raise_errors.append('Passwords do not match')
+        
+        currentPassword = self.cleaned_data.get('currentPassword')
+
+        try:
+            validators.validate_password(password=currentPassword, user=user)
+        except forms.ValidationError as error:
+            self.raise_errors.append('Wrong current Password')
+
+        password = self.cleaned_data.get('password')
+
+        if password != None:
+            if len(password) < PASSWORD_MIN_LENGTH:
+                #raise forms.ValidationError("The new password must be at least %d characters long." % PASSWORD_MIN_LENGTH)
+
+                self.raise_errors.append("The password must be at least %d characters long." % PASSWORD_MIN_LENGTH)
+            # At least one letter and one non-letter
+            first_isalpha = password[0].isalpha()
+            if all(c.isalpha() == first_isalpha for c in password):
+                #raise forms.ValidationError("The new password must contain at least one letter and at least one digit or" " punctuation character.")
+
+                self.raise_errors.append("The password must contain at least one letter and at least one digit or punctuation character.")
+
+        if self.raise_errors:
+            raise forms.ValidationError(self.raise_errors)
+        
+        self.cleaned_data = cleaned_data
+
+    def save(self, request):
+        self.clean()
+        cleaned_data = self.cleaned_data
+        userManager = MyUserManager()
+        password = cleaned_data.get('password')
+        
+        user = request.user
+        user.set_password(password)
+        user.save()
+        
+        return user
+
+
+class updateGeneralInfoForm(forms.Form):
+
+
+    class Meta:
+        model = User
+
+
+    preferredName = forms.CharField(required=False, max_length=MAX_LENGTH_STANDARDFIELDS,
+                                widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Preferred First Name (optional)'})
+                                )
+
+    phoneNumber = forms.CharField(max_length=MAX_LENGTH_STANDARDFIELDS,
+                            widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Phone number'})
+                            )
+
+    notifyByEmail = forms.ChoiceField(
+                                        choices=YES_NO,
+                                        widget=forms.Select(attrs={'class': 'form-control'})
+                                    )
+
+
+    def clean(self):
+        self.raise_errors = []
+        user = self.request.user
+        cleaned_data = super().clean()
+        User.objects.all()
+
+        if self.raise_errors:
+            raise forms.ValidationError(self.raise_errors)
+        
+        self.cleaned_data = cleaned_data
+
+    def save(self, request):
+        self.clean()
+        cleaned_data = self.cleaned_data
+        userManager = MyUserManager()
+        password = cleaned_data.get('password')
+        
+        user = request.user
+        user.preferredName = cleaned_data.get('preferredName')
+        user.phoneNumber = cleaned_data.get('phoneNumber')
+        user.save()
+
+        if cleaned_data.get('notifyByEmail') == 'No' and self.subject:
+            self.subject.notify_by_email = False
+            self.subject.save()
+        if cleaned_data.get('notifyByEmail') == 'Yes' and self.subject:
+            self.subject.notify_by_email = True
+            self.subject.save()
+        
+        return user
