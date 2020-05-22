@@ -45,7 +45,7 @@ For test
   Skip step 2) above. 
 
   4) Enter the following command `docker-compose up --build`
-  5) Go to `locahost` to access the website with any web browser.
+  5) Go to `locahost` to access the website with any web browser. Media and db files are stored in virtual docker volumes not mounted to a physical location on the drive. 
 
   All other step are identical. Note: don't run test volumes on the same machine as prod volumes; they share the same volume names.
 
