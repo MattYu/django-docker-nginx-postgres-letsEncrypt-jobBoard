@@ -148,7 +148,7 @@ def candidate_view_rankings(request):
             "form" : form,
             }
     context["newMessageCount"] = len(request.user.notifications.unread())
-    context["announcements"] = RankingMessage.objects.filter().order_by('-created_at').all()
+    context["announcements"] = RankingMessage.objects.filter().all()
     return render(request, "dashboard-ranking-candidate.html", context)
 
 @transaction.atomic

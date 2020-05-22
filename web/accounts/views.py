@@ -301,7 +301,7 @@ def edit_profile(request):
     
     if request.user.is_authenticated and request.user.user_type == USER_TYPE_EMPLOYER:
         employer = get_object_or_404(Employer, user = request.user)
-        context = {'employer' : candidate}
+        context = {'employer' : employer}
         context["newMessageCount"] = len(request.user.notifications.unread())
         return render(request, 'edit-profile.html', context)
 
