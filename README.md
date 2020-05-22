@@ -22,7 +22,7 @@ Job board made for Concordia University, Montreal, Canada, Co-op ACE program.
 
 # Launch code on your machine
 For production
-1) Make sure Docker is installed and running on the machine. No other installation is needed. 
+1) Make sure [Docker](https://www.docker.com/) is installed and running on the machine. No other installation is needed. 
 2) Make a `web.env`file (not included in the code) using the same format as `web.env.dev` file (include here) as template and in the same folder location, but with your own production keys. Add your host ip/domain name to `DJANGO_ALLOWED_HOSTS`. Add your Google Captcha key (make sure that the key is linked to your domain) and Google Map API key and stmp email login credentials. The `GOOGLE_API_KEY` is optional and currently not use, use the same key as dev to omit it. You should generate a new strong `secret key`; this will be used for RSA. Leave the DB login credentials item (i.e. use the default linux postgre db login credentials) - the DB is not exposed to the web and there is no need to further secure it. Make a `db.env` file with the same content as `db.env.dev`. In `production.yml`, add your domain to the letsEncryption environment parameters (i.e. replace concordia-ace.ca in `URL=concordia-ace.ca`with your own domain name). 
 3) Navigate to the root path of the files, where production.yml is located.
 4) Enter the following command `docker-compose -f production.yml up --build` OR `docker-compose -f production.yml up --build -d` (deamon mode). This will spin up the docker server, install all dependencies and set up the website with https encryption.  
