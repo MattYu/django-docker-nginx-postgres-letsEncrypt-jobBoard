@@ -128,8 +128,9 @@
               <div class="dashboard-content-wrapper">
                 <div class="manage-candidate-container">
                   <br>
-                  <input type="submit" value="Approved Only">
-                  <input type="submit" value="Not Approved Only">
+                  <a class="button" href="/manageCompanies/&chronological=True">Sort: Chronologically</a>
+                  <a class="button" href="/manageCompanies/&alphabeticalLastName=True"> Alphabetically[Last Name]</a>
+                  <a class="button" href="/manageCompanies/&alphabeticalFirstName=True"> Alphabetically[First Name]</a>
                   <table class="table">
                     <thead>
                       <tr>
@@ -169,18 +170,6 @@
                         {% endif %}
                     </tbody>
                   </table>
-                  <div class="pagination-list text-center">
-                    <nav class="navigation pagination">
-                      <div class="nav-links">
-                        <a class="prev page-numbers" href="#"><i class="fas fa-angle-left"></i></a>
-                        <a class="page-numbers" href="#">1</a>
-                        <span aria-current="page" class="page-numbers current">2</span>
-                        <a class="page-numbers" href="#">3</a>
-                        <a class="page-numbers" href="#">4</a>
-                        <a class="next page-numbers" href="#"><i class="fas fa-angle-right"></i></a>
-                      </div>
-                    </nav>                
-                  </div>
                 </div>
               </div>
               <div class="dashboard-sidebar">

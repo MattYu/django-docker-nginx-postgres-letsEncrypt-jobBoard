@@ -220,6 +220,30 @@ def resend_activation(request):
 
 def manage_employers(request, searchString=""):
     if request.user.is_authenticated and request.user.user_type == USER_TYPE_SUPER:
+
+        orderby = '-created_at'
+
+        if searchString:
+                searchWords = searchString.split("&")
+        else:
+            searchWords = []
+
+        search = {}
+
+        for searchWord in searchWords:
+            pair = searchWord.split("=")
+            if len(pair) == 2:
+                search[pair[0]] = pair[1]
+
+        user = request.user
+
+        notifications = []
+        if "chronological" in search:   
+            orderby = '-created_at'
+        if "alphabeticalFirstName" in search:
+            orderby = '-user__firstName'
+        if "alphabeticalLastName" in search:
+            orderby = '-user__lastName'
         
         if (request.method == 'POST'):
             if "Approved" in  request.POST:
@@ -241,7 +265,7 @@ def manage_employers(request, searchString=""):
                             job.save()
 
         filterquery = Q()
-        employers = Employer.objects.filter(filterquery).order_by('-created_at').all()
+        employers = Employer.objects.filter(filterquery).order_by(orderby).all()
         
         context = {
             "employers": employers,
