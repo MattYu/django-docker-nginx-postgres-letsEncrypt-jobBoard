@@ -13,7 +13,7 @@ from io import BytesIO, StringIO
 from PyPDF2 import PdfFileWriter, PdfFileReader, PdfFileMerger
 import requests
 
-from ace.constants import MAX_PER_PAGE, FILE_TYPE_RESUME, FILE_TYPE_COVER_LETTER, FILE_TYPE_TRANSCRIPT, FILE_TYPE_OTHER, USER_TYPE_SUPER, USER_TYPE_CANDIDATE, USER_TYPE_EMPLOYER
+from ace.constants import MAX_PER_PAGE, FILE_TYPE_RESUME, FILE_TYPE_COVER_LETTER, FILE_TYPE_TRANSCRIPT, FILE_TYPE_TRANSCRIPT_BY_USER, FILE_TYPE_OTHER, USER_TYPE_SUPER, USER_TYPE_CANDIDATE, USER_TYPE_EMPLOYER
 
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_text
@@ -31,6 +31,8 @@ from django.core.mail import EmailMessage
 from django.core import mail
 from django.template.loader import render_to_string
 from notifications.signals import notify
+
+from announcements.models import GlobalAnnouncement
 #u = uuid.uuid4()
 #u.hex
 
@@ -100,6 +102,7 @@ def download_test(request, pk):
 @transaction.atomic
 def browse_job_applications(request, searchString = "", jobId= -1):
     context = {}
+    context['announcements'] = GlobalAnnouncement.objects.filter().all()
     jobApplications = None
     form = FilterApplicationForm()
     query = Q()
@@ -161,7 +164,7 @@ def browse_job_applications(request, searchString = "", jobId= -1):
     import sys
     #print(filterSet, file=sys.stderr)
     try:
-        if "Last 24 hours".lower() in filterSet:
+        if "Last 24 hours" in filterSet:
             query &= Q(created_at__gte=timezone.now()-timedelta(days=1))
         if "Last 7 days" in filterSet:
             query &= Q(created_at__gte=timezone.now()-timedelta(days=7))
@@ -615,6 +618,7 @@ def get_protected_file_withAuth(request, fileType, applicationId, supportID=""):
         return sendfile(request, "/" + filePath)
 
     if request.user.user_type == USER_TYPE_EMPLOYER:
+
         jobApplications = JobApplication.objects.filter(job__jobAccessPermission=Employer.objects.get(user=request.user), id=applicationId).count()
         
         if jobApplications == 0:
@@ -645,9 +649,16 @@ def get_protected_file_withAuth(request, fileType, applicationId, supportID=""):
             document = supportingDocument.document
             filePath = document.path
 
+
         return sendfile(request, "/" + filePath)
 
     if request.user.user_type == USER_TYPE_CANDIDATE:
+        if fileType == (FILE_TYPE_TRANSCRIPT_BY_USER):
+            candidate = get_object_or_404(Candidate, user=request.user)
+            transcript = candidate.transcript
+            filePath = transcript.path
+            return sendfile(request, "/" + filePath)
+
         jobApplications = JobApplication.objects.filter(candidate=Candidate.objects.get(user=request.user), id=applicationId).count()
 
 

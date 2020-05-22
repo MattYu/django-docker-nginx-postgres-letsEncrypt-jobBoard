@@ -56,14 +56,6 @@
                 <div class="header-top-toggler-button"></div>
               </div>
               <div class="top-nav">
-                    {% if user.user_type == 2%}
-                      <a href="/jobApplications/"><span class="ti-user"></span> Dashboard </a>
-                    {% endif %}
-
-                    {% if user.user_type == 4 %}
-                      <a href="/jobApplications/"><span class="ti-user"></span> Dashboard </a>
-                      <a href="/admin"><span class="ti-user"></span> Admin DB </a>
-                    {% endif %}
                 <div class="dropdown header-top-account">
                   <a href="#" class="account-button">My Account</a>
                   <div class="account-card">
@@ -90,6 +82,14 @@
               <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav">
                   <li class="menu-item active"><a title="Home" href="/">Home</a></li>
+                  {% if user.user_type == 2 or user.user_type == 1 %}
+                    <li class="menu-item active"><a href="/jobApplications/">Dashboard </a></li>
+                  {% endif %}
+
+                  {% if user.user_type == 4 %}
+                    <li class="menu-item active"><a href="/jobApplications/"> Dashboard </a></li>
+                    <li class="menu-item active"><a href="/admin"> Admin DB </a></li>
+                  {% endif %}
                 </ul>
               </div>
             </nav>
@@ -187,9 +187,18 @@
                     </div>
                     <div class="progress-body">
                       <div class="progress">
-                        <div class="progress-bar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width: 0;"></div>
+                        <div class="progress-bar" role="progressbar" aria-valuenow={% if request.user.is_email_confirmed %} "100" {% else %} "70" {% endif %} aria-valuemin="0" aria-valuemax="100" style="width: 0;"></div>
                       </div>
-                      <p class="progress-to">70%</p>
+                      {% if request.user.user_type == 4 %}
+<p class="progress-to">100%</p>
+{% else %}
+{% if request.user.is_email_confirmed %}
+<p class="progress-to">100%</p>
+{% else %}
+<p class="progress-to">70%</p>
+<p> Please confirm your email </p>
+{% endif %} 
+{% endif %}
                     </div>
                   </div>
                 </div>
@@ -204,6 +213,7 @@
                     </a></li>
                     <li><i class="fas fa-user"></i><a href="/edit-profile">Edit Profile</a></li>
                     {% if user.user_type == 4 %}
+                    <li><i class="fas fa-users"></i><a href="/manageCandidate/">Manage Candidate</a></li>
                     <li><i class="fas fa-users"></i><a href="/manageEmployers/">Manage Employer</a></li>
                     <li><i class="fas fa-briefcase"></i><a href="/manageCompanies/">Manage Company</a></li>
                     {% endif %}
@@ -220,11 +230,13 @@
                     <li><i class="fas fa-plus-square"></i><a href="/matchDay">Admin Matchday</a></li>
                     {% endif %}
                     <li><i class="fas fa-plus-square"></i><a href="/viewMatch">View Match</a></li>
-                    <li><i class="fas fa-plus-square"></i><a href="/employer-dashboard-post-job">Post New Job</a></li>
+                    {% if request.user.user_type == 4 or request.user.user_type == 2 %}
+<li><i class="fas fa-plus-square"></i><a href="/employer-dashboard-post-job">Post New Job</a></li>
+{% endif %}
                   </ul>
                   <ul class="delete">
                     {% if user.user_type == 4 %}
-                    <li><i class="fas fa-power-off"></i><a href="/">Add New Admin</a></li>
+                    <li><i class="fas fa-power-off"></i><a href="/createNewAdmin">Add New Admin</a></li>
                     {% endif %}
                     <li><i class="fas fa-power-off"></i><a href="/logout">Logout</a></li>
                   </ul>

@@ -352,9 +352,18 @@
                     </div>
                     <div class="progress-body">
                       <div class="progress">
-                        <div class="progress-bar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width: 0;"></div>
+                        <div class="progress-bar" role="progressbar" aria-valuenow={% if request.user.is_email_confirmed %} "100" {% else %} "70" {% endif %} aria-valuemin="0" aria-valuemax="100" style="width: 0;"></div>
                       </div>
-                      <p class="progress-to">70%</p>
+                      {% if request.user.user_type == 4 %}
+<p class="progress-to">100%</p>
+{% else %}
+{% if request.user.is_email_confirmed %}
+<p class="progress-to">100%</p>
+{% else %}
+<p class="progress-to">70%</p>
+<p> Please confirm your email </p>
+{% endif %} 
+{% endif %}
                     </div>
                   </div>
                 </div>

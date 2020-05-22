@@ -1,6 +1,6 @@
 from django.db import models
 from tinymce import models as tinymce_models
-from ace.constants import MAX_LENGTH_TITLE, MAX_LENGTH_DESCRIPTION, MAX_LENGTH_RESPONSABILITIES, MAX_LENGTH_REQUIREMENTS, MAX_LENGTH_STANDARDFIELDS, CATEGORY_CHOICES, LOCATION_CHOICES, JOB_STATUS
+from ace.constants import DEFAULT_VIDEO, MAX_LENGTH_TITLE, MAX_LENGTH_DESCRIPTION, MAX_LENGTH_RESPONSABILITIES, MAX_LENGTH_REQUIREMENTS, MAX_LENGTH_STANDARDFIELDS, CATEGORY_CHOICES, LOCATION_CHOICES, JOB_STATUS
 
 
 # Create your models here.
@@ -33,6 +33,13 @@ class GlobalAnnouncement(models.Model):
     title = models.CharField(max_length = MAX_LENGTH_TITLE)
     author = models.CharField(max_length = MAX_LENGTH_STANDARDFIELDS, default= "")
     description = tinymce_models.HTMLField(max_length = MAX_LENGTH_DESCRIPTION, default= "")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+class MainPageVideo(models.Model):
+    videoType = models.CharField(max_length = 30, default= "youtube")
+    videoLink = models.CharField(max_length = 200, default= DEFAULT_VIDEO)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

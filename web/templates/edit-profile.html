@@ -7,7 +7,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>Concordia Ace</title>
+    <title>Concordia ACE</title>
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href={% static "assets/css/bootstrap.min.css" %}>
@@ -64,12 +64,10 @@
                       <a href="#" class="account-thumb">
                         <img src="images/account/thumb-1.jpg" class="img-fluid" alt="">
                       </a>
-                      {% if user.is_authenticated %}
                       <div class="account-body">
                         <h5><a href="#">{{user.firstName}} {{user.lastName}}</a></h5>
                         <span class="mail">{{user.email}}</span>
                       </div>
-                      {% endif %}
                     </div>
                     <ul class="account-item-list">
                       <li><a href="/logout"><span class="ti-power-off"></span>Log Out</a></li>
@@ -100,36 +98,13 @@
         </div>
       </div>
     </header>
+
     <!-- Breadcrumb -->
     <div class="alice-bg padding-top-70 padding-bottom-70">
       <div class="container">
         <div class="row">
           <div class="col-md-6">
             <div class="breadcrumb-area">
-
-                        {% if announcements %}
-                <div class="testimonial-quote">
-                    <img src={% static "images/testimonial/quote.png" %} class="img-fluid" alt="">
-                    <h4> Important announcement: </h4>
-                    <br>
-                </div>
-                
-              {% endif %}
-              {% for annoncement in announcements %}
-                <div class="container">
-                    <div class="testimonial">
-                      <div class="testimonial-for">
-                      
-                      <div class="testimonial-item">
-                        <p>{{annoncement.title|safe}}</p>
-                        <p>{{annoncement.description|safe}}</p>
-                        <h5>{{annoncement.author}} @ Concordia ACE Staff</h5>
-                      </div>
-                      
-                    </div>
-                  </div>
-              </div>
-            {% endfor %}
               
               <h1>{% if user.user_type == 1%} Candidate {% elif user.user_type  == 2 %} Employer {% else %} Admin {% endif %}Dashboard</h1>
               <nav aria-label="breadcrumb">
@@ -153,50 +128,71 @@
             <div class="dashboard-container">
               <div class="dashboard-content-wrapper">
                 <div class="manage-job-container">
-                <form method="POST" class="job-post-form" enctype="multipart/form-data">
-                        {% csrf_token %}
-                  <table class="table">
-                    <thead>
-                      <tr>
-                        <th>Rank the employer. Note: ranking submission opens on Match Day</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {% for rank in form.get_ranking_fields  %}
-                        <tr class="candidates-list">
-                          <td class="title">
-                            <div class="body">
-                              <h5><a href="/jobApplicationDetails/{{rank.rank.jobApplication.id}}">View your application</a></h5>
-                              <div class="info">
-                                <span class="designation"><a href="/job-details/{{rank.rank.job.id}}"><i data-feather="check-square"></i>{{rank.rank.jobApplication.job.title}}</a></span>
-                                <span class="location"><a href="#"><i data-feather="map-pin"></i>{{rank.rank.jobApplication.job.company.name}}</a></span>
-                              </div>
-                            </div>
-                          </td>
-                          <td class="status"><i data-feather="check-circle"></i>{{application.status}}</td>
-                          <td> {{rank.employerRank}} </td>
-                          <td class="action">
-                            {{rank.rankField}}
-                          </td>
-                        </tr>
-                      {% endfor %}
-                      
-                    </tbody>
-                  </table>
-                      <tr>
-                        <div>
-                        <button class="button">Submit Rankings</button>
-                        </div>
-                        </tr>
-                </form>
+
+                <h5><i></i> Click on Section Title to Edit  </h5>
+                <br>
+                 <div class="about-details details-section dashboard-section">
+                  <a href="post-job.html"><h4><i data-feather="edit"></i> General Information  </h4> </a>
+                <p> Name: {{request.user.preferredName}} {{request.user.firstName}} {{request.user.lastName}} </p>
+                <p> Email: {{request.user.email}} </p>
+                <p> Email is confirmed: {{request.user.is_email_confirmed}} </p>
+                <p> Email notification: {% if subject.notify_by_email %} On {% else %} off {% endif %} </p>
+                <p> Phone number: {{request.user.phoneNumber}} </p>
                 </div>
+                {% if  user.user_type == 1 %}
+                <div class="about-details details-section dashboard-section">
+                  <a href="/edit-profile/candidateInfo"><h4><i data-feather="edit"></i> Student Information and Confirm Concordia Email</h4> </a>
+                    <div class="buttons">
+                      <a href="/getFileWithAuth/5/{{request.user.pk}}/" class="button contact-download"><i data-feather="download"></i>Transcript</a>
+                      <br>
+                    </div>
+                    <br>
+                    <p> Concordia Email: {{subject.concordia_email}} </p>
+                    <p> Concordia Email is confirmed: {{subject.is_concordia_email_confirmed}} </p>
+                    <p> Student ID: {{subject.studentID}} </p>
+                    <p> Program of study: {{subject.program}} </p>
+                    <p> Credit completed: {{subject.creditCompleted}} </p>
+                    <p> Credit left: {{subject.creditLeft}} </p>
+                    <p> GPA: {{subject.gpa}} </p>
+                    <p> Citizenship completed: {{subject.citizenship}} </p>
+                    <p> Languages: </p>
+                    <div class="professonal-skill details-section">
+                    <div class="progress-group">
+                      {% for lan in languages%}
+                        <div class="progress-item">
+                          <div class="progress-head">
+                            {% if lan.language == "English" or lan.language == "French"%}
+                            <p class="progress-on">{{lan.language}}</p>
+                            {% else %}
+                            <p class="progress-on">{{lan.details}}</p>
+                            {% endif %}
+                          </div>
+                          <div class="progress-body">
+                            <div class="progress">
+                              <div class="progress-bar" role="progressbar" aria-valuenow="{{lan.fluency}}" aria-valuemin="0" aria-valuemax="100" style="width: 0;"></div>
+                            </div>
+                            <p class="progress-to">{{lan.fluency}}%</p>
+                          </div>
+                        </div>
+                        {% endfor %}
+                      </div>
+                    </div>
+                </div>
+                <div class="about-details details-section dashboard-section">
+                  <br>
+                  <a href="post-job.html"><h4><i data-feather="edit"></i> Reset Password  </h4> </a>
+                </div>
+                {% endif %}
+                </div>
+
+
               </div>
               <div class="dashboard-sidebar">
-
+                <div class="company-info">
                   <div class="company-body">
-                    <h5>{{request.user.preferredName}} {{request.user.firstName}} {{request.user.lastName}}</h5>
-                    <span>{{request.user.email}}</span>
+                    <h5>{{user.email}}</h5>
                   </div>
+                </div>
                 <div class="profile-progress">
                   <div class="progress-item">
                     <div class="progress-head">
@@ -221,14 +217,14 @@
                 </div>
                 <div class="dashboard-menu">
                   <ul>
-                    <li><i class="fas fa-home"></i><a href="#">Dashboard</a></li>
+                    <li><i class="fas fa-home"></i><a href="employer-dashboard.html">Dashboard</a></li>
                     <li><i class="fas fa-comment"></i><a href="/notifications">Message 
                       <div class="notifier green">
                         <i class="bell fa fa-envelope-o"></i>
                         <span class="badge">{{newMessageCount}}</span>
                       </div>
                     </a></li>
-                    <li><i class="fas fa-user"></i><a href="/edit-profile">Edit Profile</a></li>
+                    <li class="active"><i class="fas fa-user"></i><a href="/edit-profile">Edit Profile</a></li>
                     {% if user.user_type == 4 %}
                     <li><i class="fas fa-users"></i><a href="/manageCandidate/">Manage Candidate</a></li>
                     <li><i class="fas fa-users"></i><a href="/manageEmployers/">Manage Employer</a></li>
@@ -238,7 +234,7 @@
                     <li><i class="fas fa-briefcase"></i><a href="/manageJobs/">Manage Jobs</a></li>
                     {% endif %}
                     <li><i class="fas fa-users"></i><a href="/jobApplications/">Applications</a></li>
-                    <li class="active"><i class="fas fa-heart"></i><a href="/candidateRanking">Interview Ranking</a></li>
+                    <li><i class="fas fa-heart"></i><a href="/employerRanking">Interview Ranking</a></li>
                     {% if user.user_type == 4 %}
                     <li><i class="fas fa-plus-square"></i><a href="/matchDay">Admin Matchday</a></li>
                     {% endif %}

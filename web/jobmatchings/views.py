@@ -19,6 +19,7 @@ from django.core import mail
 from django.contrib.sites.shortcuts import get_current_site
 from notifications.signals import notify
 from django.template.loader import render_to_string
+from announcements.models import MatchingMessage, RankingMessage
 
 # Create your views here.
 @transaction.atomic
@@ -34,7 +35,7 @@ def employer_view_rankings(request, jobId= None):
 
         if jobId == None:
         
-            jobQuery = Job.objects.all()
+            jobQuery = Job.objects.filter().order_by('-created_at').all()
 
             jobs = {}
 
@@ -147,6 +148,7 @@ def candidate_view_rankings(request):
             "form" : form,
             }
     context["newMessageCount"] = len(request.user.notifications.unread())
+    context["announcements"] = RankingMessage.objects.filter().all()
     return render(request, "dashboard-ranking-candidate.html", context)
 
 @transaction.atomic
@@ -371,7 +373,7 @@ def admin_matchmaking(request):
         context["user"] = request.user
         
         context["newMessageCount"] = len(request.user.notifications.unread())
-
+        context["announcements"] = RankingMessage.objects.filter().all()
         return render(request, "dashboard-ranking-matchday.html", context)
 
 def admin_open_matching(request):
@@ -390,7 +392,7 @@ def view_matching(request, jobId= None):
 
         if jobId == None:
         
-            jobQuery = Job.objects.all()
+            jobQuery = Job.objects.filter().order_by("-created_at").all()
 
             jobs = []
 
@@ -422,7 +424,7 @@ def view_matching(request, jobId= None):
     if request.user.user_type == USER_TYPE_EMPLOYER:
 
         if jobId == None:
-            jobQuery = Job.objects.filter(jobAccessPermission = Employer.objects.get(user=request.user))
+            jobQuery = Job.objects.filter(jobAccessPermission = Employer.objects.get(user=request.user)).order_by("-created_at")
 
 
             jobs = []
@@ -451,11 +453,12 @@ def view_matching(request, jobId= None):
 
     if request.user.user_type == USER_TYPE_CANDIDATE:
 
-        matches = Match.objects.filter(candidate=Candidate.objects.get(user=request.user), isOpenToPublic=True)
+        matches = Match.objects.filter(candidate=Candidate.objects.get(user=request.user), isOpenToPublic=True).order_by("-created_at")
 
         context = {
                     "job": True,
                     "matches" : matches,
                     }       
     context["newMessageCount"] = len(request.user.notifications.unread())
+    context["announcements"] = MatchingMessage.objects.filter().all()
     return render(request, "dashboard-match.html", context)

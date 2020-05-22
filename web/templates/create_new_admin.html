@@ -1,0 +1,284 @@
+<!doctype html>
+{% load static %}
+{% load joblist_tag %}
+<html lang="en">
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Concordia ACE</title>
+ 
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href={% static "assets/css/bootstrap.min.css" %}>
+
+    <!-- External Css -->
+    <link rel="stylesheet" href={% static "assets/css/fontawesome-all.min.css" %}>
+    <link rel="stylesheet" href={% static "assets/css/themify-icons.css" %} />
+    <link rel="stylesheet" href={% static "assets/css/et-line.css" %} />
+    <link rel="stylesheet" href={% static "assets/css/bootstrap-select.min.css" %} />
+    <link rel="stylesheet" href={% static "assets/css/plyr.css" %} />
+    <link rel="stylesheet" href={% static "assets/css/flag.css" %} />
+    <link rel="stylesheet" href={% static "assets/css/slick.css" %} /> 
+    <link rel="stylesheet" href={% static "assets/css/owl.carousel.min.css" %} />
+    <link rel="stylesheet" href={% static "assets/css/jquery.nstSlider.min.css" %} />
+
+    <!-- Custom Css -->
+    <link rel="stylesheet" type="text/css" href={% static "css/main.css" %}>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,600%7CRoboto:300i,400,500" rel="stylesheet">
+
+    <!-- Favicon -->
+    <link rel="icon" href={% static "images/favicon.png" %}>
+    <link rel="apple-touch-icon" href={% static "images/apple-touch-icon.png" %}>
+    <link rel="apple-touch-icon" sizes="72x72" href={% static "images/icon-72x72.png" %}>
+    <link rel="apple-touch-icon" sizes="114x114" href={% static "images/icon-114x114.png" %}>
+
+
+    <!--[if lt IE 9]>
+    <script src="assets/js/html5shiv.min.js"></script>
+    <script src="assets/js/respond.min.js"></script>
+    <![endif]-->
+
+  </head>
+  <body>
+
+    <header class="header-2 access-page-nav">
+      <div class="container">
+        <div class="row">
+          <div class="col">
+            <div class="header-top">
+              <div class="logo-area">
+                <a href="/"><img src={% static "images/concordia-logo.png" %} alt=""></a>
+              </div>
+              <div class="top-nav">
+                <a href="/jobApplications" class="account-page-link">Back</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <div class="padding-top-90 padding-bottom-90 access-page-bg" >
+      <div class="container">
+        <div class="row">
+          <div class="col-xl-4 col-md-6">
+            <div class="access-form">
+              <div class="form-header">
+                <h5><i data-feather="edit"></i>Create New Admin</h5>
+              </div>
+              {% if form.non_field_errors %}
+                <div class="non-field-errors">
+                  {% for err in form.non_field_errors %}
+                    <p class="text-danger">{{ err }}</p>
+                  {% endfor %}
+                </div>
+              {% endif %}
+              <form method="POST" enctype="multipart/form-data">
+              {% csrf_token %}       
+                </div>
+                    <div class="form-group">
+                      {{form.email}}
+                      {% if showError %}
+                      {% for error in form.email.errors %}
+                          <div class="alert alert-danger">
+                              <strong>{{ error|escape }}</strong>
+                          </div>
+                      {% endfor %}
+                      {% endif %}
+                    </div>
+                    <div class="form-group">
+                      {{form.firstName}}
+                      {% if showError %}
+                      {% for error in form.firstName.errors %}
+                          <div class="alert alert-danger">
+                              <strong>{{ error|escape }}</strong>
+                          </div>
+                      {% endfor %}
+                      {% endif %}
+                    </div>
+                    <div class="form-group">
+                      {{form.lastName}}
+                      {% if showError %}
+                      {% for error in form.lastName.errors %}
+                          <div class="alert alert-danger">
+                              <strong>{{ error|escape }}</strong>
+                          </div>
+                      {% endfor %}
+                      {% endif %}
+                    </div>
+                  <div class="form-group">
+                  <div class="form-group">
+                  {{form.currentAdminPassword}}
+                  {% if showError %}
+                  {% for error in form.currentAdminPassword.errors %}
+                      <div class="alert alert-danger">
+                          <strong>{{ error|escape }}</strong>
+                      </div>
+                  {% endfor %}
+                  {% endif %}
+                </div>
+                  {{form.password}}
+                  {% if showError %}
+                  {% for error in form.password.errors %}
+                      <div class="alert alert-danger">
+                          <strong>{{ error|escape }}</strong>
+                      </div>
+                  {% endfor %}
+                  {% endif %}
+                  </div>
+                <div class="form-group">
+                  {{form.passwordConfirm}}
+                  {% if showError %}
+                  {% for error in form.passwordConfirm.errors %}
+                      <div class="alert alert-danger">
+                          <strong>{{ error|escape }}</strong>
+                      </div>
+                  {% endfor %}
+                  {% endif %}
+                </div>
+                {% if form.non_field_errors %}
+                    {% for error in form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            <strong>{{ error|escape }}</strong>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                <input type="submit" class="button primary-bg btn-block" formnovalidate value="Create" name="Create" id="Create">
+              </form>
+              <div class="shortcut-login">
+                <p><a href="/jobApplications">Cancel</a></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script>
+
+    var notLocked = true;
+    $.fn.animateHighlight = function(highlightColor, duration) {
+        var highlightBg = highlightColor || "#6495ED";
+        var animateMs = duration || 1500;
+        var originalBg = this.css("backgroundColor");
+        if (notLocked) {
+            notLocked = false;
+            this.stop().css("background-color", highlightBg)
+                .animate({backgroundColor: originalBg}, animateMs);
+            setTimeout( function() { notLocked = true; }, animateMs);
+        }
+    };
+
+    </script>
+
+    <script src={% static "assets/js/jquery.min.js" %}></script>
+    <script src={% static "assets/js/popper.min.js" %}></script>
+    <script src={% static "assets/js/bootstrap.min.js" %}></script>
+    <script src={% static "assets/js/feather.min.js" %}></script>
+    <script src={% static "assets/js/bootstrap-select.min.js" %}></script>
+    <script src={% static "assets/js/jquery.nstSlider.min.js" %}></script>
+    <script src={% static "assets/js/owl.carousel.min.js" %}></script>
+    <script src={% static "assets/js/visible.js" %}></script>
+    <script src={% static "assets/js/jquery.countTo.js" %}></script>
+    <script src={% static "assets/js/chart.js" %}></script>
+    <script src={% static "assets/js/plyr.js" %}></script>
+    <script src={% static "assets/js/tinymce.min.js" %}></script>
+    <script src={% static "assets/js/slick.min.js" %}></script>
+    <script src={% static "assets/js/jquery.ajaxchimp.min.js" %}></script>
+
+    <script src={% static "js/custom.js" %}></script>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC87gjXWLqrHuLKR0CTV5jNLdP4pEHMhmg"></script>
+    <script src={% static "js/map.js" %}></script>
+    <script>
+
+      let form_language_count = Number($("[name=extra_language_count]").val());
+
+      $(function() {
+          var pos = localStorage.getItem('my-scroll-pos', 0);
+          if (pos)
+              $(window).scrollTop(pos)
+      });
+
+    </script>
+    <!-- On click button color change animation function -->
+    <script>
+
+    var notLocked = true;
+    $.fn.animateHighlight = function(highlightColor, duration) {
+        var highlightBg = highlightColor || "#6495ED";
+        var animateMs = duration || 1500;
+        var originalBg = this.css("backgroundColor");
+        if (notLocked) {
+            notLocked = false;
+            this.stop().css("background-color", highlightBg)
+                .animate({backgroundColor: originalBg}, animateMs);
+            setTimeout( function() { notLocked = true; }, animateMs);
+        }
+    };
+
+    </script>
+
+    <script>
+  
+      $("#addLanguage").click(function() {
+          form_language_count ++;
+          localStorage.setItem('my-scroll-pos', $(window).scrollTop());
+
+          $("[name=extra_language_count]").val(form_language_count);
+
+          $("#addLanguage").animateHighlight("##6495ED", 1000)
+      })
+
+      $("#removeLanguage").click(function() {
+          form_language_count --;
+          localStorage.setItem('my-scroll-pos', $(window).scrollTop());
+
+          $("[name=extra_language_count]").val(form_language_count);
+          $("#removeLanguage").animateHighlight("##6495ED", 1000)
+      })
+    </script>
+    <!-- Select between candidate or employer button control-->
+    <script>
+  
+      $("#selectCandidate").click(function() {
+          localStorage.setItem('my-scroll-pos', $(window).scrollTop());
+
+          $("[name=registrationType]").val("candidate");
+          $("#selectCandidate").animateHighlight("##6495ED", 1000)
+      })
+
+      $("#selectEmployer").click(function() {
+          localStorage.setItem('my-scroll-pos', $(window).scrollTop());
+
+          $("[name=registrationType]").val("employer");
+          $("#selectCandidate").animateHighlight("##6495ED", 1000)
+      })
+    </script>
+
+    <!-- Select between new company or existing company button control-->
+    <script>
+
+      $("#existingpartner").click(function() {
+          localStorage.setItem('my-scroll-pos', $(window).scrollTop());
+
+          $("[name=employerCompany]").val("selectFromExisting");
+          $("[name=registrationType]").val("employer");
+          $("#existingpartner").animateHighlight("##6495ED", 1000)
+      })
+
+      $("#newpartner").click(function() {
+          localStorage.setItem('my-scroll-pos', $(window).scrollTop());
+
+          $("[name=employerCompany]").val("createNew");
+          $("[name=registrationType]").val("employer");
+          $("#newpartner").animateHighlight("##6495ED", 1000)
+      })
+    </script>
+  </body>
+</html>
