@@ -37,7 +37,7 @@ For production
     - Make a `db.env` file with the same content as `db.env.dev`. 
     - In `production.yml`, add your domain to the letsEncryption environment parameters (i.e. replace concordia-ace.ca in `URL=concordia-ace.ca`with your own domain name). 
 4) Enter the following command `docker-compose -f production.yml up --build` OR `docker-compose -f production.yml up --build -d` (deamon mode). This will spin up the docker server, install all dependencies and set up the website with https encryption.  
-5) The website is now running. Collection Static and migrations are automated in step 4), migration files are saved in your web/prod_storage/ directory. You may access it using your host `ip/domain name` with any web browser. Db and media files are also stored in web/prod_storage folder via volume mount. 
+5) The website is now running. You may access it using your host `ip/domain name` with any web browser. Collection Static and migrations are automated in step 4), migration files are saved in your web/prod_storage/ directory. Db and media files are also stored in web/prod_storage folder via volume mount. Db Migration files are stored in web/appName/ `migration` subfolders.
 6) To create the first superuser (admin), run the command `docker exec -it yourWebDockerID python manage.py createsuperuser` . Choose user type `4` when asked. Subsequent admin can be created in the admin menu options. To find out the value of `yourWbDockerID`, run the command line `docker ps`
 
 For test
