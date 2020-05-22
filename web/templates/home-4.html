@@ -149,7 +149,11 @@
           <h4><i data-feather="video"></i>About Concordia Co-op</h4>
           <div class="video-area">
             <!-- <div data-type="vimeo" data-video-id="126777001"></div> -->
+            {% if video %}
+            <div id="player" data-plyr-provider="{{video.videoType}}" data-plyr-embed-id="{{video.VideoLink}}"></div>
+            {% else %}
             <div id="player" data-plyr-provider="youtube" data-plyr-embed-id="https://www.youtube.com/watch?v=NwAxNFwEEbM"></div>
+            {% endif %}
           </div>
         </div>
       </div>
@@ -301,42 +305,20 @@
           </div>
         </div>
         <div class="row">
+          {% for event in events%}
           <div class="col-md-6 col-lg-4">
             <article class="blog-grid">
               <div class="body">
-                <span class="date">22 <span>Jun</span></span>
-                <h3><a href= "blog-details.html">Application Deadline</a></h3>
-                <p>The application deadline for all current jobs is June 22th</p>
+                <span class="date">{{event.day}} <span>{{event.month}}</span></span>
+                <h3><a href= "blog-details.html">{{event.title}}</a></h3>
+                <p>{{event.description|safe}}</p>
               </div>
               <div class="info">
-                <span class="author"><a href= "#"><i data-feather="user"></i>ACE team</a></span>
+                <span class="author"><a href= "#"><i data-feather="user"></i>{{event.author}}</a></span>
               </div>
             </article>
           </div>
-          <div class="col-md-6 col-lg-4">
-            <article class="blog-grid">
-              <div class="body">
-                <span class="date">29 <span>Aug</span></span>
-                <h3><a href= "blog-details.html">Last Day of Rankings</a></h3>
-                <p>Please submit all rankings by August 29th</p>
-              </div>
-              <div class="info">
-                <span class="author"><a href= "#"><i data-feather="user"></i>Ace Team</a></span>
-              </div>
-            </article>
-          </div>
-          <div class="col-md-6 col-lg-4">
-            <article class="blog-grid">
-              <div class="body">
-                <span class="date">1 <span>Sep</span></span>
-                <h3><a href= "blog-details.html">Match day</a></h3>
-                <p>Match will be made available at around Noon</p>
-              </div>
-              <div class="info">
-                <span class="author"><a href= "#"><i data-feather="user"></i>Ace Team</a></span>
-              </div>
-            </article>
-          </div>
+          {% endfor %}
         </div>
       </div>
     </div>

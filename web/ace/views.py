@@ -7,6 +7,7 @@ from joblistings.models import Job
 from accounts.models import Candidate
 from ace.models import Candidate_termsAndConditions, Employer_termsAndConditions
 from django.db.models import Q
+from announcements.models import Event, MainPageVideo
 
 #import sys
 
@@ -22,6 +23,10 @@ def home_page(request):
     context["candidateCount"] = Candidate.objects.count()
 
     context["activeJobCount"] = Job.objects.filter(Q(status="Approved") | Q(status="Interviewing")).count()
+
+    context["events"] = Event.objects.filter().all()[:3]
+
+    context["video"] = MainPageVideo.objects.filter().last()
 
     #print("It's working", file=sys.stderr)
 
