@@ -110,6 +110,15 @@
               {% for email in emails%}
                 {{email}},
               {% endfor%}
+
+              {% if emails_do_not_disturbe %}
+              <p>
+              <h6> Emails - Users with email notification OFF: </h6>
+              {% for email in emails_do_not_disturbe%}
+                {{email}}
+              {% endfor %}
+
+              {% endif %}
               </p>
               <h6> Detail info: </h6>
               <ul>

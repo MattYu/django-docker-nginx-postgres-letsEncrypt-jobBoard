@@ -7,7 +7,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>Concordia ACE</title>
+    <title>ACE Concordia</title>
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href={% static "assets/css/bootstrap.min.css" %}>
@@ -31,10 +31,10 @@
     <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,600%7CRoboto:300i,400,500" rel="stylesheet">
 
     <!-- Favicon -->
-    <link rel="icon" href="images/favicon.png">
-    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="images/icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="images/icon-114x114.png">
+    <link rel="icon" href={% static "images/favicon.png" %}%> 
+    <link rel="apple-touch-icon" href={% static "images/apple-touch-icon.png" %}>
+    <link rel="apple-touch-icon" sizes="72x72" href={% static "images/icon-72x72.png" %}>
+    <link rel="apple-touch-icon" sizes="114x114" href={% static "images/icon-114x114.png" %}>
 
 
     <!--[if lt IE 9]>
@@ -64,10 +64,12 @@
                       <a href="#" class="account-thumb">
                         <img src="images/account/thumb-1.jpg" class="img-fluid" alt="">
                       </a>
+                      {% if user.is_authenticated %}
                       <div class="account-body">
                         <h5><a href="#">{{user.firstName}} {{user.lastName}}</a></h5>
                         <span class="mail">{{user.email}}</span>
                       </div>
+                      {% endif %}
                     </div>
                     <ul class="account-item-list">
                       <li><a href="/logout"><span class="ti-power-off"></span>Log Out</a></li>
@@ -120,72 +122,145 @@
       </div>
     </div>
     <!-- Breadcrumb End -->
-
+    <form method="POST" class="job-post-form" enctype="multipart/form-data">
+      {% csrf_token %}
     <div class="alice-bg section-padding-bottom">
       <div class="container no-gliters">
         <div class="row no-gliters">
           <div class="col">
             <div class="dashboard-container">
               <div class="dashboard-content-wrapper">
-                <div class="manage-job-container">
-
-                <h5><i></i> Click on Section Title to Edit  </h5>
-                <br>
-                 <div class="about-details details-section dashboard-section">
-                  <a href="post-job.html"><h4><i data-feather="edit"></i> General Information  </h4> </a>
-                <p> Name: {{request.user.preferredName}} {{request.user.firstName}} {{request.user.lastName}} </p>
-                <p> Email: {{request.user.email}} </p>
-                <p> Email is confirmed: {{request.user.is_email_confirmed}} </p>
-                <p> Email notification: {% if subject.notify_by_email %} On {% else %} off {% endif %} </p>
-                <p> Phone number: {{request.user.phoneNumber}} </p>
-                </div>
-                {% if  user.user_type == 1 %}
-                <div class="about-details details-section dashboard-section">
-                  <a href="/edit-profile/candidateInfo"><h4><i data-feather="edit"></i> Student Information and Confirm Concordia Email</h4> </a>
-                    <div class="buttons">
-                      <a href="/getFileWithAuth/5/{{request.user.pk}}/" class="button contact-download"><i data-feather="download"></i>Transcript</a>
-                      <br>
-                    </div>
-                    <br>
-                    <p> Concordia Email: {{subject.concordia_email}} </p>
-                    <p> Concordia Email is confirmed: {{subject.is_concordia_email_confirmed}} </p>
-                    <p> Student ID: {{subject.studentID}} </p>
-                    <p> Program of study: {{subject.program}} </p>
-                    <p> Credit completed: {{subject.creditCompleted}} </p>
-                    <p> Credit left: {{subject.creditLeft}} </p>
-                    <p> GPA: {{subject.gpa}} </p>
-                    <p> Citizenship completed: {{subject.citizenship}} </p>
-                    <p> Languages: </p>
-                    <div class="professonal-skill details-section">
-                    <div class="progress-group">
-                      {% for lan in languages%}
-                        <div class="progress-item">
-                          <div class="progress-head">
-                            {% if lan.language == "English" or lan.language == "French"%}
-                            <p class="progress-on">{{lan.language}}</p>
-                            {% else %}
-                            <p class="progress-on">{{lan.details}}</p>
-                            {% endif %}
-                          </div>
-                          <div class="progress-body">
-                            <div class="progress">
-                              <div class="progress-bar" role="progressbar" aria-valuenow="{{lan.fluency}}" aria-valuemin="0" aria-valuemax="100" style="width: 0;"></div>
-                            </div>
-                            <p class="progress-to">{{lan.fluency}}%</p>
-                          </div>
-                        </div>
-                        {% endfor %}
-                      </div>
-                    </div>
-                </div>
-                <div class="about-details details-section dashboard-section">
+                <div class="manage-candidate-container">
+                  {% if request.user.user_type == 4%}
+                    <button class="button" class="add-new-field" name="contact" id="contact">Get Contact Info and Summary Views</button>
+                  {% endif %}
                   <br>
-                  <a href="post-job.html"><h4><i data-feather="edit"></i> Reset Password  </h4> </a>
+                  <p>
+                    <h7>Showing {{pageLow}} to {{pageHigh}} out of {{pageRange}} results</h7>
+                  </P>
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Candidates</th>
+                        <th>Info</th>
+                        <th class="action"><a href="{{ request.path }}&oldest=True"> Created On </a></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        {% if candidatesList %}
+                          {% for candidate in candidatesList %}
+                        <tr class="candidates-list">
+                          <td class="title">
+                            <div class="body">
+                              <h5><a href="/admin/accounts/candidate/{{candidate.pk}}/change/">{{candidate.user.preferredName}} {{candidate.user.firstName}} {{candidate.user.lastName}}</a></h5>
+                              <div class="info">
+                                <span class="designation"><a href="/admin/accounts/candidate/{{candidate.pk}}/change/"><i data-feather="check-square"></i>Click to view Candidate Profile</a></span>
+                                <span class="designation"><a href="/admin/accounts/user/{{candidate.user.pk}}/change/"><i data-feather="map-pin"></i>Click to view General Profile</a></span>
+                              </div>
+                            </div>
+                          </td>
+                          <td class="status"><i data-feather="check-circle"></i>{{candidate.user.email}}</td>
+                          <td class="action">
+                            {{candidate.created_at}}
+                          </td>
+                        </tr>
+                          {% endfor %}
+                        {% endif %}
+                    </tbody>
+                  </table>
+                  <div class="pagination-list text-center">
+                      {% if not hideLow %}
+                      <input type="submit" class="page-numbers" formnovalidate value="Prev" name="prevPage" id="prevPage">
+                      {% endif %}
+                      {% if not hideHigh %}
+                      <input type="submit" class="page-numbers" formnovalidate value="Next" name="nextPage" id="nextPage">
+                      {% endif %}
+                  </div>
                 </div>
+              </div>
+                <div class="job-filter-wrapper">
+                {{form.selected_filter}}
+                {{form.selected_filter_outerHTML}}
+                {{form.selected_filter_class}}
+                {{form.page}}
+                {{form.gpa_min}}
+                {{form.gpa_max}}
+                <center>
+                <input type="submit" class="add-new-field" formnovalidate value="Apply Filter" name="filter" id="filter">
+                </center>
+                <div class="selected-options same-pad">
+                  <div class="selection-title">
+                    <h4>You Selected</h4>
+                    <a href="#">Clear All</a>
+                  </div>
+                  <ul class="filtered-options" id= "currentFilter">
+                  </ul>
+                </div>
+                <div class="job-filter-dropdown same-pad category">
+                    {{form.program}}
+                </div>
+                <div class="job-filter same-pad">
+                {% if request.user.user_type == 2 or request.user.user_type == 4%}
+                <h4 class="option-title">Optional Keywords</h4>
+                <ul id="formInput">
+                    {{form.firstName}}
+                    {{form.lastName}}
+                    {{form.email}}
+                    {{form.studentId}}
+                    {{form.companyName}}
+                </ul>
+                {% endif %}
+
+                {% if request.user.user_type == 1 %}
+                <h4 class="option-title">Optional Keywords</h4>
+                <ul id="formInput">
+                    {{form.companyName}}
+                </ul>
                 {% endif %}
                 </div>
-
-
+                {% if request.user.user_type == 2 or request.user.user_type == 4%}
+                <div class="job-filter same-pad">
+                  <h4 class="option-title">GPA</h4>
+                  <div class="price-range-slider">
+                    <div class="nstSlider" data-range_min="1.7" data-range_max="4.3" 
+                     data-cur_min="1.7"    data-cur_max="4.3">
+                      <div class="bar"></div>
+                      <div class="leftGrip"></div>
+                      <div class="rightGrip"></div>
+                      <div class="grip-label">
+                        <span class="leftLabel" id="minSlider"></span>
+                        <span class="rightLabel" id= "maxSlider"></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {% endif %}
+                <div data-id="job-type" class="job-filter job-type same-pad">
+                  <h4 class="option-title">Date Posted</h4>
+                  <ul>
+                    <li class="full-time"><i data-feather="clock"></i><a href="#" data-attr="Last 24 hours">Last 24h</a></li>
+                    <li class="part-time"><i data-feather="clock"></i><a href="#" data-attr="Last 7 days">Last 7 days</a></li>
+                    <li class="freelance"><i data-feather="clock"></i><a href="#" data-attr="Last 14 days">Last 14 days</a></li>
+                    <li class="temporary"><i data-feather="clock"></i><a href="#" data-attr="Last month">Last month</a></li>
+                    <li class="temporary"><i data-feather="clock"></i><a href="#" data-attr="Last 3 months">Last 3 months</a></li>
+                  </ul>
+                </div>
+                <div data-id="experience" class="job-filter experience same-pad">
+                  <h4 class="option-title">Citizenship Status</h4>
+                  <ul>
+                    <li><a href="#" data-attr="Canadian">Canadian</a></li>
+                    <li><a href="#" data-attr="Permanent Resident">Permanent Resident</a></li>
+                    <li><a href="#" data-attr="International Student">International Student</a></li>
+                    <li><a href="#" data-attr="Concordia Student confirmed email">Concordia Student [Confirmed Email]</a></li>
+                  </ul>
+                </div>
+                <div data-id="post" class="job-filter post same-pad">
+                  <h4 class="option-title">Order By</h4>
+                  <ul>
+                    <li><a href="#" data-attr="Latest First">Latest First</a></li>
+                    <li><a href="" data-attr="Oldest First">Oldest First</a></li>
+                  </ul>
+                </div>
               </div>
               <div class="dashboard-sidebar">
                 <div class="company-info">
@@ -215,9 +290,9 @@
                         <span class="badge">{{newMessageCount}}</span>
                       </div>
                     </a></li>
-                    <li class="active"><i class="fas fa-user"></i><a href="/edit-profile">Edit Profile</a></li>
+                    <li><i class="fas fa-user"></i><a href="/edit-profile">Edit Profile</a></li>
                     {% if user.user_type == 4 %}
-                    <li><i class="fas fa-users"></i><a href="/manageCandidate/">Manage Candidate</a></li>
+                    <li class="active"><i class="fas fa-users"></i><a href="/manageCandidate/">Manage Candidate</a></li>
                     <li><i class="fas fa-users"></i><a href="/manageEmployers/">Manage Employer</a></li>
                     <li><i class="fas fa-briefcase"></i><a href="/manageCompanies/">Manage Company</a></li>
                     {% endif %}
@@ -225,7 +300,11 @@
                     <li><i class="fas fa-briefcase"></i><a href="/manageJobs/">Manage Jobs</a></li>
                     {% endif %}
                     <li><i class="fas fa-users"></i><a href="/jobApplications/">Applications</a></li>
+                    {% if user.user_type != 1 %}
                     <li><i class="fas fa-heart"></i><a href="/employerRanking">Interview Ranking</a></li>
+                    {% else %}
+                    <li><i class="fas fa-heart"></i><a href="/candidateRanking">Interview Ranking</a></li>
+                    {% endif %}
                     {% if user.user_type == 4 %}
                     <li><i class="fas fa-plus-square"></i><a href="/matchDay">Admin Matchday</a></li>
                     {% endif %}
@@ -269,7 +348,7 @@
         </div>
       </div>
     </div>
-
+    </form>
     <!-- Call to Action -->
     <div class="call-to-action-bg padding-top-90 padding-bottom-90">
       <div class="container">
@@ -418,5 +497,75 @@
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC87gjXWLqrHuLKR0CTV5jNLdP4pEHMhmg"></script>
     <script src={% static "js/map.js" %}></script>
+
+
+    <script>
+        let page = Number($("[name=page]").val());
+        {% if filterClasses %}
+        var oldCls =  unescape({{filterClasses | safe }}).split(',');
+        var oldHTMLs = unescape({{filterHTML| safe }}).split(',');
+        if (oldCls.length > 0) {
+          for (var i=0; i < oldCls.length; ++i){
+            if (oldCls[i] != ""){
+              $('.selected-options').slideDown();
+              $('.selected-options .filtered-options li.' + oldCls[i]).remove();
+              $('.selected-options .filtered-options').append(oldHTMLs[i]);
+            }
+          }
+        }
+
+        {% endif %}
+
+        var fnc = function() {
+          var res = [];
+          var htmls = [];
+          var cls = [];
+          var lis = document.getElementById("currentFilter").getElementsByTagName("li");
+          for (var i = 0; i < lis.length; ++i) {
+            cls[i] = lis[i].className;
+            htmls[i] = lis[i].outerHTML;
+            res[i] = (lis[i].innerText || lis[i].textContent);
+          }
+          $("[name=selected_filter]").val(res);
+          $("[name=selected_filter_outerHTML]").val(htmls);
+          $("[name=selected_filter_class]").val(cls);
+          $("[name=gpa_min]").val(document.getElementById('minSlider').textContent);
+          $("[name=gpa_max]").val(document.getElementById('maxSlider').textContent);
+        }
+
+        $("#nextPage").click(fnc);
+
+        $("#filter").click(fnc);
+
+        $("#prevPage").click(fnc);
+
+        $("#firstPage").click(fnc);
+
+        $("#lastPage").click(fnc);
+
+        $("#nextPage").click(function() {
+          page ++;
+          $("[name=page]").val(page);
+        });
+
+        $("#prevPage").click(function() {
+          page --;
+          $("[name=page]").val(page);
+        });
+
+        $("#filter").click(function() {
+          page = 1;
+          $("[name=page]").val(page);
+        });
+
+        $('html').bind('keypress', function(e)
+        {
+          if(e.keyCode == 13)
+          {
+              return false;
+          }
+        });
+    </script>
+
   </body>
 </html>

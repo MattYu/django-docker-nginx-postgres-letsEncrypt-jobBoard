@@ -24,7 +24,7 @@ from ace.views import home_page
 from joblistings.views import job_details, post_job, download_jobPDF, manage_jobs, job_search
 from jobapplications.views import add_resume, download_test, browse_job_applications, get_protected_file, get_protected_file_withAuth, view_application_details
 from companies.views import view_company_details, manage_companies
-from accounts.views import edit_candidate_profile, edit_profile, register_user, logout_user, login_user, activate, manage_employers, validate, resend_activation, activate_account, validated
+from accounts.views import browse_candidate, edit_candidate_profile, edit_profile, register_user, logout_user, login_user, activate, manage_employers, validate, resend_activation, activate_account, validated
 from ace.views import terms_and_conditions
 from django.urls import include
 from django.urls import register_converter
@@ -104,9 +104,12 @@ urlpatterns = [
     path('notifications/<optional_string:searchString>', view_notifications),
     path('adminOpenMatching/', admin_open_matching),
     path('edit-profile/', edit_profile),
-    path('edit-profile/candidateInfo', edit_candidate_profile),
-    path('edit-profile/concordiaEmailValidation', edit_profile),
-    path('edit-profile/employerInfo', edit_profile),
+    path('edit-profile/candidateInfo/', edit_candidate_profile),
+    path('edit-profile/generalInfo/', edit_profile),
+    path('dashboard/', edit_profile),
+    path('manageCandidate/', browse_candidate),
+    path('createNewAdmin/', edit_profile),
+    path('changePassword/', edit_profile),
 ]
 
 

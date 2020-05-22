@@ -161,7 +161,7 @@ def browse_job_applications(request, searchString = "", jobId= -1):
     import sys
     #print(filterSet, file=sys.stderr)
     try:
-        if "Last 24 hours".lower() in filterSet:
+        if "Last 24 hours" in filterSet:
             query &= Q(created_at__gte=timezone.now()-timedelta(days=1))
         if "Last 7 days" in filterSet:
             query &= Q(created_at__gte=timezone.now()-timedelta(days=7))
