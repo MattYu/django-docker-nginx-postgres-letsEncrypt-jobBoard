@@ -36,3 +36,8 @@ For test
   4) Enter the following command `docker-compose up --build` 
 
   All other step are identical.
+
+Turning on and off
+To turn off website: `docker-compose down`
+To turn on without rebuilding: `docker-compose -f production.yml up`
+To turn on with rebuilding: Step 4) above
