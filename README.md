@@ -24,10 +24,10 @@ Job board made for Concordia University, Montreal, Canada, Co-op ACE program.
 For production
 1) Make sure [Docker](https://www.docker.com/) is installed and running on the machine. No other installation is needed. 
 2) Clone this repo and navigate to its root path, where `production.yml` is located.
-3) Make a `web.env`file (not included in the code) using the `web.env.dev` file (include here) as template and put it in the same folder directory. Change the secret keys in the template to your own production keys:
-    - Add your host ip/domain name to `DJANGO_ALLOWED_HOSTS`. (Note that your Domain Name must be linked to your server IP address. this is outside the scope of this readme; please consult your server provider for more details.)
+3) Make a `web.env`file (not included in the code) using the `web.env.dev` file (include here) as template and put it in the same folder directory. Change the secret keys in the template to your own production keys. More specifically:
+    - Add your host ip/domain name to `DJANGO_ALLOWED_HOSTS` list. (Note that your Domain Name must be linked to your server IP address. this is outside the scope of this readme; please consult your server provider for more details.)
     - Add your [Google reCaptcha V2](https://www.google.com/recaptcha/intro/v3.html) key (make sure that your domain is in your Google Key API account's allowed list) 
-    - You should generate a new strong random `secret key`; this will be used for [RSA](https://en.wikipedia.org/wiki/RSA_(cryptosystem)).
+    - Generate a strong random `secret key`; this will be used for [RSA](https://en.wikipedia.org/wiki/RSA_(cryptosystem)).
     - Set `DEV=False`
     - Leave the DB login credentials idem (i.e. use the default linux postgre db login credentials) - the DB is not exposed to the web and there is no need to further secure it. 
     - Add your email credentials and `smtp` host. `web/ace/settings.py` uses PORT = 587 and TLS by default.
