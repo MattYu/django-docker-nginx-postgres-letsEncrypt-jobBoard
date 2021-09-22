@@ -8,7 +8,7 @@ chardet==3.0.4
 Pillow==7.1.2
 cssselect2==0.2.2
 defusedxml==0.6.0
-Django==3.0.7
+Django==3.1.13
 django-file-resubmit==0.5.2
 django-sendfile==0.3.11
 django-sendfile2==0.6.0
